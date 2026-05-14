@@ -1,0 +1,101 @@
+flowchart TD
+  App["Aplicação PWA"] --> FirstAccess{"Primeiro acesso?"}
+
+  FirstAccess -->|Sim| Onboarding["Boas-vindas e configuração inicial"]
+  FirstAccess -->|Não| Home["Página inicial"]
+
+  Onboarding --> SelectLanguage["Selecionar idioma por bandeiras"]
+  SelectLanguage --> SelectTheme["Selecionar tema"]
+  SelectTheme --> SelectUsageMode{"Tipo de uso"}
+
+  SelectUsageMode -->|Uso autônomo| CreateProfessionalProfile["Criar perfil profissional"]
+  SelectUsageMode -->|Empresa / instituição| CreateInstitutionProfile["Criar perfil da instituição"]
+
+  CreateInstitutionProfile --> CreateInstitutionProfessionalProfile["Criar perfil do profissional"]
+  CreateProfessionalProfile --> IntroTutorial["Tutorial inicial de uso"]
+  CreateInstitutionProfessionalProfile --> IntroTutorial
+
+  IntroTutorial --> Home
+
+  Home --> Dashboard["Dashboard"]
+  Home --> Shortcuts["Atalhos"]
+  Home --> News["Novidades e atualizações"]
+  Home --> DocsUpdates["Documentação e implementações"]
+
+  Home --> NavigationBar["Barra de navegação universal"]
+
+  NavigationBar --> HomeNav["Início"]
+  NavigationBar --> ClientsNav["Clientes"]
+  NavigationBar --> ProfileNav["Perfil"]
+  NavigationBar --> BackupNav["Backups"]
+  NavigationBar --> FAQsNav["FAQs"]
+  NavigationBar --> DocumentationNav["Documentação técnica"]
+  NavigationBar --> SettingsNav["Configurações"]
+
+  ProfileNav --> Professionals["Profissionais"]
+  ProfileNav --> Institutions["Instituições"]
+
+  BackupNav --> ExportDatabase["Exportar base de dados"]
+  BackupNav --> ImportDatabase["Importar base de dados"]
+
+  SettingsNav --> ChangeLanguage["Alterar idioma"]
+  SettingsNav --> ChangeTheme["Alterar tema"]
+  SettingsNav --> ChangeClientTerm["Alterar termo da pessoa avaliada"]
+  SettingsNav --> ChangeNavPosition["Alterar posição da barra de navegação"]
+
+  ClientsNav --> ClientList["Lista de clientes"]
+  ClientsNav --> NewClient["Novo cliente"]
+
+  ClientList --> ClientCardActions["Ações CRUD do cliente"]
+  ClientCardActions --> ViewClient["Visualizar cliente"]
+  ClientCardActions --> EditClient["Editar cliente"]
+  ClientCardActions --> DeleteClient["Excluir cliente"]
+
+  NewClient --> ClientProfile["Perfil do cliente"]
+  ViewClient --> ClientProfile
+  EditClient --> ClientProfile
+
+  ClientProfile --> ClientData["Dados cadastrais"]
+  ClientProfile --> GeneralAnamnesis["Anamnese geral única"]
+  ClientProfile --> EvaluationsList["Lista de avaliações"]
+  ClientProfile --> CreateEvaluation["Nova avaliação"]
+
+  GeneralAnamnesis --> EditGeneralAnamnesis["Editar anamnese geral"]
+  EditGeneralAnamnesis --> AnamnesisHistory["Histórico das últimas X alterações"]
+
+  CreateEvaluation --> SelectEvaluationType{"Escolher tipo de avaliação"}
+
+  SelectEvaluationType --> AnthropometricEvaluation["Avaliação antropométrica"]
+  SelectEvaluationType --> KinanthropometricEvaluation["Avaliação cineantropométrica"]
+  SelectEvaluationType --> NutritionalEvaluation["Avaliação nutricional"]
+  SelectEvaluationType --> PosturalEvaluation["Avaliação postural"]
+
+  AnthropometricEvaluation --> EvaluationForm["Formulário da avaliação"]
+  KinanthropometricEvaluation --> EvaluationForm
+  NutritionalEvaluation --> EvaluationForm
+  PosturalEvaluation --> EvaluationForm
+
+  EvaluationForm --> EditRelevantAnamnesis["Editar campos relevantes da anamnese"]
+  EditRelevantAnamnesis --> UpdateGeneralAnamnesis["Atualizar anamnese geral"]
+  UpdateGeneralAnamnesis --> AnamnesisHistory
+
+  EvaluationForm --> SaveDraft["Salvar rascunho"]
+  EvaluationForm --> CompleteEvaluation["Concluir avaliação"]
+  EvaluationForm --> DiscardEvaluation["Descartar avaliação"]
+
+  CompleteEvaluation --> CalculateResults["Executar cálculos automáticos"]
+  CalculateResults --> ReportPreview["Pré-visualizar relatório"]
+
+  ReportPreview --> EditEvaluation["Editar avaliação"]
+  ReportPreview --> SaveEvaluation["Salvar avaliação"]
+  ReportPreview --> DiscardAfterPreview["Descartar avaliação"]
+
+  SaveEvaluation --> EvaluationsList
+
+  EvaluationsList --> EvaluationActions["Ações CRUD da avaliação"]
+  EvaluationActions --> OpenEvaluation["Abrir avaliação"]
+  EvaluationActions --> EditExistingEvaluation["Editar avaliação"]
+  EvaluationActions --> DeleteEvaluation["Excluir avaliação"]
+
+  OpenEvaluation --> ReportView["Visualizar relatório"]
+  ReportView --> ExportPDF["Exportar PDF"]

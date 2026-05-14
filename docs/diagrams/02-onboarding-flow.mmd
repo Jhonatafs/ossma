@@ -1,0 +1,30 @@
+flowchart TD
+  Start["Usuário acessa a PWA"] --> Welcome["Tela de boas-vindas"]
+
+  Welcome --> LanguageFlags["Selecionar idioma por bandeiras"]
+
+  LanguageFlags --> English["Inglês"]
+  LanguageFlags --> Portuguese["Português"]
+  LanguageFlags --> FutureLanguages["Idiomas futuros: espanhol, francês, chinês etc."]
+
+  English --> ThemeSelection["Selecionar tema"]
+  Portuguese --> ThemeSelection
+  FutureLanguages --> ThemeSelection
+
+  ThemeSelection --> LightTheme["Tema claro padrão"]
+  ThemeSelection --> DarkTheme["Tema escuro padrão"]
+  ThemeSelection --> CommunityThemes["Temas futuros criados pela comunidade"]
+
+  LightTheme --> UsageMode{"Tipo de uso"}
+  DarkTheme --> UsageMode
+  CommunityThemes --> UsageMode
+
+  UsageMode -->|Uso autônomo| ProfessionalProfile["Criar perfil profissional"]
+  UsageMode -->|Empresa / instituição| InstitutionProfile["Criar perfil da instituição"]
+
+  InstitutionProfile --> InstitutionProfessional["Criar perfil profissional vinculado"]
+  ProfessionalProfile --> UsageTutorial["Tutorial e contextualização"]
+  InstitutionProfessional --> UsageTutorial
+
+  UsageTutorial --> Ready["Aplicação pronta para uso"]
+  Ready --> Home["Página inicial"]

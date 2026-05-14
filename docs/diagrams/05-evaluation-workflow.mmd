@@ -1,0 +1,47 @@
+flowchart TD
+  Start["Nova avaliação"] --> SelectType{"Escolher tipo de avaliação"}
+
+  SelectType --> Anthropometric["Antropométrica"]
+  SelectType --> Kinanthropometric["Cineantropométrica"]
+  SelectType --> Nutritional["Nutricional"]
+  SelectType --> Postural["Postural"]
+
+  Anthropometric --> EvaluationForm["Formulário da avaliação"]
+  Kinanthropometric --> EvaluationForm
+  Nutritional --> EvaluationForm
+  Postural --> EvaluationForm
+
+  EvaluationForm --> RelevantAnamnesis["Campos relevantes da anamnese geral"]
+  RelevantAnamnesis --> EditRelevantAnamnesis["Editar campos relevantes"]
+  EditRelevantAnamnesis --> UpdateGeneralAnamnesis["Atualizar anamnese geral"]
+  UpdateGeneralAnamnesis --> RegisterChangeHistory["Registrar no histórico das últimas X alterações"]
+
+  EvaluationForm --> FillRawData["Preencher dados brutos"]
+  FillRawData --> ValidateData["Validar dados e unidades"]
+
+  ValidateData --> MissingData{"Faltam dados obrigatórios?"}
+  MissingData -->|Sim| ShowMissingFields["Exibir campos faltantes"]
+  ShowMissingFields --> EvaluationForm
+
+  MissingData -->|Não| FinishOptions{"Ação do profissional"}
+
+  FinishOptions --> SaveDraft["Salvar rascunho"]
+  FinishOptions --> CompleteEvaluation["Concluir avaliação"]
+  FinishOptions --> DiscardEvaluation["Descartar avaliação"]
+
+  CompleteEvaluation --> CalculateResults["Executar cálculos automáticos"]
+  CalculateResults --> GenerateReport["Gerar resultado / relatório"]
+  GenerateReport --> ReportPreview["Pré-visualização do relatório"]
+
+  ReportPreview --> SaveAndExportPDF["Salvar e Exportar PDF"]
+  ReportPreview --> EditEvaluation["Editar"]
+  ReportPreview --> SaveEvaluation["Salvar"]
+  ReportPreview --> DiscardAfterPreview["Descartar"]
+
+  SaveEvaluation --> EvaluationHistory["Histórico de avaliações"]
+
+  EvaluationHistory --> OpenExistingEvaluation["Abrir avaliação existente"]
+  OpenExistingEvaluation --> ViewReport["Visualizar relatório"]
+  OpenExistingEvaluation --> EditExistingEvaluation["Editar avaliação"]
+  OpenExistingEvaluation --> DeleteExistingEvaluation["Excluir avaliação"]
+  ViewReport --> ExportPDF["Exportar PDF"]

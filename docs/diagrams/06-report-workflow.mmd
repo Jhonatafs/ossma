@@ -1,0 +1,21 @@
+flowchart TD
+  EvaluationCompleted["Avaliação concluída"] --> ComputeResults["Resultados calculados"]
+  ComputeResults --> ProfessionalInterpretation["Interpretação profissional"]
+  ProfessionalInterpretation --> ReportPreview["Pré-visualização do relatório"]
+
+  ReportPreview --> TechnicalDisclaimer["Seção de aviso técnico geral"]
+  TechnicalDisclaimer --> ProfessionalStamp["Carimbo profissional em todas as páginas"]
+
+  ProfessionalStamp --> ReportActions{"Ação"}
+
+  ReportActions --> EditEvaluation["Editar avaliação"]
+  ReportActions --> SaveReport["Salvar avaliação / relatório"]
+  ReportActions --> DiscardReport["Descartar"]
+  ReportActions --> ExportPDF["Exportar PDF"]
+
+  SaveReport --> ReportSnapshot["Gerar ou atualizar snapshot do relatório"]
+  ReportSnapshot --> EvaluationHistory["Disponível no histórico do cliente"]
+
+  EvaluationHistory --> OpenReport["Abrir relatório posteriormente"]
+  OpenReport --> ViewReport["Visualizar relatório"]
+  ViewReport --> ExportExistingPDF["Exportar PDF novamente"]

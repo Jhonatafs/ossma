@@ -1,0 +1,13 @@
+/*
+ * File purpose:
+ * Global stylesheet entry point.
+ * Imports reset, design tokens, themes, base styles, layout helpers, and utilities.
+ */
+
+@import './lib/styles/reset.css';
+@import './lib/styles/tokens.css';
+@import './lib/styles/themes/light.css';
+@import './lib/styles/themes/dark.css';
+@import './lib/styles/base.css';
+@import './lib/styles/layout.css';
+@import './lib/styles/utilities.css';

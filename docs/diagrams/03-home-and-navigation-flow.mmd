@@ -1,0 +1,38 @@
+flowchart TD
+  Home["Página inicial"] --> Layout{"Largura do dispositivo"}
+
+  Layout -->|Tela larga| WideLayout["Layout amplo estilo VSCode"]
+  Layout -->|Tela estreita| NarrowLayout["Layout responsivo compacto"]
+
+  WideLayout --> LeftColumn["Coluna esquerda"]
+  WideLayout --> RightColumn["Coluna direita"]
+
+  LeftColumn --> Shortcuts["Atalhos"]
+  LeftColumn --> Dashboard["Dashboard"]
+
+  Dashboard --> ClientCount["Quantidade de clientes"]
+  Dashboard --> StorageUsage["Tamanho de armazenamento local"]
+  Dashboard --> OtherMetrics["Outros indicadores locais"]
+
+  RightColumn --> News["Novidades e atualizações"]
+  RightColumn --> Implementations["Implementações recentes"]
+  RightColumn --> DocumentationHighlights["Documentação"]
+
+  NarrowLayout --> CompactDashboard["Dashboard compacto"]
+  NarrowLayout --> CompactUpdates["Atualizações, implementações e documentação"]
+  NarrowLayout --> HiddenShortcuts["Atalhos ocultos ou reduzidos"]
+
+  Home --> UniversalNavigation["Barra de navegação universal"]
+
+  UniversalNavigation --> PositionRule{"Tipo de dispositivo"}
+
+  PositionRule -->|Tela larga| WidePositions["Esquerda, direita, topo ou rodapé"]
+  PositionRule -->|Tela estreita| NarrowPositions["Topo ou rodapé"]
+
+  UniversalNavigation --> Start["Início"]
+  UniversalNavigation --> Clients["Clientes"]
+  UniversalNavigation --> Profile["Perfil"]
+  UniversalNavigation --> Backups["Backups"]
+  UniversalNavigation --> FAQs["FAQs"]
+  UniversalNavigation --> TechnicalDocs["Documentação técnica"]
+  UniversalNavigation --> Settings["Configurações"]

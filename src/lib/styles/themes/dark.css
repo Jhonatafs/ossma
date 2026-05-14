@@ -1,0 +1,19 @@
+/*
+ * File purpose:
+ * Defines semantic color variables for the default dark theme.
+ */
+
+:root[data-theme='dark'] {
+	--color-background: #111816;
+	--color-surface: #1a2420;
+	--color-surface-muted: #22302b;
+	--color-text: #edf5f0;
+	--color-muted: #a9b8af;
+	--color-border: #314039;
+	--color-primary: #73d6bf;
+	--color-primary-hover: #9be5d4;
+	--color-primary-contrast: #0d1f19;
+	--color-danger: #ffb4ab;
+	--color-warning: #ffd08a;
+	--color-success: #8edbb2;
+}

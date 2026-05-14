@@ -1,0 +1,31 @@
+flowchart TD
+  ClientsPage["Página Clientes"] --> ClientList["Lista de clientes cadastrados"]
+  ClientsPage --> NewClient["Novo cliente"]
+
+  ClientList --> ClientCard["Cliente"]
+  ClientCard --> ViewClient["Visualizar"]
+  ClientCard --> EditClient["Editar"]
+  ClientCard --> DeleteClient["Excluir"]
+
+  NewClient --> ClientProfile["Perfil do cliente"]
+  ViewClient --> ClientProfile
+  EditClient --> ClientProfile
+
+  ClientProfile --> ClientData["Dados cadastrais"]
+  ClientProfile --> GeneralAnamnesis["Anamnese geral única"]
+  ClientProfile --> EvaluationHistory["Lista / histórico de avaliações"]
+  ClientProfile --> NewEvaluation["Nova avaliação"]
+
+  ClientData --> EditClientData["Editar dados cadastrais"]
+
+  GeneralAnamnesis --> EditAnamnesis["Editar anamnese"]
+  EditAnamnesis --> SaveAnamnesis["Salvar anamnese"]
+  SaveAnamnesis --> AnamnesisChangeHistory["Histórico das últimas X alterações"]
+
+  GeneralAnamnesis --> NoDelete["Não possui exclusão isolada"]
+  NoDelete --> DeleteClientOnly["Só é removida ao excluir o cliente"]
+
+  EvaluationHistory --> EvaluationItem["Avaliação registrada"]
+  EvaluationItem --> OpenEvaluation["Abrir"]
+  EvaluationItem --> EditEvaluation["Editar"]
+  EvaluationItem --> DeleteEvaluation["Excluir"]
