@@ -6,6 +6,8 @@ Offline-first professional assessment app for sport and health professionals.
 
 Initial foundation.
 
+OSSMA now includes an initial onboarding shell for first-time configuration.
+
 ## Tech Stack
 
 - SvelteKit
@@ -15,6 +17,11 @@ Initial foundation.
 - ESLint
 - Prettier
 - adapter-static
+
+## Internationalization
+
+OSSMA uses Paraglide for type-safe internationalization. The initial supported languages are
+English and Brazilian Portuguese.
 
 ## Development
 

@@ -1,0 +1,163 @@
+/*
+ * File purpose:
+ * Defines the application shell navigation and responsive menu placement.
+ */
+
+.app-shell--with-nav {
+	display: grid;
+	grid-template-rows: minmax(0, 1fr);
+}
+
+.app-shell--focus .main-content {
+	min-height: 0;
+}
+
+.suspended-navigation,
+.app-navigation {
+	position: fixed;
+	top: var(--space-4);
+	right: var(--space-4);
+	z-index: 20;
+}
+
+.suspended-navigation__inner,
+.app-navigation__inner {
+	display: grid;
+	width: min(17rem, calc(100vw - var(--space-8)));
+	width: min(17rem, calc(100dvw - var(--space-8)));
+	justify-items: end;
+	gap: var(--space-2);
+}
+
+.responsive-menu-toggle {
+	display: inline-flex;
+	min-height: var(--size-touch-target);
+	align-items: center;
+	justify-content: center;
+	border: 1px solid var(--color-border);
+	border-radius: var(--radius-sm);
+	background: var(--color-surface-elevated);
+	box-shadow: var(--shadow-md);
+	color: var(--color-text);
+	padding: var(--space-2) var(--space-3);
+	font-weight: 700;
+	transition:
+		border-color var(--transition-fast),
+		background-color var(--transition-fast),
+		color var(--transition-fast);
+}
+
+.responsive-menu-toggle:hover {
+	border-color: var(--color-primary);
+	background: var(--color-surface-muted);
+	color: var(--color-text);
+}
+
+.suspended-navigation-list,
+.app-navigation__items {
+	display: none;
+	gap: var(--space-2);
+}
+
+.responsive-menu-panel {
+	width: 100%;
+	max-height: min(70vh, 24rem);
+	overflow-y: auto;
+	border: 1px solid var(--color-border);
+	border-radius: var(--radius-md);
+	background: var(--color-surface-elevated);
+	box-shadow: var(--shadow-md);
+	padding: var(--space-2);
+}
+
+.responsive-menu-panel--open {
+	display: grid;
+}
+
+.responsive-menu-panel--icon-only {
+	width: auto;
+	justify-self: end;
+}
+
+.suspended-navigation-link,
+.app-navigation__item {
+	display: inline-flex;
+	min-height: var(--size-touch-target);
+	align-items: center;
+	gap: var(--space-2);
+	border-radius: var(--radius-sm);
+	color: var(--color-muted);
+	font-size: 0.9375rem;
+	font-weight: 700;
+	padding: var(--space-2) var(--space-3);
+	text-decoration: none;
+	white-space: nowrap;
+	width: 100%;
+}
+
+.suspended-navigation-link:hover,
+.suspended-navigation-link-active,
+.app-navigation__item:hover,
+.app-navigation__item--active {
+	background: var(--color-surface-muted);
+	color: var(--color-text);
+}
+
+.suspended-navigation-link-active,
+.app-navigation__item--active {
+	box-shadow: inset 0 0 0 1px var(--color-border);
+}
+
+.suspended-navigation-link--icon-only {
+	justify-content: center;
+	width: auto;
+}
+
+.navigation-icon {
+	display: inline-flex;
+	width: 1.25rem;
+	justify-content: center;
+	color: var(--color-text);
+	font-weight: 700;
+	line-height: 1;
+}
+
+.navigation-label {
+	line-height: 1;
+}
+
+@media (min-width: 64rem) and (orientation: landscape) {
+	.suspended-navigation,
+	.app-navigation {
+		left: 50%;
+		right: auto;
+		transform: translateX(-50%);
+	}
+
+	.suspended-navigation__inner,
+	.app-navigation__inner {
+		width: auto;
+	}
+
+	.responsive-menu-toggle {
+		display: none;
+	}
+
+	.suspended-navigation-list,
+	.app-navigation__items {
+		display: flex;
+		width: max-content;
+		max-width: calc(100vw - var(--space-8));
+		max-width: calc(100dvw - var(--space-8));
+		overflow-x: auto;
+	}
+
+	.responsive-menu-panel {
+		padding: var(--space-2);
+	}
+
+	.suspended-navigation-link,
+	.app-navigation__item {
+		width: auto;
+	}
+}

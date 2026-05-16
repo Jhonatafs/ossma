@@ -2,7 +2,7 @@
 
 ## 1. Identificação
 
-**Nome provisório do projeto:** Aplicação Profissional de Avaliações Físicas e Nutricionais  
+**Nome provisório do projeto:**
 **Tipo de produto:** PWA offline-first  
 **Licença:** MIT  
 **Modelo de distribuição:** Open source e gratuito  

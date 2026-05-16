@@ -1,9 +1,13 @@
+import { paraglideVitePlugin } from '@inlang/paraglide-js';
 import { defineConfig } from 'vitest/config';
 import { playwright } from '@vitest/browser-playwright';
 import { sveltekit } from '@sveltejs/kit/vite';
 
 export default defineConfig({
-	plugins: [sveltekit()],
+	plugins: [
+		sveltekit(),
+		paraglideVitePlugin({ project: './project.inlang', outdir: './src/lib/paraglide' })
+	],
 	test: {
 		expect: { requireAssertions: true },
 		projects: [

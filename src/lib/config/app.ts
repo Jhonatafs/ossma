@@ -1,6 +1,6 @@
 export type SupportedLanguage = 'en' | 'pt-BR';
 
-export type SupportedTheme = 'light' | 'dark';
+export type SupportedTheme = 'light' | 'dark' | 'dracula' | 'gruvbox';
 
 export type EvaluatedPersonTerm = 'client' | 'student' | 'patient' | 'athlete' | 'evaluated';
 
@@ -23,7 +23,7 @@ export const APP_CONFIG = {
 	version: '0.0.1',
 	supportedLanguages: ['en', 'pt-BR'],
 	defaultLanguage: 'en',
-	supportedThemes: ['light', 'dark'],
+	supportedThemes: ['light', 'dark', 'dracula', 'gruvbox'],
 	defaultTheme: 'light',
 	defaultEvaluatedPersonTerm: 'client'
 } as const satisfies AppConfig;

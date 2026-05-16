@@ -19,6 +19,8 @@ describe('APP_CONFIG', () => {
 		expect(APP_CONFIG.defaultTheme).toBe('light');
 		expect(APP_CONFIG.supportedThemes).toContain('light');
 		expect(APP_CONFIG.supportedThemes).toContain('dark');
+		expect(APP_CONFIG.supportedThemes).toContain('dracula');
+		expect(APP_CONFIG.supportedThemes).toContain('gruvbox');
 	});
 
 	it('defines the default evaluated person term', () => {

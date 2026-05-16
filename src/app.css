@@ -8,6 +8,9 @@
 @import './lib/styles/tokens.css';
 @import './lib/styles/themes/light.css';
 @import './lib/styles/themes/dark.css';
+@import './lib/styles/themes/dracula.css';
+@import './lib/styles/themes/gruvbox.css';
 @import './lib/styles/base.css';
 @import './lib/styles/layout.css';
+@import './lib/styles/components/navigation.css';
 @import './lib/styles/utilities.css';
