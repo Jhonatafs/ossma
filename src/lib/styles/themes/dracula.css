@@ -1,0 +1,31 @@
+/*
+ * File purpose:
+ * Defines semantic color variables for the Dracula theme.
+ */
+
+:root[data-theme='dracula'] {
+	--color-background: #282a36;
+	--color-surface: #44475a;
+	--color-surface-muted: #44475a;
+	--color-surface-elevated: #44475a;
+	--color-text: #f8f8f2;
+	--color-muted: #bd93f9;
+	--color-border: #6272a4;
+	--color-primary: #bd93f9;
+	--color-primary-hover: #ff79c6;
+	--color-primary-contrast: #282a36;
+	--color-accent: #8be9fd;
+	--color-accent-contrast: #282a36;
+	--color-danger: #ff5555;
+	--color-danger-contrast: #282a36;
+	--color-warning: #f1fa8c;
+	--color-warning-contrast: #282a36;
+	--color-success: #50fa7b;
+	--color-success-contrast: #282a36;
+	--color-focus: #ff79c6;
+	--color-selection-background: #44475a;
+	--color-selection-text: #f8f8f2;
+	--color-link: #8be9fd;
+	--color-link-hover: #ff79c6;
+	--color-shadow: rgb(0 0 0 / 0.35);
+}

@@ -1,20 +1,32 @@
 /*
  * File purpose:
- * Defines semantic color variables for the default light theme.
+ * Defines semantic color variables for the default professional light theme.
  */
 
 :root,
 :root[data-theme='light'] {
-	--color-background: #f7faf8;
+	--color-background: #f8fafc;
 	--color-surface: #ffffff;
-	--color-surface-muted: #eef5f1;
-	--color-text: #17231c;
-	--color-muted: #607066;
-	--color-border: #d8e2dc;
-	--color-primary: #116b5b;
-	--color-primary-hover: #0d594c;
+	--color-surface-muted: #f1f5f9;
+	--color-surface-elevated: #ffffff;
+	--color-text: #111827;
+	--color-muted: #52606d;
+	--color-border: #d6dde5;
+	--color-primary: #0f766e;
+	--color-primary-hover: #115e59;
 	--color-primary-contrast: #ffffff;
+	--color-accent: #2563eb;
+	--color-accent-contrast: #ffffff;
 	--color-danger: #b42318;
-	--color-warning: #b86e00;
-	--color-success: #087443;
+	--color-danger-contrast: #ffffff;
+	--color-warning: #a15c07;
+	--color-warning-contrast: #ffffff;
+	--color-success: #047857;
+	--color-success-contrast: #ffffff;
+	--color-focus: #2563eb;
+	--color-selection-background: #dbeafe;
+	--color-selection-text: #0f172a;
+	--color-link: #0f766e;
+	--color-link-hover: #115e59;
+	--color-shadow: rgb(15 23 42 / 0.14);
 }

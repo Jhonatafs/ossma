@@ -4,9 +4,12 @@ import { APP_CONFIG, type SupportedLanguage, type SupportedTheme } from '$lib/co
 
 export type ParaglideLocale = 'en' | 'pt-br';
 
+export type MenuLabelMode = 'iconAndText' | 'iconOnly';
+
 export type UserInterfacePreferences = {
 	language: SupportedLanguage;
 	theme: SupportedTheme;
+	menuLabelMode: MenuLabelMode;
 };
 
 export const INTERFACE_PREFERENCES_STORAGE_KEY = 'ossma.interfacePreferences';
@@ -14,7 +17,8 @@ export const INTERFACE_PREFERENCES_STORAGE_KEY = 'ossma.interfacePreferences';
 export function getDefaultInterfacePreferences(): UserInterfacePreferences {
 	return {
 		language: APP_CONFIG.defaultLanguage,
-		theme: APP_CONFIG.defaultTheme
+		theme: APP_CONFIG.defaultTheme,
+		menuLabelMode: 'iconAndText'
 	};
 }
 
@@ -31,11 +35,19 @@ export function normalizeLanguage(value: unknown): SupportedLanguage {
 }
 
 export function normalizeTheme(value: unknown): SupportedTheme {
-	if (value === 'light' || value === 'dark') {
-		return value;
+	if (APP_CONFIG.supportedThemes.includes(value as SupportedTheme)) {
+		return value as SupportedTheme;
 	}
 
 	return getDefaultInterfacePreferences().theme;
+}
+
+export function normalizeMenuLabelMode(value: unknown): MenuLabelMode {
+	if (value === 'iconAndText' || value === 'iconOnly') {
+		return value;
+	}
+
+	return getDefaultInterfacePreferences().menuLabelMode;
 }
 
 export function normalizeInterfacePreferences(value: unknown): UserInterfacePreferences {
@@ -49,7 +61,8 @@ export function normalizeInterfacePreferences(value: unknown): UserInterfacePref
 
 	return {
 		language: normalizeLanguage(preferences.language),
-		theme: normalizeTheme(preferences.theme)
+		theme: normalizeTheme(preferences.theme),
+		menuLabelMode: normalizeMenuLabelMode(preferences.menuLabelMode)
 	};
 }
 

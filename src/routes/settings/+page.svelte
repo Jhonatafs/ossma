@@ -1,23 +1,14 @@
 <script lang="ts">
 	import type { SupportedLanguage, SupportedTheme } from '$lib/config/app';
-	import {
-		toParaglideLocale,
-		type ParaglideLocale
-	} from '$lib/features/settings/interface-preferences';
+	import type { MenuLabelMode } from '$lib/features/settings/interface-preferences';
 	import {
 		interfacePreferences,
 		setInterfaceLanguage,
+		setMenuLabelMode,
 		setInterfaceTheme
 	} from '$lib/features/settings/interface-preferences-store';
 	import * as m from '$lib/paraglide/messages';
-
-	type StaticMessage = (
-		inputs?: Record<string, never>,
-		options?: { locale?: ParaglideLocale }
-	) => string;
-
-	const translate = (message: StaticMessage, language: SupportedLanguage) =>
-		message({}, { locale: toParaglideLocale(language) });
+	import { translate } from '$lib/shared/utils/i18n';
 
 	const languageOptions = [
 		{
@@ -38,6 +29,25 @@
 		{
 			value: 'dark',
 			label: m.theme_dark
+		},
+		{
+			value: 'dracula',
+			label: m.theme_dracula
+		},
+		{
+			value: 'gruvbox',
+			label: m.theme_gruvbox
+		}
+	] as const;
+
+	const menuLabelModeOptions = [
+		{
+			value: 'iconAndText',
+			label: m.settings_menu_icon_and_text
+		},
+		{
+			value: 'iconOnly',
+			label: m.settings_menu_icon_only
 		}
 	] as const;
 
@@ -56,77 +66,99 @@
 			setInterfaceTheme(select.value as SupportedTheme);
 		}
 	}
+
+	function handleMenuLabelModeChange(event: Event) {
+		const select = event.currentTarget;
+
+		if (select instanceof HTMLSelectElement) {
+			setMenuLabelMode(select.value as MenuLabelMode);
+		}
+	}
 </script>
 
 <svelte:head>
 	<title>
-		{translate(m.nav_settings, $interfacePreferences.language)} · {translate(
+		{translate(m.page_settings_title, $interfacePreferences.language)} · {translate(
 			m.app_name,
 			$interfacePreferences.language
 		)}
 	</title>
 	<meta
 		name="description"
-		content={translate(m.settings_description, $interfacePreferences.language)}
+		content={translate(m.page_settings_description, $interfacePreferences.language)}
 	/>
 </svelte:head>
 
-<main class="app-shell">
-	<div class="page-container stack stack-lg">
-		<section class="page-section page-hero stack" aria-labelledby="settings-title">
-			<p class="page-kicker">{translate(m.app_status, $interfacePreferences.language)}</p>
-			<h1 id="settings-title" class="page-title">
-				{translate(m.nav_settings, $interfacePreferences.language)}
-			</h1>
-			<p class="page-description">
-				{translate(m.settings_description, $interfacePreferences.language)}
-			</p>
-			<p class="text-muted">
-				{translate(m.settings_save_behavior, $interfacePreferences.language)}
-			</p>
-		</section>
+<section class="page-section page-hero stack" aria-labelledby="settings-title">
+	<p class="page-kicker">{translate(m.common_current, $interfacePreferences.language)}</p>
+	<h1 id="settings-title" class="page-title">
+		{translate(m.page_settings_title, $interfacePreferences.language)}
+	</h1>
+	<p class="page-description">
+		{translate(m.page_settings_description, $interfacePreferences.language)}
+	</p>
+	<p class="text-muted">
+		{translate(m.settings_save_behavior, $interfacePreferences.language)}
+	</p>
+</section>
 
-		<section
-			class="page-section"
-			aria-label={translate(m.nav_settings, $interfacePreferences.language)}
-		>
-			<div class="card-grid">
-				<article class="card stack">
-					<label class="card-title" for="interface-language">
-						{translate(m.settings_language_label, $interfacePreferences.language)}
-					</label>
-					<select
-						id="interface-language"
-						value={$interfacePreferences.language}
-						onchange={handleLanguageChange}
-					>
-						{#each languageOptions as option (option.value)}
-							<option value={option.value}>
-								{translate(option.label, $interfacePreferences.language)}
-							</option>
-						{/each}
-					</select>
-				</article>
+<section
+	class="page-section"
+	aria-label={translate(m.page_settings_title, $interfacePreferences.language)}
+>
+	<div class="card-grid">
+		<article class="card stack">
+			<label class="card-title" for="interface-language">
+				{translate(m.settings_language_label, $interfacePreferences.language)}
+			</label>
+			<select
+				id="interface-language"
+				value={$interfacePreferences.language}
+				onchange={handleLanguageChange}
+			>
+				{#each languageOptions as option (option.value)}
+					<option value={option.value}>
+						{translate(option.label, $interfacePreferences.language)}
+					</option>
+				{/each}
+			</select>
+		</article>
 
-				<article class="card stack">
-					<label class="card-title" for="interface-theme">
-						{translate(m.settings_theme_label, $interfacePreferences.language)}
-					</label>
-					<select
-						id="interface-theme"
-						value={$interfacePreferences.theme}
-						onchange={handleThemeChange}
-					>
-						{#each themeOptions as option (option.value)}
-							<option value={option.value}>
-								{translate(option.label, $interfacePreferences.language)}
-							</option>
-						{/each}
-					</select>
-				</article>
+		<article class="card stack">
+			<label class="card-title" for="interface-theme">
+				{translate(m.settings_theme_label, $interfacePreferences.language)}
+			</label>
+			<select id="interface-theme" value={$interfacePreferences.theme} onchange={handleThemeChange}>
+				{#each themeOptions as option (option.value)}
+					<option value={option.value}>
+						{translate(option.label, $interfacePreferences.language)}
+					</option>
+				{/each}
+			</select>
+		</article>
+
+		<article class="card stack">
+			<div class="stack">
+				<label class="card-title" for="menu-label-mode">
+					{translate(m.settings_navigation_display, $interfacePreferences.language)}
+				</label>
+				<p class="card-description">
+					{translate(m.settings_menu_display_description, $interfacePreferences.language)}
+				</p>
 			</div>
-		</section>
-
-		<p class="text-muted">{translate(m.settings_local_notice, $interfacePreferences.language)}</p>
+			<select
+				id="menu-label-mode"
+				value={$interfacePreferences.menuLabelMode}
+				onchange={handleMenuLabelModeChange}
+			>
+				{#each menuLabelModeOptions as option (option.value)}
+					<option value={option.value}>
+						{translate(option.label, $interfacePreferences.language)}
+					</option>
+				{/each}
+			</select>
+		</article>
 	</div>
-</main>
+</section>
+
+<p class="text-muted">{translate(m.settings_local_notice, $interfacePreferences.language)}</p>

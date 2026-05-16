@@ -7,6 +7,7 @@ import {
 	getDefaultInterfacePreferences,
 	loadInterfacePreferences,
 	updateInterfacePreferences,
+	type MenuLabelMode,
 	type UserInterfacePreferences
 } from './interface-preferences';
 
@@ -38,6 +39,17 @@ export function setInterfaceTheme(theme: SupportedTheme): UserInterfacePreferenc
 	const preferences = updateInterfacePreferences({
 		...get(interfacePreferences),
 		theme
+	});
+
+	interfacePreferences.set(preferences);
+
+	return preferences;
+}
+
+export function setMenuLabelMode(menuLabelMode: MenuLabelMode): UserInterfacePreferences {
+	const preferences = updateInterfacePreferences({
+		...get(interfacePreferences),
+		menuLabelMode
 	});
 
 	interfacePreferences.set(preferences);
