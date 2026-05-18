@@ -3,6 +3,7 @@
 	import { resolve } from '$app/paths';
 	import { page } from '$app/state';
 	import { onMount } from 'svelte';
+	import { dev } from '$app/environment';
 
 	import { initializeOnboardingState } from '$lib/features/onboarding/onboarding-store';
 	import { initializeInterfacePreferences } from '$lib/features/settings/interface-preferences-store';
@@ -13,6 +14,18 @@
 
 	let { children } = $props();
 	let isClientReady = $state(false);
+
+	async function registerServiceWorker() {
+		if (dev || !('serviceWorker' in navigator)) {
+			return;
+		}
+
+		try {
+			await navigator.serviceWorker.register('/sw.js', { scope: '/' });
+		} catch {
+			// Development and unsupported environments can run without the generated service worker.
+		}
+	}
 
 	function redirectForOnboarding(pathname: string) {
 		const state = initializeOnboardingState();
@@ -32,6 +45,7 @@
 		initializeInterfacePreferences();
 		isClientReady = true;
 		redirectForOnboarding(page.url.pathname);
+		void registerServiceWorker();
 	});
 
 	$effect(() => {

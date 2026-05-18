@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-labelledby="title desc">
+	<title id="title">OSSMA maskable icon</title>
+	<desc id="desc">Maskable minimal OSSMA application icon.</desc>
+	<rect width="512" height="512" fill="#282a36" />
+	<circle cx="256" cy="256" r="132" fill="none" stroke="#f8f8f2" stroke-width="38" />
+	<path
+		d="M192 286c27 38 64 58 112 58 28 0 54-7 78-21"
+		fill="none"
+		stroke="#50fa7b"
+		stroke-linecap="round"
+		stroke-width="28"
+	/>
+	<circle cx="330" cy="185" r="22" fill="#8be9fd" />
+</svg>
