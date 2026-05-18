@@ -17,11 +17,23 @@ OSSMA now includes an initial onboarding shell for first-time configuration.
 - ESLint
 - Prettier
 - adapter-static
+- Dexie.js
 
 ## Internationalization
 
 OSSMA uses Paraglide for type-safe internationalization. The initial supported languages are
 English and Brazilian Portuguese.
+
+## Local Database
+
+OSSMA uses Dexie.js over IndexedDB for local-first domain data. The current milestone creates
+the database foundation only. Interface preferences still use localStorage for now, and domain
+data will be implemented in later milestones.
+
+## Local Repositories
+
+Clients and anamneses now have local repositories backed by Dexie. There is no CRUD interface yet.
+The next persistence step is either professional/institution repositories or the first client UI.
 
 ## Development
 
