@@ -18,16 +18,16 @@ Offline-first professional assessment app for sport and health professionals.
 OSSMA uses Paraglide for type-safe internationalization. The initial supported languages are
 English and Brazilian Portuguese.
 
-## Local Database
+## PWA
 
-OSSMA uses Dexie.js over IndexedDB for local-first domain data. The current milestone creates
-the database foundation only. Interface preferences still use localStorage for now, and domain
-data will be implemented in later milestones.
+OSSMA uses a PWA foundation to support installability and offline access after the first load.
+For development validation, use the production build and preview server, then test offline mode in
+browser DevTools.
 
-## Local Repositories
-
-Clients and anamneses now have local repositories backed by Dexie. There is no CRUD interface yet.
-The next persistence step is either professional/institution repositories or the first client UI.
+```bash
+pnpm run build
+pnpm run preview
+```
 
 ## Local Database
 
@@ -37,6 +37,7 @@ localStorage for now.
 ## Local Repositories
 
 Clients and anamneses now have local repositories backed by Dexie. There is no CRUD interface yet.
+The next persistence step is either professional/institution repositories or the first client UI.
 
 ## Development
 

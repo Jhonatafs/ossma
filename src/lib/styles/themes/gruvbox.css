@@ -28,4 +28,7 @@
 	--color-link: #83a598;
 	--color-link-hover: #8ec07c;
 	--color-shadow: rgb(0 0 0 / 0.42);
+	--color-scrollbar-track: #1d2021;
+	--color-scrollbar-thumb: #504945;
+	--color-scrollbar-thumb-hover: #7c6f64;
 }

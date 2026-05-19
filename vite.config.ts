@@ -43,32 +43,17 @@ export default defineConfig({
 						sizes: '512x512',
 						type: 'image/png',
 						purpose: 'maskable'
+					},
+					{
+						src: '/icons/icon.svg',
+						sizes: 'any',
+						type: 'image/svg+xml',
+						purpose: 'any'
 					}
 				]
 			},
 			workbox: {
-				globPatterns: ['**/*.{js,css,html,png,svg,ico,webmanifest}'],
-				additionalManifestEntries: [
-					{ url: '/', revision: APP_CONFIG.version },
-					{ url: '/onboarding', revision: APP_CONFIG.version },
-					{ url: '/clients', revision: APP_CONFIG.version },
-					{ url: '/profile', revision: APP_CONFIG.version },
-					{ url: '/backups', revision: APP_CONFIG.version },
-					{ url: '/faqs', revision: APP_CONFIG.version },
-					{ url: '/docs', revision: APP_CONFIG.version },
-					{ url: '/settings', revision: APP_CONFIG.version }
-				],
-				navigateFallback: '/',
-				navigateFallbackAllowlist: [
-					/^\/$/,
-					/^\/onboarding\/?$/,
-					/^\/clients\/?$/,
-					/^\/profile\/?$/,
-					/^\/backups\/?$/,
-					/^\/faqs\/?$/,
-					/^\/docs\/?$/,
-					/^\/settings\/?$/
-				]
+				globPatterns: ['**/*.{js,css,html,svg,png,ico,webmanifest}']
 			}
 		})
 	],

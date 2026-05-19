@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-labelledby="title desc">
+	<title id="title">OSSMA icon</title>
+	<desc id="desc">Minimal OSSMA application icon.</desc>
+	<rect width="512" height="512" rx="112" fill="#282a36" />
+	<circle cx="256" cy="256" r="146" fill="none" stroke="#f8f8f2" stroke-width="42" />
+	<path
+		d="M180 286c30 44 71 66 124 66 30 0 59-8 86-24"
+		fill="none"
+		stroke="#50fa7b"
+		stroke-linecap="round"
+		stroke-width="32"
+	/>
+	<circle cx="338" cy="176" r="26" fill="#8be9fd" />
+</svg>
