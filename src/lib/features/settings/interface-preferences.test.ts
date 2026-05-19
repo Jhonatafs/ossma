@@ -3,6 +3,7 @@ import { describe, expect, it } from 'vitest';
 import {
 	getDefaultInterfacePreferences,
 	normalizeInterfacePreferences,
+	normalizeOptionalEntityId,
 	normalizeLanguage,
 	normalizeMenuLabelMode,
 	normalizeTheme
@@ -15,6 +16,8 @@ describe('interface preferences', () => {
 			theme: 'light',
 			menuLabelMode: 'iconAndText'
 		});
+		expect(getDefaultInterfacePreferences()).not.toHaveProperty('activeProfessionalId');
+		expect(getDefaultInterfacePreferences()).not.toHaveProperty('activeInstitutionId');
 	});
 
 	it('normalizes supported languages', () => {
@@ -49,6 +52,13 @@ describe('interface preferences', () => {
 		expect(normalizeMenuLabelMode(undefined)).toBe('iconAndText');
 	});
 
+	it('normalizes active profile ids', () => {
+		expect(normalizeOptionalEntityId('professional-1')).toBe('professional-1');
+		expect(normalizeOptionalEntityId(' institution-1 ')).toBe('institution-1');
+		expect(normalizeOptionalEntityId('')).toBeUndefined();
+		expect(normalizeOptionalEntityId(null)).toBeUndefined();
+	});
+
 	it('adds the default menu label mode to older preferences', () => {
 		expect(
 			normalizeInterfacePreferences({
@@ -67,7 +77,9 @@ describe('interface preferences', () => {
 			normalizeInterfacePreferences({
 				language: 'pt-BR',
 				theme: 'system',
-				menuLabelMode: 'textOnly'
+				menuLabelMode: 'textOnly',
+				activeProfessionalId: '',
+				activeInstitutionId: 42
 			})
 		).toEqual({
 			language: 'pt-BR',
@@ -81,12 +93,16 @@ describe('interface preferences', () => {
 			normalizeInterfacePreferences({
 				language: 'pt-BR',
 				theme: 'gruvbox',
-				menuLabelMode: 'iconOnly'
+				menuLabelMode: 'iconOnly',
+				activeProfessionalId: 'professional-1',
+				activeInstitutionId: 'institution-1'
 			})
 		).toEqual({
 			language: 'pt-BR',
 			theme: 'gruvbox',
-			menuLabelMode: 'iconOnly'
+			menuLabelMode: 'iconOnly',
+			activeProfessionalId: 'professional-1',
+			activeInstitutionId: 'institution-1'
 		});
 	});
 });

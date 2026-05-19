@@ -1,6 +1,7 @@
 import { get, writable } from 'svelte/store';
 
 import type { SupportedLanguage, SupportedTheme } from '$lib/config/app';
+import type { EntityId } from '$lib/db/types';
 
 import {
 	applyInterfacePreferences,
@@ -50,6 +51,28 @@ export function setMenuLabelMode(menuLabelMode: MenuLabelMode): UserInterfacePre
 	const preferences = updateInterfacePreferences({
 		...get(interfacePreferences),
 		menuLabelMode
+	});
+
+	interfacePreferences.set(preferences);
+
+	return preferences;
+}
+
+export function setActiveProfessionalId(activeProfessionalId?: EntityId): UserInterfacePreferences {
+	const preferences = updateInterfacePreferences({
+		...get(interfacePreferences),
+		activeProfessionalId
+	});
+
+	interfacePreferences.set(preferences);
+
+	return preferences;
+}
+
+export function setActiveInstitutionId(activeInstitutionId?: EntityId): UserInterfacePreferences {
+	const preferences = updateInterfacePreferences({
+		...get(interfacePreferences),
+		activeInstitutionId
 	});
 
 	interfacePreferences.set(preferences);
