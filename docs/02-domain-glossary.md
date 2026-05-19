@@ -59,7 +59,17 @@ Na primeira versão, o termo padrão será **Cliente**.
 
 ## 3.1 Aplicação
 
-Sistema PWA offline-first, gratuito e open source, utilizado por profissionais desportivos e de saúde para registrar clientes, realizar avaliações presenciais, executar cálculos científicos e gerar relatórios profissionais.
+A aplicação se chama **OSSMA**.
+
+O nome expandido recomendado é **Open Source Sport Management Application**.
+
+A sigla **OSSMA** deriva de:
+
+```text
+Open Source Sport Management Application
+```
+
+OSSMA é um sistema PWA offline-first, gratuito e open source, utilizado por profissionais desportivos e de saúde para registrar clientes, realizar avaliações presenciais, executar cálculos científicos e gerar relatórios profissionais.
 
 **Nome técnico sugerido:** `Application`
 
@@ -1692,113 +1702,3 @@ As seguintes decisões ainda precisam ser refinadas:
 - definir nomes técnicos finais no código;
 - definir como os avisos técnicos aparecerão nos relatórios;
 - definir se haverá termos legais específicos para uso nutricional, fisioterapêutico e desportivo.
-
----
-
-## 19. Respostas as questões do ponto 18
-
-### Menu principal
-
-```text
-Início
-Clientes
-Perfil
-Backup
-Configurações
-```
-
-### Estrutura de Perfil
-
-```text
-Perfil
-├── Profissionais
-└── Instituições
-```
-
-### Estrutura de Clientes
-
-```text
-Clientes
-├── Lista de clientes cadastrados
-├── Novo cliente
-├── Avaliações
-└── Histórico de avaliações
-```
-
-No histórico, o profissional poderá:
-
-```text
-abrir avaliação;
-visualizar resultado/relatório;
-editar avaliação.
-```
-
-### CRUD
-
-Haverá CRUD para:
-
-```text
-clientes;
-avaliações.
-```
-
-A **anamnese geral** será diferente:
-
-```text
-pode ser editada;
-não pode ser excluída isoladamente;
-só é excluída junto com o cliente.
-```
-
-Durante uma avaliação, partes pertinentes da anamnese geral poderão ser editadas.
-
-### Código
-
-```text
-Todo o código será em inglês técnico.
-```
-
-Inclui:
-
-```text
-nomes de arquivos;
-pastas;
-variáveis;
-funções;
-tipos;
-classes;
-comentários;
-documentação técnica interna.
-```
-
-### Avisos técnicos
-
-Os avisos técnicos serão:
-
-```text
-uma seção dentro do resultado/relatório;
-genéricos;
-claros;
-abrangentes;
-não específicos por tipo de avaliação.
-```
-
-Ou seja, não haverá um aviso diferente para postural, outro para nutricional, outro para antropometria etc.
-
-### Carimbo profissional
-
-Toda página do relatório terá um **carimbo profissional**, semelhante a um carimbo físico.
-
-Pode conter:
-
-```text
-nome do profissional;
-contatos;
-endereço;
-logo;
-registro profissional;
-instituição;
-outros dados configurados.
-```
-
-Esse carimbo deve aparecer em todas as páginas do relatório.

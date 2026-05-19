@@ -2,12 +2,6 @@
 
 Offline-first professional assessment app for sport and health professionals.
 
-## Status
-
-Initial foundation.
-
-OSSMA now includes an initial onboarding shell for first-time configuration.
-
 ## Tech Stack
 
 - SvelteKit
@@ -17,6 +11,7 @@ OSSMA now includes an initial onboarding shell for first-time configuration.
 - ESLint
 - Prettier
 - adapter-static
+- Dexie.js
 
 ## Internationalization
 
@@ -33,6 +28,16 @@ browser DevTools.
 pnpm run build
 pnpm run preview
 ```
+
+## Local Database
+
+OSSMA uses Dexie.js over IndexedDB for local-first domain data. Interface preferences still use
+localStorage for now.
+
+## Local Repositories
+
+Clients and anamneses now have local repositories backed by Dexie. There is no CRUD interface yet.
+The next persistence step is either professional/institution repositories or the first client UI.
 
 ## Development
 

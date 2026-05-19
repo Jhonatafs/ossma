@@ -2,8 +2,8 @@
 	import { goto } from '$app/navigation';
 	import { resolve } from '$app/paths';
 	import { page } from '$app/state';
+	import { browser, dev } from '$app/environment';
 	import { onMount } from 'svelte';
-	import { dev } from '$app/environment';
 
 	import { initializeOnboardingState } from '$lib/features/onboarding/onboarding-store';
 	import { initializeInterfacePreferences } from '$lib/features/settings/interface-preferences-store';
@@ -16,7 +16,7 @@
 	let isClientReady = $state(false);
 
 	async function registerServiceWorker() {
-		if (dev || !('serviceWorker' in navigator)) {
+		if (dev || !browser || !('serviceWorker' in navigator)) {
 			return;
 		}
 
