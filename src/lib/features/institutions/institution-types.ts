@@ -1,3 +1,5 @@
+import type { ContactEntry } from '$lib/db/types';
+
 export interface CreateInstitutionInput {
 	name: string;
 	tradeName?: string;
@@ -5,7 +7,10 @@ export interface CreateInstitutionInput {
 	phone?: string;
 	email?: string;
 	address?: string;
+	logoDataUrl?: string;
+	photoDataUrl?: string;
 	logoUri?: string;
+	contacts?: ContactEntry[];
 	footerText?: string;
 	notes?: string;
 	isActive?: boolean;

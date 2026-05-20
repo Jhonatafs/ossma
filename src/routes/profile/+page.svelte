@@ -4,133 +4,76 @@
 	import type { EntityId, Institution, Professional } from '$lib/db/types';
 	import type { CreateInstitutionInput } from '$lib/features/institutions/institution-types';
 	import type { CreateProfessionalInput } from '$lib/features/professionals/professional-types';
+	import InstitutionHeaderPreview from '$lib/features/profile/InstitutionHeaderPreview.svelte';
+	import InstitutionProfileDialog from '$lib/features/profile/InstitutionProfileDialog.svelte';
+	import ProfessionalProfileDialog from '$lib/features/profile/ProfessionalProfileDialog.svelte';
+	import ProfessionalStampPreview from '$lib/features/profile/ProfessionalStampPreview.svelte';
+	import ProfileAvatar from '$lib/features/profile/ProfileAvatar.svelte';
 	import {
 		interfacePreferences,
 		setActiveInstitutionId,
 		setActiveProfessionalId
 	} from '$lib/features/settings/interface-preferences-store';
 	import * as m from '$lib/paraglide/messages';
+	import LucideIcon from '$lib/shared/components/icons/LucideIcon.svelte';
 	import { translate } from '$lib/shared/utils/i18n';
 
-	type ProfessionalFormState = {
-		fullName: string;
-		displayName: string;
-		profession: string;
-		education: string;
-		specialty: string;
-		professionalRegistry: string;
-		phone: string;
-		email: string;
-		address: string;
-		notes: string;
-	};
-
-	type InstitutionFormState = {
-		name: string;
-		tradeName: string;
-		document: string;
-		phone: string;
-		email: string;
-		address: string;
-		footerText: string;
-		notes: string;
-	};
+	type ProfileTab = 'professionals' | 'institutions';
 
 	let professionals = $state<Professional[]>([]);
 	let institutions = $state<Institution[]>([]);
-	let professionalForm = $state<ProfessionalFormState>(createEmptyProfessionalForm());
-	let institutionForm = $state<InstitutionFormState>(createEmptyInstitutionForm());
-	let editingProfessionalId = $state<EntityId | undefined>();
-	let editingInstitutionId = $state<EntityId | undefined>();
-	let professionalFormError = $state(false);
-	let institutionFormError = $state(false);
+	let activeTab = $state<ProfileTab>('professionals');
+	let isProfileTypePanelOpen = $state(false);
+	let professionalDialog = $state<{ professional?: Professional } | undefined>();
+	let institutionDialog = $state<{ institution?: Institution } | undefined>();
+	let professionalPreview = $state<Professional | undefined>();
+	let institutionPreview = $state<Institution | undefined>();
+	let isLoading = $state(true);
 
-	function createEmptyProfessionalForm(): ProfessionalFormState {
-		return {
-			fullName: '',
-			displayName: '',
-			profession: '',
-			education: '',
-			specialty: '',
-			professionalRegistry: '',
-			phone: '',
-			email: '',
-			address: '',
-			notes: ''
-		};
+	function getProfessionalName(professional: Professional): string {
+		return [professional.prefix, professional.displayName || professional.fullName]
+			.filter(Boolean)
+			.join(' ');
 	}
 
-	function createEmptyInstitutionForm(): InstitutionFormState {
-		return {
-			name: '',
-			tradeName: '',
-			document: '',
-			phone: '',
-			email: '',
-			address: '',
-			footerText: '',
-			notes: ''
-		};
+	function getInstitutionName(institution: Institution): string {
+		return institution.tradeName || institution.name;
 	}
 
-	function optionalString(value: string): string | undefined {
-		const normalizedValue = value.trim();
-
-		return normalizedValue || undefined;
+	function getInstitutionById(id?: EntityId): Institution | undefined {
+		return institutions.find((institution) => institution.id === id);
 	}
 
-	function buildProfessionalInput(): CreateProfessionalInput | undefined {
-		const fullName = professionalForm.fullName.trim();
-		professionalFormError = !fullName;
+	function getProfessionalSummary(professional: Professional): string {
+		const institution = getInstitutionById(professional.institutionId);
+		const details = [
+			translate(m.profile_stamp_role, $interfacePreferences.language),
+			professional.profession,
+			professional.specialty,
+			professional.professionalRegistry
+		].filter(Boolean);
 
-		if (!fullName) {
-			return undefined;
+		if (institution) {
+			details.push(
+				`${translate(m.profile_linked_to, $interfacePreferences.language)}: ${getInstitutionName(institution)}`
+			);
 		}
 
-		return {
-			fullName,
-			displayName: optionalString(professionalForm.displayName),
-			profession: optionalString(professionalForm.profession),
-			education: optionalString(professionalForm.education),
-			specialty: optionalString(professionalForm.specialty),
-			professionalRegistry: optionalString(professionalForm.professionalRegistry),
-			phone: optionalString(professionalForm.phone),
-			email: optionalString(professionalForm.email),
-			address: optionalString(professionalForm.address),
-			notes: optionalString(professionalForm.notes)
-		};
+		return details.join(' / ');
 	}
 
-	function buildInstitutionInput(): CreateInstitutionInput | undefined {
-		const name = institutionForm.name.trim();
-		institutionFormError = !name;
-
-		if (!name) {
-			return undefined;
-		}
-
-		return {
-			name,
-			tradeName: optionalString(institutionForm.tradeName),
-			document: optionalString(institutionForm.document),
-			phone: optionalString(institutionForm.phone),
-			email: optionalString(institutionForm.email),
-			address: optionalString(institutionForm.address),
-			footerText: optionalString(institutionForm.footerText),
-			notes: optionalString(institutionForm.notes)
-		};
+	function getInstitutionSummary(institution: Institution): string {
+		return [translate(m.profile_header_role, $interfacePreferences.language), institution.document]
+			.filter(Boolean)
+			.join(' / ');
 	}
 
-	function resetProfessionalForm() {
-		professionalForm = createEmptyProfessionalForm();
-		editingProfessionalId = undefined;
-		professionalFormError = false;
+	function isActiveProfessional(id: EntityId): boolean {
+		return $interfacePreferences.activeProfessionalId === id;
 	}
 
-	function resetInstitutionForm() {
-		institutionForm = createEmptyInstitutionForm();
-		editingInstitutionId = undefined;
-		institutionFormError = false;
+	function isActiveInstitution(id: EntityId): boolean {
+		return $interfacePreferences.activeInstitutionId === id;
 	}
 
 	function syncActivePreferences() {
@@ -166,82 +109,143 @@
 		professionals = nextProfessionals;
 		institutions = nextInstitutions;
 		syncActivePreferences();
+		isLoading = false;
 	}
 
-	async function handleProfessionalSubmit(event: SubmitEvent) {
-		event.preventDefault();
+	function openProfileTypeChooser() {
+		closeDialogs();
+		isProfileTypePanelOpen = true;
+	}
 
-		const input = buildProfessionalInput();
+	function closeProfileTypePanel() {
+		isProfileTypePanelOpen = false;
+	}
 
-		if (!input) {
-			return;
-		}
+	function openCreateProfessionalDialog() {
+		isProfileTypePanelOpen = false;
+		institutionDialog = undefined;
+		professionalPreview = undefined;
+		institutionPreview = undefined;
+		professionalDialog = {};
+	}
 
+	function openEditProfessionalDialog(professional: Professional) {
+		isProfileTypePanelOpen = false;
+		institutionDialog = undefined;
+		professionalPreview = undefined;
+		institutionPreview = undefined;
+		professionalDialog = { professional };
+	}
+
+	function openCreateInstitutionDialog() {
+		isProfileTypePanelOpen = false;
+		professionalDialog = undefined;
+		professionalPreview = undefined;
+		institutionPreview = undefined;
+		institutionDialog = {};
+	}
+
+	function openEditInstitutionDialog(institution: Institution) {
+		isProfileTypePanelOpen = false;
+		professionalDialog = undefined;
+		professionalPreview = undefined;
+		institutionPreview = undefined;
+		institutionDialog = { institution };
+	}
+
+	function openProfessionalPreview(professional: Professional) {
+		isProfileTypePanelOpen = false;
+		professionalDialog = undefined;
+		institutionDialog = undefined;
+		institutionPreview = undefined;
+		professionalPreview = professional;
+	}
+
+	function openInstitutionPreview(institution: Institution) {
+		isProfileTypePanelOpen = false;
+		professionalDialog = undefined;
+		institutionDialog = undefined;
+		professionalPreview = undefined;
+		institutionPreview = institution;
+	}
+
+	function closeDialogs() {
+		professionalDialog = undefined;
+		institutionDialog = undefined;
+		professionalPreview = undefined;
+		institutionPreview = undefined;
+	}
+
+	function setActiveTab(tab: ProfileTab) {
+		activeTab = tab;
+		closeProfileTypePanel();
+	}
+
+	function getProfileActionLabel(actionLabel: string, profileName: string): string {
+		return `${actionLabel} ${translate(m.profile_title, $interfacePreferences.language).toLowerCase()}: ${profileName}`;
+	}
+
+	function getProfileStateActionLabel(actionLabel: string, profileName: string): string {
+		return `${actionLabel}: ${profileName}`;
+	}
+
+	async function handleSaveProfessional(input: CreateProfessionalInput, id?: EntityId) {
 		const { createProfessional, updateProfessional } =
 			await import('$lib/features/professionals/professional-repository');
 
-		if (editingProfessionalId) {
-			await updateProfessional(editingProfessionalId, input);
+		if (id) {
+			await updateProfessional(id, input);
 		} else {
 			await createProfessional(input);
 		}
 
-		resetProfessionalForm();
+		closeDialogs();
 		await loadProfileData();
 	}
 
-	async function handleInstitutionSubmit(event: SubmitEvent) {
-		event.preventDefault();
-
-		const input = buildInstitutionInput();
-
-		if (!input) {
-			return;
-		}
-
+	async function handleSaveInstitution(
+		input: CreateInstitutionInput,
+		linkedProfessionalIds: EntityId[],
+		id?: EntityId
+	) {
 		const { createInstitution, updateInstitution } =
 			await import('$lib/features/institutions/institution-repository');
 
-		if (editingInstitutionId) {
-			await updateInstitution(editingInstitutionId, input);
-		} else {
-			await createInstitution(input);
+		const savedInstitution = id
+			? await updateInstitution(id, input)
+			: await createInstitution(input);
+
+		if (savedInstitution) {
+			await syncInstitutionProfessionals(savedInstitution.id, linkedProfessionalIds);
 		}
 
-		resetInstitutionForm();
+		closeDialogs();
 		await loadProfileData();
 	}
 
-	function handleEditProfessional(professional: Professional) {
-		editingProfessionalId = professional.id;
-		professionalFormError = false;
-		professionalForm = {
-			fullName: professional.fullName,
-			displayName: professional.displayName ?? '',
-			profession: professional.profession ?? '',
-			education: professional.education ?? '',
-			specialty: professional.specialty ?? '',
-			professionalRegistry: professional.professionalRegistry ?? '',
-			phone: professional.phone ?? '',
-			email: professional.email ?? '',
-			address: professional.address ?? '',
-			notes: professional.notes ?? ''
-		};
-	}
+	async function syncInstitutionProfessionals(
+		institutionId: EntityId,
+		linkedProfessionalIds: EntityId[]
+	) {
+		const { updateProfessional } =
+			await import('$lib/features/professionals/professional-repository');
+		const linkedProfessionalIdSet = new Set(linkedProfessionalIds);
 
-	function handleEditInstitution(institution: Institution) {
-		editingInstitutionId = institution.id;
-		institutionFormError = false;
-		institutionForm = {
-			name: institution.name,
-			tradeName: institution.tradeName ?? '',
-			document: institution.document ?? '',
-			phone: institution.phone ?? '',
-			email: institution.email ?? '',
-			address: institution.address ?? '',
-			footerText: institution.footerText ?? '',
-			notes: institution.notes ?? ''
-		};
+		await Promise.all(
+			professionals.map(async (professional) => {
+				if (linkedProfessionalIdSet.has(professional.id)) {
+					if (professional.institutionId !== institutionId) {
+						await updateProfessional(professional.id, { institutionId });
+					}
+
+					return;
+				}
+
+				if (professional.institutionId === institutionId) {
+					await updateProfessional(professional.id, { institutionId: undefined });
+				}
+			})
+		);
 	}
 
 	function handleSetActiveProfessional(id: EntityId) {
@@ -266,10 +270,6 @@
 			setActiveProfessionalId(undefined);
 		}
 
-		if (editingProfessionalId === professional.id) {
-			resetProfessionalForm();
-		}
-
 		await loadProfileData();
 	}
 
@@ -287,10 +287,7 @@
 			setActiveInstitutionId(undefined);
 		}
 
-		if (editingInstitutionId === institution.id) {
-			resetInstitutionForm();
-		}
-
+		await syncInstitutionProfessionals(institution.id, []);
 		await loadProfileData();
 	}
 
@@ -300,271 +297,225 @@
 </script>
 
 <svelte:head>
-	<title>
-		{translate(m.profile_title, $interfacePreferences.language)} · {translate(
-			m.app_name,
-			$interfacePreferences.language
-		)}
-	</title>
+	<title>{translate(m.profile_title, $interfacePreferences.language)}</title>
 	<meta
 		name="description"
 		content={translate(m.profile_description, $interfacePreferences.language)}
 	/>
 </svelte:head>
 
-<section class="page-section page-hero stack" aria-labelledby="profile-title">
-	<p class="page-kicker">{translate(m.common_current, $interfacePreferences.language)}</p>
-	<h1 id="profile-title" class="page-title">
-		{translate(m.profile_title, $interfacePreferences.language)}
-	</h1>
-	<p class="page-description">
-		{translate(m.profile_description, $interfacePreferences.language)}
-	</p>
-</section>
-
-<div class="profile-sections">
-	<section class="page-section profile-section" aria-labelledby="profile-professionals-title">
-		<div class="profile-section-header stack">
-			<h2 id="profile-professionals-title" class="section-title">
-				{translate(m.profile_professionals_title, $interfacePreferences.language)}
-			</h2>
-			<p class="section-description">
-				{translate(m.profile_professionals_description, $interfacePreferences.language)}
-			</p>
-		</div>
-
-		<div class="profile-section-layout">
-			<form
-				class="profile-form stack"
-				aria-labelledby="professional-form-title"
-				novalidate
-				onsubmit={handleProfessionalSubmit}
+<div class="profile-index stack-lg">
+	<section class="page-section page-hero stack" aria-labelledby="profile-title">
+		<h1 id="profile-title" class="page-title">
+			{translate(m.profile_title, $interfacePreferences.language)}
+		</h1>
+		<p class="page-description">
+			{translate(m.profile_description, $interfacePreferences.language)}
+		</p>
+		<div class="profile-page-actions">
+			<button
+				type="button"
+				class="button profile-new-profile-button"
+				aria-label={translate(m.profile_new_profile, $interfacePreferences.language)}
+				onclick={openProfileTypeChooser}
 			>
-				<h3 id="professional-form-title" class="section-subtitle">
-					{translate(
-						editingProfessionalId ? m.profile_update_professional : m.profile_create_professional,
-						$interfacePreferences.language
-					)}
-				</h3>
+				<LucideIcon name="plus" size={22} />
+				{translate(m.profile_new_profile, $interfacePreferences.language)}
+			</button>
+		</div>
+	</section>
 
-				<div class="profile-form-grid">
-					<div class="profile-field profile-field--wide">
-						<label for="professional-full-name">
-							{translate(m.field_full_name, $interfacePreferences.language)}
-						</label>
-						<input
-							id="professional-full-name"
-							name="fullName"
-							autocomplete="name"
-							aria-invalid={professionalFormError}
-							aria-describedby={professionalFormError ? 'professional-full-name-error' : undefined}
-							bind:value={professionalForm.fullName}
-						/>
-						{#if professionalFormError}
-							<p id="professional-full-name-error" class="profile-error" role="alert">
-								{translate(m.validation_required, $interfacePreferences.language)}
-							</p>
-						{/if}
-					</div>
+	{#if isProfileTypePanelOpen}
+		<section class="profile-type-panel" aria-labelledby="profile-type-panel-title">
+			<div class="profile-type-panel-header">
+				<h2 id="profile-type-panel-title" class="section-title">
+					{translate(m.profile_choose_profile_type, $interfacePreferences.language)}
+				</h2>
+				<button
+					type="button"
+					class="button button-secondary"
+					aria-label={translate(m.action_cancel, $interfacePreferences.language)}
+					title={translate(m.action_cancel, $interfacePreferences.language)}
+					onclick={closeProfileTypePanel}
+				>
+					<LucideIcon name="x" size={22} />
+					{translate(m.action_cancel, $interfacePreferences.language)}
+				</button>
+			</div>
 
-					<div class="profile-field">
-						<label for="professional-display-name">
-							{translate(m.field_display_name, $interfacePreferences.language)}
-						</label>
-						<input
-							id="professional-display-name"
-							name="displayName"
-							bind:value={professionalForm.displayName}
-						/>
-					</div>
-
-					<div class="profile-field">
-						<label for="professional-profession">
-							{translate(m.field_profession, $interfacePreferences.language)}
-						</label>
-						<input
-							id="professional-profession"
-							name="profession"
-							bind:value={professionalForm.profession}
-						/>
-					</div>
-
-					<div class="profile-field">
-						<label for="professional-education">
-							{translate(m.field_education, $interfacePreferences.language)}
-						</label>
-						<input
-							id="professional-education"
-							name="education"
-							bind:value={professionalForm.education}
-						/>
-					</div>
-
-					<div class="profile-field">
-						<label for="professional-specialty">
-							{translate(m.field_specialty, $interfacePreferences.language)}
-						</label>
-						<input
-							id="professional-specialty"
-							name="specialty"
-							bind:value={professionalForm.specialty}
-						/>
-					</div>
-
-					<div class="profile-field">
-						<label for="professional-registry">
-							{translate(m.field_professional_registry, $interfacePreferences.language)}
-						</label>
-						<input
-							id="professional-registry"
-							name="professionalRegistry"
-							bind:value={professionalForm.professionalRegistry}
-						/>
-					</div>
-
-					<div class="profile-field">
-						<label for="professional-phone">
-							{translate(m.field_phone, $interfacePreferences.language)}
-						</label>
-						<input
-							id="professional-phone"
-							name="phone"
-							type="tel"
-							autocomplete="tel"
-							bind:value={professionalForm.phone}
-						/>
-					</div>
-
-					<div class="profile-field">
-						<label for="professional-email">
-							{translate(m.field_email, $interfacePreferences.language)}
-						</label>
-						<input
-							id="professional-email"
-							name="email"
-							type="email"
-							autocomplete="email"
-							bind:value={professionalForm.email}
-						/>
-					</div>
-
-					<div class="profile-field profile-field--wide">
-						<label for="professional-address">
-							{translate(m.field_address, $interfacePreferences.language)}
-						</label>
-						<input
-							id="professional-address"
-							name="address"
-							autocomplete="street-address"
-							bind:value={professionalForm.address}
-						/>
-					</div>
-
-					<div class="profile-field profile-field--wide">
-						<label for="professional-notes">
-							{translate(m.field_notes, $interfacePreferences.language)}
-						</label>
-						<textarea
-							id="professional-notes"
-							name="notes"
-							rows="4"
-							bind:value={professionalForm.notes}
-						></textarea>
-					</div>
-				</div>
-
-				<div class="profile-actions">
-					<button type="submit" class="button">
+			<div class="profile-type-options">
+				<button type="button" class="profile-type-option" onclick={openCreateProfessionalDialog}>
+					<span class="profile-type-option-icon" aria-hidden="true">
+						<LucideIcon name="user-round" size={32} />
+					</span>
+					<span class="profile-type-option-title">
+						{translate(m.profile_create_professional_profile, $interfacePreferences.language)}
+					</span>
+					<span class="profile-type-option-description">
 						{translate(
-							editingProfessionalId ? m.profile_update_professional : m.profile_create_professional,
+							m.profile_create_professional_profile_description,
 							$interfacePreferences.language
 						)}
-					</button>
+					</span>
+				</button>
 
-					{#if editingProfessionalId}
-						<button type="button" class="button button-secondary" onclick={resetProfessionalForm}>
-							{translate(m.action_cancel, $interfacePreferences.language)}
-						</button>
-					{/if}
-				</div>
-			</form>
+				<button type="button" class="profile-type-option" onclick={openCreateInstitutionDialog}>
+					<span class="profile-type-option-icon" aria-hidden="true">
+						<LucideIcon name="building-2" size={32} />
+					</span>
+					<span class="profile-type-option-title">
+						{translate(m.profile_create_institution_profile, $interfacePreferences.language)}
+					</span>
+					<span class="profile-type-option-description">
+						{translate(
+							m.profile_create_institution_profile_description,
+							$interfacePreferences.language
+						)}
+					</span>
+				</button>
+			</div>
+		</section>
+	{:else}
+		<div class="profile-toolbar">
+			<div
+				class="profile-tabs"
+				role="tablist"
+				aria-label={translate(m.profile_title, $interfacePreferences.language)}
+			>
+				<button
+					id="profile-tab-professionals"
+					type="button"
+					class="profile-tab"
+					role="tab"
+					aria-selected={activeTab === 'professionals'}
+					aria-controls="profile-panel-professionals"
+					onclick={() => setActiveTab('professionals')}
+				>
+					{translate(m.profile_professional_profiles, $interfacePreferences.language)}
+				</button>
+				<button
+					id="profile-tab-institutions"
+					type="button"
+					class="profile-tab"
+					role="tab"
+					aria-selected={activeTab === 'institutions'}
+					aria-controls="profile-panel-institutions"
+					onclick={() => setActiveTab('institutions')}
+				>
+					{translate(m.profile_institution_profiles, $interfacePreferences.language)}
+				</button>
+			</div>
+		</div>
 
-			<div class="profile-list stack" aria-labelledby="profile-professionals-list-title">
-				<h3 id="profile-professionals-list-title" class="section-subtitle">
-					{translate(m.profile_professionals_title, $interfacePreferences.language)}
-				</h3>
-
-				{#if professionals.length === 0}
-					<p class="profile-empty">
-						{translate(m.profile_no_professionals, $interfacePreferences.language)}
+		{#if activeTab === 'professionals'}
+			<div
+				id="profile-panel-professionals"
+				class="profile-section"
+				role="tabpanel"
+				aria-labelledby="profile-tab-professionals"
+			>
+				<div class="profile-section-header stack">
+					<h2 id="professional-profiles-title" class="section-title">
+						{translate(m.profile_professional_profiles, $interfacePreferences.language)}
+					</h2>
+					<p class="section-description">
+						{translate(m.profile_professionals_description, $interfacePreferences.language)}
 					</p>
-				{:else}
-					<ul class="profile-record-list">
-						{#each professionals as professional (professional.id)}
-							<li class="profile-record">
-								<div class="profile-record-main stack">
-									<div class="profile-record-heading">
-										<h4 class="profile-record-title">
-											{professional.displayName || professional.fullName}
-										</h4>
-										{#if $interfacePreferences.activeProfessionalId === professional.id}
-											<p class="profile-active-label">
-												{translate(m.profile_active_professional, $interfacePreferences.language)}
-											</p>
-										{/if}
-									</div>
+				</div>
 
-									<dl class="profile-record-details">
-										{#if professional.displayName}
-											<div>
-												<dt>{translate(m.field_full_name, $interfacePreferences.language)}</dt>
-												<dd>{professional.fullName}</dd>
-											</div>
-										{/if}
-										{#if professional.profession}
-											<div>
-												<dt>{translate(m.field_profession, $interfacePreferences.language)}</dt>
-												<dd>{professional.profession}</dd>
-											</div>
-										{/if}
-										{#if professional.specialty}
-											<div>
-												<dt>{translate(m.field_specialty, $interfacePreferences.language)}</dt>
-												<dd>{professional.specialty}</dd>
-											</div>
-										{/if}
-										{#if professional.email}
-											<div>
-												<dt>{translate(m.field_email, $interfacePreferences.language)}</dt>
-												<dd>{professional.email}</dd>
-											</div>
-										{/if}
-									</dl>
+				{#if !isLoading && professionals.length === 0}
+					<div class="profile-empty-state">
+						<p>
+							{translate(m.profile_no_professionals_registered, $interfacePreferences.language)}
+						</p>
+						<p class="profile-empty-hint">
+							{translate(m.profile_empty_professional_hint, $interfacePreferences.language)}
+						</p>
+					</div>
+				{:else}
+					<ul
+						class="profile-list"
+						aria-label={translate(m.profile_professional_profiles, $interfacePreferences.language)}
+					>
+						{#each professionals as professional (professional.id)}
+							{@const professionalName = getProfessionalName(professional)}
+							<li class="profile-list-item">
+								<ProfileAvatar name={professionalName} photoDataUrl={professional.photoDataUrl} />
+
+								<div class="profile-summary">
+									<p class="profile-primary-line">{professionalName}</p>
+									<p class="profile-id-line">
+										{translate(m.profile_id, $interfacePreferences.language)}: {professional.id}
+									</p>
+									<p class="profile-meta-line">{getProfessionalSummary(professional)}</p>
+									{#if isActiveProfessional(professional.id)}
+										<p class="profile-active-label">
+											{translate(m.profile_active, $interfacePreferences.language)}
+										</p>
+									{/if}
 								</div>
 
-								<div class="profile-actions">
-									{#if $interfacePreferences.activeProfessionalId !== professional.id}
-										<button
-											type="button"
-											class="button button-secondary"
-											onclick={() => handleSetActiveProfessional(professional.id)}
-										>
-											{translate(m.profile_set_active_professional, $interfacePreferences.language)}
-										</button>
-									{/if}
+								<div class="profile-row-actions">
 									<button
 										type="button"
-										class="button button-secondary"
-										onclick={() => handleEditProfessional(professional)}
+										class="icon-button"
+										aria-label={getProfileActionLabel(
+											translate(m.action_view, $interfacePreferences.language),
+											professionalName
+										)}
+										title={getProfileActionLabel(
+											translate(m.action_view, $interfacePreferences.language),
+											professionalName
+										)}
+										onclick={() => openProfessionalPreview(professional)}
 									>
-										{translate(m.action_edit, $interfacePreferences.language)}
+										<LucideIcon name="eye" size={22} />
 									</button>
 									<button
 										type="button"
-										class="button button-secondary"
+										class="icon-button"
+										aria-label={getProfileActionLabel(
+											translate(m.action_edit, $interfacePreferences.language),
+											professionalName
+										)}
+										title={getProfileActionLabel(
+											translate(m.action_edit, $interfacePreferences.language),
+											professionalName
+										)}
+										onclick={() => openEditProfessionalDialog(professional)}
+									>
+										<LucideIcon name="edit-3" size={22} />
+									</button>
+									<button
+										type="button"
+										class="icon-button"
+										aria-label={getProfileStateActionLabel(
+											translate(m.profile_set_active, $interfacePreferences.language),
+											professionalName
+										)}
+										title={getProfileStateActionLabel(
+											translate(m.profile_set_active, $interfacePreferences.language),
+											professionalName
+										)}
+										onclick={() => handleSetActiveProfessional(professional.id)}
+										disabled={isActiveProfessional(professional.id)}
+									>
+										<LucideIcon name="clipboard-check" size={22} />
+									</button>
+									<button
+										type="button"
+										class="icon-button"
+										aria-label={getProfileActionLabel(
+											translate(m.action_delete, $interfacePreferences.language),
+											professionalName
+										)}
+										title={getProfileActionLabel(
+											translate(m.action_delete, $interfacePreferences.language),
+											professionalName
+										)}
 										onclick={() => handleDeleteProfessional(professional)}
 									>
-										{translate(m.action_delete, $interfacePreferences.language)}
+										<LucideIcon name="trash-2" size={22} />
 									</button>
 								</div>
 							</li>
@@ -572,229 +523,116 @@
 					</ul>
 				{/if}
 			</div>
-		</div>
-	</section>
-
-	<section class="page-section profile-section" aria-labelledby="profile-institutions-title">
-		<div class="profile-section-header stack">
-			<h2 id="profile-institutions-title" class="section-title">
-				{translate(m.profile_institutions_title, $interfacePreferences.language)}
-			</h2>
-			<p class="section-description">
-				{translate(m.profile_institutions_description, $interfacePreferences.language)}
-			</p>
-		</div>
-
-		<div class="profile-section-layout">
-			<form
-				class="profile-form stack"
-				aria-labelledby="institution-form-title"
-				novalidate
-				onsubmit={handleInstitutionSubmit}
+		{:else}
+			<div
+				id="profile-panel-institutions"
+				class="profile-section"
+				role="tabpanel"
+				aria-labelledby="profile-tab-institutions"
 			>
-				<h3 id="institution-form-title" class="section-subtitle">
-					{translate(
-						editingInstitutionId ? m.profile_update_institution : m.profile_create_institution,
-						$interfacePreferences.language
-					)}
-				</h3>
-
-				<div class="profile-form-grid">
-					<div class="profile-field profile-field--wide">
-						<label for="institution-name">
-							{translate(m.field_name, $interfacePreferences.language)}
-						</label>
-						<input
-							id="institution-name"
-							name="name"
-							autocomplete="organization"
-							aria-invalid={institutionFormError}
-							aria-describedby={institutionFormError ? 'institution-name-error' : undefined}
-							bind:value={institutionForm.name}
-						/>
-						{#if institutionFormError}
-							<p id="institution-name-error" class="profile-error" role="alert">
-								{translate(m.validation_required, $interfacePreferences.language)}
-							</p>
-						{/if}
-					</div>
-
-					<div class="profile-field">
-						<label for="institution-trade-name">
-							{translate(m.field_trade_name, $interfacePreferences.language)}
-						</label>
-						<input
-							id="institution-trade-name"
-							name="tradeName"
-							bind:value={institutionForm.tradeName}
-						/>
-					</div>
-
-					<div class="profile-field">
-						<label for="institution-document">
-							{translate(m.field_document, $interfacePreferences.language)}
-						</label>
-						<input
-							id="institution-document"
-							name="document"
-							bind:value={institutionForm.document}
-						/>
-					</div>
-
-					<div class="profile-field">
-						<label for="institution-phone">
-							{translate(m.field_phone, $interfacePreferences.language)}
-						</label>
-						<input
-							id="institution-phone"
-							name="phone"
-							type="tel"
-							autocomplete="tel"
-							bind:value={institutionForm.phone}
-						/>
-					</div>
-
-					<div class="profile-field">
-						<label for="institution-email">
-							{translate(m.field_email, $interfacePreferences.language)}
-						</label>
-						<input
-							id="institution-email"
-							name="email"
-							type="email"
-							autocomplete="email"
-							bind:value={institutionForm.email}
-						/>
-					</div>
-
-					<div class="profile-field profile-field--wide">
-						<label for="institution-address">
-							{translate(m.field_address, $interfacePreferences.language)}
-						</label>
-						<input
-							id="institution-address"
-							name="address"
-							autocomplete="street-address"
-							bind:value={institutionForm.address}
-						/>
-					</div>
-
-					<div class="profile-field profile-field--wide">
-						<label for="institution-footer-text">
-							{translate(m.field_footer_text, $interfacePreferences.language)}
-						</label>
-						<input
-							id="institution-footer-text"
-							name="footerText"
-							bind:value={institutionForm.footerText}
-						/>
-					</div>
-
-					<div class="profile-field profile-field--wide">
-						<label for="institution-notes">
-							{translate(m.field_notes, $interfacePreferences.language)}
-						</label>
-						<textarea
-							id="institution-notes"
-							name="notes"
-							rows="4"
-							bind:value={institutionForm.notes}
-						></textarea>
-					</div>
-				</div>
-
-				<div class="profile-actions">
-					<button type="submit" class="button">
-						{translate(
-							editingInstitutionId ? m.profile_update_institution : m.profile_create_institution,
-							$interfacePreferences.language
-						)}
-					</button>
-
-					{#if editingInstitutionId}
-						<button type="button" class="button button-secondary" onclick={resetInstitutionForm}>
-							{translate(m.action_cancel, $interfacePreferences.language)}
-						</button>
-					{/if}
-				</div>
-			</form>
-
-			<div class="profile-list stack" aria-labelledby="profile-institutions-list-title">
-				<h3 id="profile-institutions-list-title" class="section-subtitle">
-					{translate(m.profile_institutions_title, $interfacePreferences.language)}
-				</h3>
-
-				{#if institutions.length === 0}
-					<p class="profile-empty">
-						{translate(m.profile_no_institutions, $interfacePreferences.language)}
+				<div class="profile-section-header stack">
+					<h2 id="institution-profiles-title" class="section-title">
+						{translate(m.profile_institution_profiles, $interfacePreferences.language)}
+					</h2>
+					<p class="section-description">
+						{translate(m.profile_institutions_description, $interfacePreferences.language)}
 					</p>
-				{:else}
-					<ul class="profile-record-list">
-						{#each institutions as institution (institution.id)}
-							<li class="profile-record">
-								<div class="profile-record-main stack">
-									<div class="profile-record-heading">
-										<h4 class="profile-record-title">
-											{institution.tradeName || institution.name}
-										</h4>
-										{#if $interfacePreferences.activeInstitutionId === institution.id}
-											<p class="profile-active-label">
-												{translate(m.profile_active_institution, $interfacePreferences.language)}
-											</p>
-										{/if}
-									</div>
+				</div>
 
-									<dl class="profile-record-details">
-										{#if institution.tradeName}
-											<div>
-												<dt>{translate(m.field_name, $interfacePreferences.language)}</dt>
-												<dd>{institution.name}</dd>
-											</div>
-										{/if}
-										{#if institution.document}
-											<div>
-												<dt>{translate(m.field_document, $interfacePreferences.language)}</dt>
-												<dd>{institution.document}</dd>
-											</div>
-										{/if}
-										{#if institution.email}
-											<div>
-												<dt>{translate(m.field_email, $interfacePreferences.language)}</dt>
-												<dd>{institution.email}</dd>
-											</div>
-										{/if}
-										{#if institution.phone}
-											<div>
-												<dt>{translate(m.field_phone, $interfacePreferences.language)}</dt>
-												<dd>{institution.phone}</dd>
-											</div>
-										{/if}
-									</dl>
+				{#if !isLoading && institutions.length === 0}
+					<div class="profile-empty-state">
+						<p>{translate(m.profile_no_institutions_registered, $interfacePreferences.language)}</p>
+						<p class="profile-empty-hint">
+							{translate(m.profile_empty_institution_hint, $interfacePreferences.language)}
+						</p>
+					</div>
+				{:else}
+					<ul
+						class="profile-list"
+						aria-label={translate(m.profile_institution_profiles, $interfacePreferences.language)}
+					>
+						{#each institutions as institution (institution.id)}
+							{@const institutionName = getInstitutionName(institution)}
+							<li class="profile-list-item">
+								<ProfileAvatar
+									name={institutionName}
+									photoDataUrl={institution.logoDataUrl ?? institution.photoDataUrl}
+								/>
+
+								<div class="profile-summary">
+									<p class="profile-primary-line">{institutionName}</p>
+									<p class="profile-id-line">
+										{translate(m.profile_id, $interfacePreferences.language)}: {institution.id}
+									</p>
+									<p class="profile-meta-line">{getInstitutionSummary(institution)}</p>
+									{#if isActiveInstitution(institution.id)}
+										<p class="profile-active-label">
+											{translate(m.profile_active, $interfacePreferences.language)}
+										</p>
+									{/if}
 								</div>
 
-								<div class="profile-actions">
-									{#if $interfacePreferences.activeInstitutionId !== institution.id}
-										<button
-											type="button"
-											class="button button-secondary"
-											onclick={() => handleSetActiveInstitution(institution.id)}
-										>
-											{translate(m.profile_set_active_institution, $interfacePreferences.language)}
-										</button>
-									{/if}
+								<div class="profile-row-actions">
 									<button
 										type="button"
-										class="button button-secondary"
-										onclick={() => handleEditInstitution(institution)}
+										class="icon-button"
+										aria-label={getProfileActionLabel(
+											translate(m.action_view, $interfacePreferences.language),
+											institutionName
+										)}
+										title={getProfileActionLabel(
+											translate(m.action_view, $interfacePreferences.language),
+											institutionName
+										)}
+										onclick={() => openInstitutionPreview(institution)}
 									>
-										{translate(m.action_edit, $interfacePreferences.language)}
+										<LucideIcon name="eye" size={22} />
 									</button>
 									<button
 										type="button"
-										class="button button-secondary"
+										class="icon-button"
+										aria-label={getProfileActionLabel(
+											translate(m.action_edit, $interfacePreferences.language),
+											institutionName
+										)}
+										title={getProfileActionLabel(
+											translate(m.action_edit, $interfacePreferences.language),
+											institutionName
+										)}
+										onclick={() => openEditInstitutionDialog(institution)}
+									>
+										<LucideIcon name="edit-3" size={22} />
+									</button>
+									<button
+										type="button"
+										class="icon-button"
+										aria-label={getProfileStateActionLabel(
+											translate(m.profile_set_active, $interfacePreferences.language),
+											institutionName
+										)}
+										title={getProfileStateActionLabel(
+											translate(m.profile_set_active, $interfacePreferences.language),
+											institutionName
+										)}
+										onclick={() => handleSetActiveInstitution(institution.id)}
+										disabled={isActiveInstitution(institution.id)}
+									>
+										<LucideIcon name="clipboard-check" size={22} />
+									</button>
+									<button
+										type="button"
+										class="icon-button"
+										aria-label={getProfileActionLabel(
+											translate(m.action_delete, $interfacePreferences.language),
+											institutionName
+										)}
+										title={getProfileActionLabel(
+											translate(m.action_delete, $interfacePreferences.language),
+											institutionName
+										)}
 										onclick={() => handleDeleteInstitution(institution)}
 									>
-										{translate(m.action_delete, $interfacePreferences.language)}
+										<LucideIcon name="trash-2" size={22} />
 									</button>
 								</div>
 							</li>
@@ -802,6 +640,69 @@
 					</ul>
 				{/if}
 			</div>
-		</div>
-	</section>
+		{/if}
+	{/if}
 </div>
+
+{#if professionalDialog}
+	<ProfessionalProfileDialog
+		professional={professionalDialog.professional}
+		{institutions}
+		onCancel={closeDialogs}
+		onSave={handleSaveProfessional}
+	/>
+{/if}
+
+{#if institutionDialog}
+	<InstitutionProfileDialog
+		institution={institutionDialog.institution}
+		{professionals}
+		onCancel={closeDialogs}
+		onSave={handleSaveInstitution}
+	/>
+{/if}
+
+{#if professionalPreview}
+	<div class="profile-dialog-backdrop" role="presentation">
+		<div
+			class="profile-dialog profile-dialog-preview stack"
+			role="dialog"
+			aria-modal="true"
+			aria-labelledby="professional-preview-title"
+		>
+			<div class="profile-dialog-header">
+				<h2 id="professional-preview-title" class="section-title">
+					{translate(m.profile_stamp_preview, $interfacePreferences.language)}
+				</h2>
+				<button type="button" class="button button-secondary" onclick={closeDialogs}>
+					{translate(m.action_cancel, $interfacePreferences.language)}
+				</button>
+			</div>
+			<ProfessionalStampPreview
+				professional={professionalPreview}
+				institution={getInstitutionById(professionalPreview.institutionId)}
+			/>
+		</div>
+	</div>
+{/if}
+
+{#if institutionPreview}
+	<div class="profile-dialog-backdrop" role="presentation">
+		<div
+			class="profile-dialog profile-dialog-preview stack"
+			role="dialog"
+			aria-modal="true"
+			aria-labelledby="institution-preview-title"
+		>
+			<div class="profile-dialog-header">
+				<h2 id="institution-preview-title" class="section-title">
+					{translate(m.profile_header_preview, $interfacePreferences.language)}
+				</h2>
+				<button type="button" class="button button-secondary" onclick={closeDialogs}>
+					{translate(m.action_cancel, $interfacePreferences.language)}
+				</button>
+			</div>
+			<InstitutionHeaderPreview institution={institutionPreview} />
+		</div>
+	</div>
+{/if}

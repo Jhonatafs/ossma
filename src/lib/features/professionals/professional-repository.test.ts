@@ -33,10 +33,24 @@ describe('professional repository', () => {
 	});
 
 	it('creates a professional with id and timestamps', async () => {
-		const professional = await createProfessional({ fullName: 'Ada Lovelace' });
+		const professional = await createProfessional({
+			fullName: 'Ada Lovelace',
+			prefix: 'Dra.',
+			institutionId: 'institution-1',
+			photoDataUrl: 'data:image/png;base64,professional-photo',
+			contacts: [
+				{ id: 'contact-1', type: 'email', value: 'ada@example.test' },
+				{ id: 'contact-2', type: 'telegram', value: '@ada' }
+			]
+		});
 
 		expect(professional.id).toBeTruthy();
 		expect(professional.fullName).toBe('Ada Lovelace');
+		expect(professional.prefix).toBe('Dra.');
+		expect(professional.institutionId).toBe('institution-1');
+		expect(professional.photoDataUrl).toBe('data:image/png;base64,professional-photo');
+		expect(professional.contacts?.[0]?.value).toBe('ada@example.test');
+		expect(professional.contacts?.[1]?.type).toBe('telegram');
 		expect(professional.createdAt).toBeTruthy();
 		expect(professional.updatedAt).toBe(professional.createdAt);
 	});
@@ -71,14 +85,22 @@ describe('professional repository', () => {
 
 		const updatedProfessional = await updateProfessional(professional.id, {
 			fullName: 'Updated Name',
+			prefix: 'Prof.',
+			institutionId: 'institution-2',
 			notes: 'Updated note',
+			photoDataUrl: 'data:image/png;base64,updated-professional-photo',
 			specialty: 'Physiology'
 		});
 
 		expect(updatedProfessional?.id).toBe(professional.id);
 		expect(updatedProfessional?.createdAt).toBe(professional.createdAt);
 		expect(updatedProfessional?.fullName).toBe('Updated Name');
+		expect(updatedProfessional?.prefix).toBe('Prof.');
+		expect(updatedProfessional?.institutionId).toBe('institution-2');
 		expect(updatedProfessional?.notes).toBe('Updated note');
+		expect(updatedProfessional?.photoDataUrl).toBe(
+			'data:image/png;base64,updated-professional-photo'
+		);
 		expect(updatedProfessional?.specialty).toBe('Physiology');
 		expect(updatedProfessional?.updatedAt).not.toBe(professional.updatedAt);
 	});

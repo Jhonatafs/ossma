@@ -1,16 +1,30 @@
 <script lang="ts">
 	import { page } from '$app/state';
 
-	import { NAVIGATION_ITEMS, type NavigationMessageKey } from '$lib/config/navigation';
+	import {
+		MOBILE_MORE_NAVIGATION_ITEMS,
+		MOBILE_PRIMARY_NAVIGATION_ITEMS,
+		NAVIGATION_ITEMS,
+		type NavigationMessageKey
+	} from '$lib/config/navigation';
 	import { interfacePreferences } from '$lib/features/settings/interface-preferences-store';
 	import * as m from '$lib/paraglide/messages';
+	import LucideIcon from '$lib/shared/components/icons/LucideIcon.svelte';
 	import { translate, type StaticMessage } from '$lib/shared/utils/i18n';
 
 	import NavigationItem from './NavigationItem.svelte';
 
-	const navigationMenuId = 'app-navigation-list';
-	let { showLabels: showLabelsOverride }: { showLabels?: boolean } = $props();
-	let isMenuOpen = $state(false);
+	let {
+		expanded,
+		onExpandedChange
+	}: {
+		expanded: boolean;
+		onExpandedChange: (expanded: boolean) => void;
+	} = $props();
+
+	let isMoreOpen = $state(false);
+
+	const moreNavigationSheetId = 'mobile-more-navigation-sheet';
 
 	const getNavigationLabel = (key: NavigationMessageKey) =>
 		translate(m[key] as StaticMessage, $interfacePreferences.language);
@@ -18,30 +32,33 @@
 	const isActive = (href: string) =>
 		href === '/' ? page.url.pathname === '/' : page.url.pathname.startsWith(href);
 
+	const isMoreActive = () => MOBILE_MORE_NAVIGATION_ITEMS.some((item) => isActive(item.href));
+
 	const navigationLabel = $derived(
 		translate(m.app_navigation_label, $interfacePreferences.language)
 	);
 	const menuButtonLabel = $derived(
 		translate(
-			isMenuOpen ? m.navigation_close_menu : m.navigation_open_menu,
+			expanded ? m.navigation_close_menu : m.navigation_open_menu,
 			$interfacePreferences.language
 		)
 	);
-	const showLabels = $derived(
-		showLabelsOverride ?? $interfacePreferences.menuLabelMode === 'iconAndText'
-	);
 
-	function toggleMenu() {
-		isMenuOpen = !isMenuOpen;
+	function toggleDesktopNavigation() {
+		onExpandedChange(!expanded);
 	}
 
-	function closeMenu() {
-		isMenuOpen = false;
+	function toggleMoreNavigation() {
+		isMoreOpen = !isMoreOpen;
+	}
+
+	function closeMoreNavigation() {
+		isMoreOpen = false;
 	}
 
 	function handleKeydown(event: KeyboardEvent) {
 		if (event.key === 'Escape') {
-			closeMenu();
+			closeMoreNavigation();
 		}
 	}
 
@@ -49,42 +66,119 @@
 		const pathname = page.url.pathname;
 
 		if (pathname) {
-			closeMenu();
+			closeMoreNavigation();
 		}
 	});
 </script>
 
 <svelte:window onkeydown={handleKeydown} />
 
-<nav class="suspended-navigation app-navigation" aria-label={navigationLabel}>
-	<div class="suspended-navigation__inner app-navigation__inner">
-		<button
-			type="button"
-			class="responsive-menu-toggle"
-			aria-controls={navigationMenuId}
-			aria-expanded={isMenuOpen}
-			aria-label={menuButtonLabel}
-			onclick={toggleMenu}
-		>
-			{translate(m.navigation_menu, $interfacePreferences.language)}
-		</button>
+<nav
+	class={`desktop-sidebar ${expanded ? 'desktop-sidebar--expanded' : 'desktop-sidebar--collapsed'}`}
+	aria-label={navigationLabel}
+>
+	<button
+		type="button"
+		class="desktop-sidebar__toggle"
+		aria-expanded={expanded}
+		aria-label={menuButtonLabel}
+		onclick={toggleDesktopNavigation}
+	>
+		<span class="nav-icon" aria-hidden="true">
+			<LucideIcon name="menu" size={24} />
+		</span>
+		{#if expanded}
+			<span class="nav-label">{translate(m.navigation_menu, $interfacePreferences.language)}</span>
+		{/if}
+	</button>
 
-		<div
-			id={navigationMenuId}
-			class={`responsive-menu-panel suspended-navigation-list app-navigation__items ${isMenuOpen ? 'responsive-menu-panel--open' : ''} ${showLabels ? '' : 'responsive-menu-panel--icon-only'}`}
-			role="group"
-			aria-label={navigationLabel}
-		>
-			{#each NAVIGATION_ITEMS as item (item.id)}
+	<div class="desktop-sidebar__items" role="group" aria-label={navigationLabel}>
+		{#each NAVIGATION_ITEMS as item (item.id)}
+			<NavigationItem
+				href={item.href}
+				label={getNavigationLabel(item.labelKey)}
+				icon={item.icon}
+				active={isActive(item.href)}
+				showLabel={expanded}
+				iconSize={expanded ? 22 : 24}
+			/>
+		{/each}
+	</div>
+</nav>
+
+{#if isMoreOpen}
+	<button
+		type="button"
+		class="more-navigation-backdrop"
+		aria-label={translate(m.nav_close_more_options, $interfacePreferences.language)}
+		tabindex="-1"
+		onclick={closeMoreNavigation}
+	></button>
+
+	<div
+		id={moreNavigationSheetId}
+		class="more-navigation-sheet"
+		role="dialog"
+		aria-modal="false"
+		aria-labelledby="more-navigation-title"
+	>
+		<div class="more-navigation-header">
+			<h2 id="more-navigation-title">
+				{translate(m.nav_more_options, $interfacePreferences.language)}
+			</h2>
+			<button
+				type="button"
+				class="more-navigation-close"
+				aria-label={translate(m.nav_close_more_options, $interfacePreferences.language)}
+				title={translate(m.nav_close_more_options, $interfacePreferences.language)}
+				onclick={closeMoreNavigation}
+			>
+				<span class="nav-icon" aria-hidden="true">
+					<LucideIcon name="x" size={22} />
+				</span>
+			</button>
+		</div>
+
+		<div class="more-navigation-list" role="group" aria-label={navigationLabel}>
+			{#each MOBILE_MORE_NAVIGATION_ITEMS as item (item.id)}
 				<NavigationItem
 					href={item.href}
 					label={getNavigationLabel(item.labelKey)}
 					icon={item.icon}
 					active={isActive(item.href)}
-					showLabel={showLabels}
-					onNavigate={closeMenu}
+					showLabel={true}
+					iconSize={24}
+					onNavigate={closeMoreNavigation}
 				/>
 			{/each}
 		</div>
 	</div>
+{/if}
+
+<nav class="bottom-navigation" aria-label={navigationLabel}>
+	{#each MOBILE_PRIMARY_NAVIGATION_ITEMS as item (item.id)}
+		<NavigationItem
+			href={item.href}
+			label={getNavigationLabel(item.labelKey)}
+			icon={item.icon}
+			active={isActive(item.href)}
+			showLabel={true}
+			iconSize={24}
+		/>
+	{/each}
+
+	<button
+		type="button"
+		class={`nav-item bottom-navigation__more ${isMoreActive() ? 'nav-item--active' : ''} ${isMoreOpen ? 'bottom-navigation__more--open' : ''}`}
+		aria-controls={moreNavigationSheetId}
+		aria-expanded={isMoreOpen}
+		aria-label={getNavigationLabel('nav_more')}
+		title={getNavigationLabel('nav_more')}
+		onclick={toggleMoreNavigation}
+	>
+		<span class="nav-icon" aria-hidden="true">
+			<LucideIcon name="more-horizontal" size={24} />
+		</span>
+		<span class="nav-label">{getNavigationLabel('nav_more')}</span>
+	</button>
 </nav>

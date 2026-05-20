@@ -33,10 +33,16 @@ describe('institution repository', () => {
 	});
 
 	it('creates an institution with id and timestamps', async () => {
-		const institution = await createInstitution({ name: 'OSSMA Clinic' });
+		const institution = await createInstitution({
+			name: 'OSSMA Clinic',
+			logoDataUrl: 'data:image/png;base64,institution-logo',
+			contacts: [{ id: 'contact-1', type: 'email', value: 'clinic@example.test' }]
+		});
 
 		expect(institution.id).toBeTruthy();
 		expect(institution.name).toBe('OSSMA Clinic');
+		expect(institution.logoDataUrl).toBe('data:image/png;base64,institution-logo');
+		expect(institution.contacts?.[0]?.value).toBe('clinic@example.test');
 		expect(institution.createdAt).toBeTruthy();
 		expect(institution.updatedAt).toBe(institution.createdAt);
 	});
@@ -72,6 +78,7 @@ describe('institution repository', () => {
 		const updatedInstitution = await updateInstitution(institution.id, {
 			name: 'Updated Name',
 			notes: 'Updated note',
+			logoDataUrl: 'data:image/png;base64,updated-institution-logo',
 			footerText: 'Prepared by OSSMA'
 		});
 
@@ -79,6 +86,7 @@ describe('institution repository', () => {
 		expect(updatedInstitution?.createdAt).toBe(institution.createdAt);
 		expect(updatedInstitution?.name).toBe('Updated Name');
 		expect(updatedInstitution?.notes).toBe('Updated note');
+		expect(updatedInstitution?.logoDataUrl).toBe('data:image/png;base64,updated-institution-logo');
 		expect(updatedInstitution?.footerText).toBe('Prepared by OSSMA');
 		expect(updatedInstitution?.updatedAt).not.toBe(institution.updatedAt);
 	});

@@ -1,5 +1,8 @@
+import type { ContactEntry, EntityId } from '$lib/db/types';
+
 export interface CreateProfessionalInput {
 	fullName: string;
+	prefix?: string;
 	displayName?: string;
 	profession?: string;
 	education?: string;
@@ -8,8 +11,11 @@ export interface CreateProfessionalInput {
 	phone?: string;
 	email?: string;
 	address?: string;
+	photoDataUrl?: string;
 	logoUri?: string;
 	signatureUri?: string;
+	institutionId?: EntityId;
+	contacts?: ContactEntry[];
 	notes?: string;
 	isActive?: boolean;
 }

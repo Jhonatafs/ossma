@@ -17,15 +17,24 @@
 		navigationPosition?: DesktopNavigationPosition;
 	} = $props();
 
-	const routesWithoutNavigation = new Set(['/', '/onboarding']);
+	let isDesktopNavigationExpanded = $state(false);
+
+	const routesWithoutNavigation = new Set(['/onboarding']);
 	const showNavigation = $derived(!routesWithoutNavigation.has(page.url.pathname));
+
+	function handleNavigationExpandedChange(expanded: boolean) {
+		isDesktopNavigationExpanded = expanded;
+	}
 </script>
 
 <div
-	class={`app-viewport app-shell app-shell--nav-${navigationPosition} ${showNavigation ? 'app-shell--with-nav' : 'app-shell--focus'}`}
+	class={`app-viewport app-shell app-shell--nav-${navigationPosition} ${showNavigation ? 'app-shell--with-nav' : 'app-shell--focus'} ${isDesktopNavigationExpanded ? 'app-shell--nav-expanded' : 'app-shell--nav-collapsed'}`}
 >
 	{#if showNavigation}
-		<AppNavigation />
+		<AppNavigation
+			expanded={isDesktopNavigationExpanded}
+			onExpandedChange={handleNavigationExpandedChange}
+		/>
 	{/if}
 
 	<MainContent>
