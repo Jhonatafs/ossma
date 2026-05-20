@@ -840,6 +840,19 @@
 	gap: var(--space-4);
 }
 
+.professional-picker-header {
+	align-items: center;
+}
+
+.professional-picker-header .stack-xs {
+	max-width: 40rem;
+}
+
+.professional-picker-header .section-description {
+	font-size: 0.95rem;
+	line-height: 1.45;
+}
+
 .profile-linked-empty {
 	display: grid;
 	gap: var(--space-1);
@@ -888,33 +901,42 @@
 	display: grid;
 	align-items: start;
 	justify-items: center;
-	padding: var(--space-4);
+	padding: var(--space-3);
 	padding-block-end: calc(5.5rem + env(safe-area-inset-bottom));
 	background: color-mix(in srgb, var(--color-background) 88%, transparent);
-	overflow: auto;
+	overflow: hidden;
 }
 
 .professional-picker-panel {
 	display: grid;
-	width: min(100%, 72rem);
-	min-height: min(46rem, calc(100vh - 8rem));
-	min-height: min(46rem, calc(100dvh - 8rem));
-	gap: var(--space-5);
+	grid-template-rows: auto auto minmax(0, 1fr) auto;
+	width: min(100%, 54rem);
+	max-height: calc(100vh - 7rem);
+	max-height: calc(100dvh - 7rem);
+	gap: var(--space-3);
 	border: 1px solid var(--color-border);
 	border-radius: var(--radius-md);
 	background: var(--color-surface);
-	padding: var(--space-5);
+	padding: var(--space-4);
+	overflow: hidden;
 }
 
 .professional-picker-search {
-	max-width: 36rem;
+	width: min(100%, 26rem);
+}
+
+.professional-picker-search input {
+	min-height: 2.5rem;
+	padding-block: var(--space-2);
 }
 
 .professional-picker-grid {
 	display: grid;
 	grid-template-columns: 1fr;
 	align-content: start;
-	gap: var(--space-3);
+	min-height: 0;
+	border-top: 1px solid var(--color-border);
+	overflow: auto;
 }
 
 .professional-picker-card {
@@ -923,8 +945,9 @@
 	align-items: center;
 	gap: var(--space-3);
 	width: 100%;
-	border: 1px solid var(--color-border);
-	border-radius: var(--radius-sm);
+	border: 0;
+	border-bottom: 1px solid var(--color-border);
+	border-radius: 0;
 	background: var(--color-surface);
 	color: var(--color-text);
 	padding: var(--space-3);
@@ -938,13 +961,16 @@
 .professional-picker-card:hover,
 .professional-picker-card:focus-visible,
 .professional-picker-card--selected {
-	border-color: var(--color-primary);
-	background: color-mix(in srgb, var(--color-primary) 8%, var(--color-surface));
+	background: color-mix(in srgb, var(--color-primary) 7%, var(--color-surface));
 }
 
 .professional-picker-card:focus-visible {
 	outline: 3px solid var(--color-focus);
-	outline-offset: 2px;
+	outline-offset: -3px;
+}
+
+.professional-picker-card--selected {
+	box-shadow: inset 3px 0 0 var(--color-primary);
 }
 
 .professional-picker-card-main {
@@ -953,9 +979,17 @@
 	gap: var(--space-1);
 }
 
+.professional-picker-card-id {
+	color: var(--color-muted);
+	font-family: var(--font-mono);
+	font-size: 0.78rem;
+	line-height: 1.35;
+	overflow-wrap: anywhere;
+}
+
 .professional-picker-card-state {
 	display: inline-flex;
-	min-height: 2rem;
+	min-height: 1.75rem;
 	align-items: center;
 	justify-content: center;
 	gap: var(--space-1);
@@ -964,8 +998,8 @@
 	border: 1px solid var(--color-border);
 	border-radius: var(--radius-sm);
 	color: var(--color-muted);
-	padding: var(--space-1) var(--space-2);
-	font-size: 0.875rem;
+	padding: 0 var(--space-2);
+	font-size: 0.8rem;
 	font-weight: 800;
 }
 
@@ -979,12 +1013,34 @@
 	flex-wrap: wrap;
 	justify-content: flex-end;
 	gap: var(--space-3);
-	padding-block-start: var(--space-4);
+	padding-block-start: var(--space-3);
 	border-top: 1px solid var(--color-border);
 }
 
 .professional-picker-footer .button {
-	flex: 1 1 12rem;
+	flex: 1 1 10rem;
+	min-height: 2.5rem;
+	padding: var(--space-2) var(--space-4);
+}
+
+.professional-picker-empty {
+	display: grid;
+	align-content: start;
+	gap: var(--space-1);
+	margin: 0;
+	padding: var(--space-4);
+	border-block: 1px solid var(--color-border);
+	color: var(--color-muted);
+}
+
+.professional-picker-empty p {
+	margin: 0;
+	line-height: 1.5;
+}
+
+.professional-picker-empty p:first-child {
+	color: var(--color-text);
+	font-weight: 800;
 }
 
 .contact-editor,
@@ -1203,7 +1259,7 @@
 	}
 
 	.professional-picker-grid {
-		grid-template-columns: repeat(2, minmax(0, 1fr));
+		max-height: 26rem;
 	}
 
 	.professional-picker-card {
@@ -1212,6 +1268,7 @@
 
 	.professional-picker-card-state {
 		grid-column: auto;
+		justify-self: end;
 	}
 
 	.professional-picker-footer .button {

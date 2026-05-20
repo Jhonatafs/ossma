@@ -130,6 +130,7 @@
 	"profile_link_professionals_description": "Select the professionals who are part of this institution.",
 	"profile_search_professional": "Search professional...",
 	"profile_no_professionals_found": "No professionals found.",
+	"profile_no_professionals_hint": "Create a professional profile before linking it to an institution.",
 	"profile_confirm_links": "Confirm links",
 	"profile_select": "Select",
 	"profile_selected": "Selected",

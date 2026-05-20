@@ -130,6 +130,7 @@
 	"profile_link_professionals_description": "Selecione os profissionais que fazem parte desta instituição.",
 	"profile_search_professional": "Buscar profissional...",
 	"profile_no_professionals_found": "Nenhum profissional encontrado.",
+	"profile_no_professionals_hint": "Cadastre um perfil profissional antes de vinculá-lo a uma instituição.",
 	"profile_confirm_links": "Confirmar vínculos",
 	"profile_select": "Selecionar",
 	"profile_selected": "Selecionado",

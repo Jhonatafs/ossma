@@ -119,13 +119,14 @@
 		</div>
 
 		{#if professionals.length === 0}
-			<p class="profile-empty">
-				{translate(m.profile_no_professionals_registered, $interfacePreferences.language)}
-			</p>
+			<div class="professional-picker-empty">
+				<p>{translate(m.profile_no_professionals_registered, $interfacePreferences.language)}</p>
+				<p>{translate(m.profile_no_professionals_hint, $interfacePreferences.language)}</p>
+			</div>
 		{:else if filteredProfessionals.length === 0}
-			<p class="profile-empty">
-				{translate(m.profile_no_professionals_found, $interfacePreferences.language)}
-			</p>
+			<div class="professional-picker-empty">
+				<p>{translate(m.profile_no_professionals_found, $interfacePreferences.language)}</p>
+			</div>
 		{:else}
 			<div class="professional-picker-grid">
 				{#each filteredProfessionals as professional (professional.id)}
@@ -140,6 +141,9 @@
 						<ProfileAvatar name={professionalName} photoDataUrl={professional.photoDataUrl} />
 						<span class="professional-picker-card-main">
 							<span class="profile-primary-line">{professionalName}</span>
+							<span class="professional-picker-card-id">
+								{translate(m.profile_id, $interfacePreferences.language)}: {professional.id}
+							</span>
 							<span class="profile-meta-line">{getProfessionalSummary(professional)}</span>
 						</span>
 						<span class="professional-picker-card-state">
