@@ -31,4 +31,8 @@
 	--color-scrollbar-track: #16191d;
 	--color-scrollbar-thumb: #3f464e;
 	--color-scrollbar-thumb-hover: #5a626b;
+	--color-navigation-background: #1f2428;
+	--color-navigation-text: #f8fafc;
+	--color-navigation-muted: #cbd5e1;
+	--color-navigation-hover: rgb(255 255 255 / 0.1);
 }

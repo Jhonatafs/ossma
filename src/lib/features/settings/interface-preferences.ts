@@ -1,6 +1,7 @@
 import { browser } from '$app/environment';
 import { setLocale } from '$lib/paraglide/runtime';
 import { APP_CONFIG, type SupportedLanguage, type SupportedTheme } from '$lib/config/app';
+import type { EntityId } from '$lib/db/types';
 
 export type ParaglideLocale = 'en' | 'pt-br';
 
@@ -10,6 +11,8 @@ export type UserInterfacePreferences = {
 	language: SupportedLanguage;
 	theme: SupportedTheme;
 	menuLabelMode: MenuLabelMode;
+	activeProfessionalId?: EntityId;
+	activeInstitutionId?: EntityId;
 };
 
 export const INTERFACE_PREFERENCES_STORAGE_KEY = 'ossma.interfacePreferences';
@@ -50,6 +53,20 @@ export function normalizeMenuLabelMode(value: unknown): MenuLabelMode {
 	return getDefaultInterfacePreferences().menuLabelMode;
 }
 
+export function normalizeOptionalEntityId(value: unknown): EntityId | undefined {
+	if (typeof value !== 'string') {
+		return undefined;
+	}
+
+	const normalizedValue = value.trim();
+
+	if (!normalizedValue) {
+		return undefined;
+	}
+
+	return normalizedValue;
+}
+
 export function normalizeInterfacePreferences(value: unknown): UserInterfacePreferences {
 	const defaults = getDefaultInterfacePreferences();
 
@@ -58,12 +75,24 @@ export function normalizeInterfacePreferences(value: unknown): UserInterfacePref
 	}
 
 	const preferences = value as Partial<UserInterfacePreferences>;
+	const activeProfessionalId = normalizeOptionalEntityId(preferences.activeProfessionalId);
+	const activeInstitutionId = normalizeOptionalEntityId(preferences.activeInstitutionId);
 
-	return {
+	const normalizedPreferences: UserInterfacePreferences = {
 		language: normalizeLanguage(preferences.language),
 		theme: normalizeTheme(preferences.theme),
 		menuLabelMode: normalizeMenuLabelMode(preferences.menuLabelMode)
 	};
+
+	if (activeProfessionalId) {
+		normalizedPreferences.activeProfessionalId = activeProfessionalId;
+	}
+
+	if (activeInstitutionId) {
+		normalizedPreferences.activeInstitutionId = activeInstitutionId;
+	}
+
+	return normalizedPreferences;
 }
 
 export function toParaglideLocale(language: SupportedLanguage): ParaglideLocale {

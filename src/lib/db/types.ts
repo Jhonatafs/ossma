@@ -22,6 +22,25 @@ export interface LocalizedText {
 	'pt-BR': string;
 }
 
+export type ContactType =
+	| 'phone'
+	| 'email'
+	| 'website'
+	| 'instagram'
+	| 'linkedin'
+	| 'whatsapp'
+	| 'telegram'
+	| 'facebook'
+	| 'youtube'
+	| 'other';
+
+export interface ContactEntry {
+	id: EntityId;
+	type: ContactType;
+	label?: string;
+	value: string;
+}
+
 export interface AppMetadata extends BaseEntity {
 	key: string;
 	value: unknown;
@@ -29,6 +48,7 @@ export interface AppMetadata extends BaseEntity {
 
 export interface Professional extends BaseEntity {
 	fullName: string;
+	prefix?: string;
 	displayName?: string;
 	profession?: string;
 	education?: string;
@@ -37,8 +57,11 @@ export interface Professional extends BaseEntity {
 	phone?: string;
 	email?: string;
 	address?: string;
+	photoDataUrl?: string;
 	logoUri?: string;
 	signatureUri?: string;
+	institutionId?: EntityId;
+	contacts?: ContactEntry[];
 	notes?: string;
 	isActive?: boolean;
 }
@@ -50,7 +73,10 @@ export interface Institution extends BaseEntity {
 	phone?: string;
 	email?: string;
 	address?: string;
+	logoDataUrl?: string;
+	photoDataUrl?: string;
 	logoUri?: string;
+	contacts?: ContactEntry[];
 	footerText?: string;
 	notes?: string;
 	isActive?: boolean;

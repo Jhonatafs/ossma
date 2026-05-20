@@ -37,7 +37,12 @@ localStorage for now.
 ## Local Repositories
 
 Clients and anamneses now have local repositories backed by Dexie. There is no CRUD interface yet.
-The next persistence step is either professional/institution repositories or the first client UI.
+The next client persistence step is the first client UI.
+
+## Profile Repositories
+
+Professionals and institutions now have local repositories backed by Dexie. There is no profile UI
+yet. The next profile step is the Profile UI.
 
 ## Development
 
