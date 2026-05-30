@@ -1,61 +1,12 @@
 import { paraglideVitePlugin } from '@inlang/paraglide-js';
-import { sveltekit } from '@sveltejs/kit/vite';
-import { playwright } from '@vitest/browser-playwright';
-import { VitePWA } from 'vite-plugin-pwa';
 import { defineConfig } from 'vitest/config';
-
-import { APP_CONFIG } from './src/lib/config/app';
+import { playwright } from '@vitest/browser-playwright';
+import { sveltekit } from '@sveltejs/kit/vite';
 
 export default defineConfig({
 	plugins: [
 		sveltekit(),
-		paraglideVitePlugin({ project: './project.inlang', outdir: './src/lib/paraglide' }),
-		VitePWA({
-			registerType: 'autoUpdate',
-			injectRegister: false,
-			includeAssets: ['robots.txt'],
-			manifest: {
-				name: APP_CONFIG.name,
-				short_name: APP_CONFIG.shortName,
-				description: APP_CONFIG.description,
-				start_url: '/',
-				scope: '/',
-				display: 'standalone',
-				orientation: 'any',
-				theme_color: '#111816',
-				background_color: '#111816',
-				lang: APP_CONFIG.defaultLanguage,
-				icons: [
-					{
-						src: '/icons/icon-192.png',
-						sizes: '192x192',
-						type: 'image/png',
-						purpose: 'any'
-					},
-					{
-						src: '/icons/icon-512.png',
-						sizes: '512x512',
-						type: 'image/png',
-						purpose: 'any'
-					},
-					{
-						src: '/icons/maskable-icon-512.png',
-						sizes: '512x512',
-						type: 'image/png',
-						purpose: 'maskable'
-					},
-					{
-						src: '/icons/icon.svg',
-						sizes: 'any',
-						type: 'image/svg+xml',
-						purpose: 'any'
-					}
-				]
-			},
-			workbox: {
-				globPatterns: ['**/*.{js,css,html,svg,png,ico,webmanifest}']
-			}
-		})
+		paraglideVitePlugin({ project: './project.inlang', outdir: './src/lib/paraglide' })
 	],
 	test: {
 		expect: { requireAssertions: true },
@@ -69,10 +20,7 @@ export default defineConfig({
 						provider: playwright(),
 						instances: [{ browser: 'chromium', headless: true }]
 					},
-					include: [
-						'src/**/*.svelte.{test,spec}.{js,ts}',
-						'src/lib/features/**/*-repository.test.ts'
-					],
+					include: ['src/**/*.svelte.{test,spec}.{js,ts}'],
 					exclude: ['src/lib/server/**']
 				}
 			},
@@ -83,10 +31,7 @@ export default defineConfig({
 					name: 'server',
 					environment: 'node',
 					include: ['src/**/*.{test,spec}.{js,ts}'],
-					exclude: [
-						'src/**/*.svelte.{test,spec}.{js,ts}',
-						'src/lib/features/**/*-repository.test.ts'
-					]
+					exclude: ['src/**/*.svelte.{test,spec}.{js,ts}']
 				}
 			}
 		]

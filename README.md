@@ -1,56 +1,42 @@
-# OSSMA
+# sv
 
-Offline-first professional assessment app for sport and health professionals.
+Everything you need to build a Svelte project, powered by [`sv`](https://github.com/sveltejs/cli).
 
-## Tech Stack
+## Creating a project
 
-- SvelteKit
-- TypeScript
-- pnpm
-- Vitest
-- ESLint
-- Prettier
-- adapter-static
-- Dexie.js
+If you're seeing this, you've probably already done this step. Congrats!
 
-## Internationalization
-
-OSSMA uses Paraglide for type-safe internationalization. The initial supported languages are
-English and Brazilian Portuguese.
-
-## PWA
-
-OSSMA uses a PWA foundation to support installability and offline access after the first load.
-For development validation, use the production build and preview server, then test offline mode in
-browser DevTools.
-
-```bash
-pnpm run build
-pnpm run preview
+```sh
+# create a new project
+npx sv create my-app
 ```
 
-## Local Database
+To recreate this project with the same configuration:
 
-OSSMA uses Dexie.js over IndexedDB for local-first domain data. Interface preferences still use
-localStorage for now.
-
-## Local Repositories
-
-Clients and anamneses now have local repositories backed by Dexie. There is no CRUD interface yet.
-The next client persistence step is the first client UI.
-
-## Profile Repositories
-
-Professionals and institutions now have local repositories backed by Dexie. There is no profile UI
-yet. The next profile step is the Profile UI.
-
-## Development
-
-```bash
-pnpm install
-pnpm run dev
-pnpm run format
-pnpm run lint
-pnpm run test
-pnpm run check
+```sh
+# recreate this project
+pnpm dlx sv@0.15.3 create --template minimal --types ts --add prettier eslint vitest="usages:unit,component" sveltekit-adapter="adapter:static" paraglide="languageTags:en, pt-br+demo:no" --install pnpm .
 ```
+
+## Developing
+
+Once you've created a project and installed dependencies with `npm install` (or `pnpm install` or `yarn`), start a development server:
+
+```sh
+npm run dev
+
+# or start the server and open the app in a new browser tab
+npm run dev -- --open
+```
+
+## Building
+
+To create a production version of your app:
+
+```sh
+npm run build
+```
+
+You can preview the production build with `npm run preview`.
+
+> To deploy your app, you may need to install an [adapter](https://svelte.dev/docs/kit/adapters) for your target environment.
