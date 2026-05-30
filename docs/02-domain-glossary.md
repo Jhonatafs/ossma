@@ -87,7 +87,11 @@ Exemplos:
 - `/clients/new`
 - `/clients/[id]`
 - `/professionals`
+- `/professionals/new`
+- `/professionals/[id]`
 - `/institutions`
+- `/institutions/new`
+- `/institutions/[id]`
 - `/evaluations`
 - `/evaluations/new`
 - `/evaluations/[id]`
