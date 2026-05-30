@@ -1,657 +1,489 @@
-# 01 — Visão do Produto
+# 01 — Product Vision
 
-## 1. Identificação
+## 1. Project name
 
-**Nome provisório do projeto:**
-**Tipo de produto:** PWA offline-first  
-**Licença:** MIT  
-**Modelo de distribuição:** Open source e gratuito  
-**Público-alvo:** Profissionais desportivos e de saúde, especialmente autônomos e pequenos estabelecimentos  
-**Status do documento:** Rascunho inicial  
-**Data:** 2026-05-11
+**OSSMA** means **Open Source Sport Management Application**.
 
----
+OSSMA is an open source application for sport, health and related professionals. Its initial focus is client management, general anamnesis, professional evaluations, historical records, report preview in HTML and report export to PDF.
 
-## 2. Resumo Executivo
+The application is designed to be local-first and offline-first, with no mandatory backend, no mandatory online login and no automatic synchronization in the MVP.
 
-A aplicação será uma ferramenta profissional, gratuita, open source e offline-first para realização presencial de avaliações posturais, antropométricas, cineantropométricas e nutricionais.
+## 2. Origin and motivation
 
-O sistema será utilizado exclusivamente por profissionais. Clientes, alunos, pacientes ou atletas não terão acesso direto à aplicação. O profissional realizará a coleta presencial dos dados, registrará as informações no sistema, executará cálculos automáticos baseados em protocolos científicos e exportará relatórios com valor profissional.
+OSSMA was idealized by **JhonFs / Jhonata Sande** from practical experience of approximately seven years working in his father’s bodybuilding gym.
 
-A primeira versão não dependerá de servidor, conta online, sincronização em nuvem ou autenticação remota. Após o primeiro acesso, a aplicação deverá funcionar completamente offline, armazenando os dados localmente no dispositivo do usuário.
+During this period, it became clear that many self-employed physical education professionals, small gyms, clinics and small health/sport establishments do not have easy access to good free applications suited to daily professional use.
 
----
+Spreadsheets, Google Forms and Google Sheets can be useful, but they often become inefficient in daily routines, especially for professionals who work mainly from a mobile phone and need to register clients, collect anamnesis, perform evaluations and generate professional reports.
 
-## 3. Problema
+The first version of the idea appeared around five years ago, initially as a system based on forms and spreadsheets. Later, it evolved into the proposal of a dedicated open source application.
 
-Profissionais autônomos e pequenos estabelecimentos da área esportiva e da saúde frequentemente precisam realizar avaliações físicas, nutricionais e posturais com aparência profissional, mas encontram barreiras como:
+## 3. Problem
 
-- alto custo de softwares especializados;
-- dependência de internet;
-- soluções fechadas e pouco auditáveis;
-- baixa qualidade técnica de planilhas improvisadas;
-- dificuldade de gerar relatórios profissionais;
-- ausência de ferramentas simples para armazenamento histórico local;
-- pouca acessibilidade para profissionais de baixa renda;
-- dificuldade de aplicar protocolos científicos com consistência.
+Professionals and small establishments in sport and health often rely on improvised tools to manage clients, anamnesis, evaluations and reports.
 
-Muitos profissionais acabam usando papel, planilhas ou aplicativos genéricos, o que prejudica padronização, organização, histórico, apresentação e reprodutibilidade dos resultados.
+Common problems include:
 
----
+- poor usability on mobile devices;
+- dependence on internet connection;
+- fragile organization of client history;
+- lack of structured professional records;
+- difficulty generating clear professional reports;
+- weak professional or institutional identity in exported documents;
+- dependence on generic tools such as spreadsheets;
+- cost or access barriers in specialized tools.
 
-## 4. Proposta de Valor
+## 4. Initial target audience
 
-A aplicação pretende oferecer uma solução local, gratuita e tecnicamente confiável para que profissionais possam:
+The initial target audience is:
 
-- cadastrar clientes;
-- registrar anamneses;
-- realizar avaliações presenciais;
-- aplicar protocolos científicos;
-- gerar cálculos automáticos;
-- acompanhar evolução;
-- emitir relatórios profissionais em PDF;
-- manter dados armazenados localmente;
-- usar a ferramenta sem depender de internet após o primeiro acesso;
-- portar dados manualmente entre dispositivos por exportação e importação.
+- self-employed physical education professionals;
+- personal trainers;
+- small gyms;
+- small clinics;
+- small sport/health establishments;
+- professionals who perform in-person evaluations and need organized records and exportable reports.
 
-A proposta central é entregar uma ferramenta acessível, robusta e de código aberto para profissionais que precisam de qualidade técnica sem depender de mensalidades ou infraestrutura complexa.
+The evaluated person is not the primary user of the application in the MVP. The main user is the professional or establishment that registers clients, performs evaluations and generates reports.
 
----
+## 5. Product value proposition
 
-## 5. Visão do Produto
+OSSMA should offer a free, open source, local-first and offline-first application that allows professionals and small establishments to:
 
-Construir uma PWA offline-first, open source e gratuita para apoiar profissionais desportivos e de saúde na realização presencial de avaliações físicas, posturais, cineantropométricas e nutricionais, com cálculos científicos, histórico local e relatórios profissionais exportáveis.
+- register clients;
+- record general anamnesis;
+- perform professional evaluations;
+- preserve historical evaluation data;
+- preview reports in HTML;
+- export reports to PDF;
+- identify the professional responsible for the evaluation;
+- show institutional data in reports when applicable;
+- work without a mandatory backend;
+- work without mandatory online login;
+- work across multiple platforms through PWA technology.
 
-A aplicação deve ser simples o suficiente para ser usada por profissionais autônomos e pequenos estabelecimentos, mas rigorosa o suficiente para preservar protocolos, unidades, referências, limitações e dados brutos utilizados nos cálculos.
+## 6. Initial technical strategy
+
+OSSMA will initially be developed as a **PWA**.
+
+The intended platforms are:
+
+- Android;
+- iOS;
+- macOS;
+- Windows;
+- Linux;
+- ChromeOS;
+- modern browsers.
+
+The MVP will store data locally on the user’s device/browser. It will not provide automatic synchronization between devices.
+
+## 7. Technical principles
+
+The project must follow these technical principles:
+
+- open source;
+- free to use;
+- local-first;
+- offline-first;
+- no mandatory backend in the MVP;
+- no mandatory online login in the MVP;
+- no automatic synchronization in the MVP;
+- no local password in the MVP;
+- no local encryption in the MVP;
+- incremental architecture;
+- small and reviewable milestones;
+- clear technical documentation;
+- structured data as the source of truth;
+- generated reports as derived artifacts;
+- code, technical names and code comments in technical English;
+- initial documentation in Brazilian Portuguese;
+- internationalization from the beginning;
+- canonical units for stored measurable data.
+
+Initial stack decisions:
+
+- **SvelteKit** as the application framework;
+- **TypeScript** as the programming language;
+- **pnpm** as the package manager;
+- **Paraglide** for internationalization;
+- **Dexie.js / IndexedDB** as the preferred local database strategy, unless a better technical option is justified later;
+- **PWA** as the multiplatform distribution strategy.
+
+## 8. Local/offline model
+
+In the MVP, OSSMA will use a local/offline data model.
+
+This means:
+
+- data is stored on the user’s device/browser;
+- no server is required for the core MVP workflow;
+- no online account is required;
+- no automatic synchronization exists between devices;
+- backup is manual;
+- the safety of the device is the responsibility of the user;
+- clearing browser data or removing the application may cause data loss if no backup exists.
 
----
+The onboarding, settings and help sections must explain this clearly.
 
-## 6. Objetivos do Produto
+## 9. MVP scope
 
-### 6.1 Objetivo Geral
+The MVP includes:
 
-Fornecer uma aplicação profissional e acessível para coleta, cálculo, organização e exportação de avaliações presenciais nas áreas de saúde, exercício físico, composição corporal, postura, nutrição e desempenho.
+- PWA local/offline application foundation;
+- onboarding with application name, basic explanation, language selection, theme selection and mini tutorial;
+- settings/help access to onboarding-related information;
+- professional profile registration;
+- institution profile registration;
+- optional link between professional and institution;
+- client registration;
+- client photo;
+- professional/institution logo;
+- maximum initial image size of **2MB** per photo/logo;
+- mandatory general client anamnesis;
+- anthropometric evaluation;
+- cineanthropometric evaluation;
+- protocol selection when required by the evaluation;
+- evaluation start requiring evaluation type, client and professional;
+- incomplete evaluation draft after the required initial data exists;
+- progressive saving during the evaluation process;
+- historical snapshots of relevant client, professional and institution data;
+- storage of raw data, calculable data, calculation results and metadata;
+- regenerable HTML report based on saved structured data;
+- PDF export on demand;
+- textual professional stamp in reports;
+- institutional header in reports when the professional has a linked institution;
+- truth/awareness confirmation for anamnesis and evaluation answers;
+- manual local backup;
+- backup package as a **zip file containing JSON + images**, with room for technical refinement.
 
-### 6.2 Objetivos Específicos
+## 10. Out of MVP scope
 
-- Permitir funcionamento completo offline após o primeiro acesso.
-- Armazenar dados localmente no dispositivo do usuário.
-- Permitir cadastro de instituições, profissionais e clientes.
-- Registrar autoria profissional de cada avaliação.
-- Gerar relatórios com identificação profissional e institucional.
-- Organizar avaliações por cliente e por data.
-- Preservar histórico de avaliações.
-- Executar cálculos automáticos com base em protocolos científicos.
-- Informar protocolos, unidades, limitações e referências utilizadas.
-- Permitir exportação manual de dados para backup.
-- Permitir importação manual de dados em outro dispositivo.
-- Ser gratuito e distribuído sob licença MIT.
-- Ser desenvolvido com tecnologias acessíveis para manutenção por desenvolvedor individual.
+The following items are not part of the MVP:
 
----
+- workout plan module;
+- diet module;
+- food recommendation module;
+- sport training protocol module;
+- nutritional evaluation;
+- postural evaluation;
+- cardiorespiratory evaluation;
+- physiotherapy evaluation;
+- support/relation evaluation;
+- combined evaluation execution;
+- fused reports from multiple evaluation types;
+- online login;
+- mandatory backend;
+- automatic synchronization between devices;
+- local password;
+- local encryption;
+- team permission system;
+- active/inactive/archived status for clients;
+- active/inactive/archived status for professionals;
+- digitalized signature;
+- storing exported PDF files in the database;
+- separate native applications for each platform.
 
-## 7. Público-Alvo
+These items may be considered in future versions.
 
-### 7.1 Público Principal
+## 11. Core entities
 
-- Profissionais de Educação Física.
-- Personal trainers.
-- Fisioterapeutas.
-- Nutricionistas.
-- Treinadores esportivos.
-- Professores de musculação.
-- Professores de artes marciais.
-- Avaliadores físicos.
-- Pequenas academias.
-- Pequenas clínicas.
-- Consultórios independentes.
-- Projetos sociais esportivos.
-- Pequenas equipes esportivas.
+OSSMA’s initial domain is organized around four core concepts:
 
-### 7.2 Características do Público
+1. **Client**;
+2. **Professional**;
+3. **Institution**;
+4. **Evaluation**.
 
-O público-alvo tende a ter uma ou mais das seguintes características:
+### 11.1 Client
 
-- baixo orçamento para software;
-- necessidade de trabalhar offline;
-- uso em celular, notebook ou computador simples;
-- atendimento presencial;
-- necessidade de gerar relatórios para clientes;
-- pouca ou nenhuma infraestrutura tecnológica própria;
-- preferência por ferramenta simples, direta e sem mensalidade;
-- necessidade de preservar os dados sob controle local.
+The client is the person being evaluated or followed.
 
----
+A client has registration data, a general anamnesis, evaluations, history and exportable reports.
 
-## 8. Usuários do Sistema
+In the MVP, the client is not directly linked to a professional or institution. The historical relationship is recorded through evaluations.
 
-A aplicação será de uso exclusivo dos profissionais ou da instituição local que realiza os atendimentos.
+### 11.2 Professional
 
-### 8.1 Profissional Autônomo
+The professional is the person who performs an evaluation.
 
-Usuário que trabalha sozinho e utiliza a aplicação em um ou mais dispositivos, sem sincronização automática entre eles.
+Every evaluation must have exactly one responsible professional.
 
-Exemplo:
+The professional profile exists to identify and validate who performed the evaluation, both inside the system and in exported reports.
 
-```text
-Professor autônomo usa a aplicação no celular.
-Os dados ficam salvos apenas naquele celular.
-Para usar os mesmos dados no computador, ele deve exportar e importar manualmente.
-```
+The professional’s data must appear in the report as a textual professional stamp, similar in purpose to professional identification in medical prescriptions or exams.
 
-### 8.2 Pequena Instituição
+A professional may be linked to at most one institution.
 
-Academia, clínica, consultório, projeto social ou equipe que utiliza a aplicação em dispositivo compartilhado.
+### 11.3 Institution
 
-Exemplo:
+The institution represents a gym, clinic, hospital, office, team or similar organization.
 
-```text
-Academia X possui um computador compartilhado.
-Vários profissionais usam a mesma instalação local.
-Cada avaliação registra qual profissional a realizou.
-```
+The institution profile exists mainly for identification and institutional/marketing purposes in reports.
 
-### 8.3 Cliente, Aluno, Paciente ou Atleta
+If the professional responsible for an evaluation is linked to an institution, the institution data must appear in the report header.
 
-Pessoa avaliada pelo profissional. Não terá acesso direto ao sistema na versão inicial. Receberá relatórios, fichas, recomendações ou documentos exportados pelo profissional.
+An institution may exist without any linked professional.
 
----
+### 11.4 Evaluation
 
-## 9. Contextos de Uso
+The evaluation is the central historical record of the system.
 
-### 9.1 Uso Individual
+Each evaluation belongs to a client and is performed by exactly one professional.
 
-- Um profissional instala a PWA em seu dispositivo.
-- Cadastra seu perfil profissional.
-- Cadastra clientes.
-- Realiza avaliações presencialmente.
-- Gera relatórios em PDF.
-- Faz backup manual quando desejar.
+The evaluation stores the data needed to preserve what happened at the time of the professional procedure.
 
-### 9.2 Uso em Dispositivo Compartilhado
+## 12. Evaluation workflow
 
-- Uma instituição cadastra seus dados.
-- Cadastra profissionais vinculados.
-- O profissional ativo é selecionado antes da avaliação.
-- A avaliação registra quem realizou o atendimento.
-- A separação entre profissionais é organizacional, não uma camada robusta de segurança.
+Before data collection starts, the system must require:
 
-### 9.3 Uso em Múltiplos Dispositivos
+1. evaluation type;
+2. client;
+3. professional evaluator.
 
-- Cada dispositivo possui seus próprios dados locais.
-- Não haverá sincronização automática na primeira versão.
-- A transferência de dados ocorrerá por exportação e importação manual.
+After these three items exist, the evaluation may be saved as an incomplete draft.
 
----
+The core workflow is:
 
-## 10. Princípios do Produto
+1. choose evaluation type;
+2. choose client;
+3. choose professional evaluator;
+4. choose protocol, when applicable;
+5. collect data;
+6. progressively save the draft;
+7. review anamnesis and evaluation-specific information;
+8. register truth/awareness confirmation;
+9. preview the report in HTML;
+10. export to PDF, if desired.
 
-### 10.1 Offline-First
+The system may allow the user to start the evaluation flow from different places, such as the client page or the evaluations area. Internally, the same rules apply.
 
-A aplicação deve funcionar completamente offline após o primeiro acesso. Funcionalidades essenciais não devem depender de conexão com internet.
+## 13. Initial evaluation types and technical source files
 
-### 10.2 Local-First
+The initial supported evaluation types are:
 
-Os dados pertencem à instalação local do usuário e ficam armazenados no dispositivo utilizado.
+- **AnthropometricEvaluation**;
+- **CineanthropometricEvaluation**.
 
-### 10.3 Sem Servidor Obrigatório
+The detailed fields, technical rules and formulas are defined in dedicated technical files:
 
-A primeira versão não dependerá de backend, autenticação online ou banco de dados remoto.
+- `ficha-de-anamnese-geral-do-cliente.md` defines the general client anamnesis fields;
+- `mapa-tecnico-de-calculo-para-antropometrica.md` defines the anthropometric evaluation fields, calculations and technical rules;
+- `mapa_tecnico_de_cálculo_para_cineantropometria(1).md` defines the cineanthropometric evaluation fields, calculations and technical rules.
 
-### 10.4 Gratuito e Open Source
+These files are treated as the technical source for detailed form fields, formulas and evaluation-specific rules. The product vision document does not duplicate all field-level content.
 
-A aplicação será gratuita e distribuída com licença MIT, permitindo uso, estudo, modificação e redistribuição.
+## 14. Protocols
 
-### 10.5 Rigor Científico
+Some evaluation types may require protocol selection before or during data collection.
 
-Cálculos, protocolos e classificações devem ser documentados, testáveis e associados às suas referências e limitações.
+For example, in anthropometric evaluation, the professional may choose a specific skinfold protocol such as a 3-site or 7-site protocol depending on the intended calculation.
 
-### 10.6 Simplicidade Operacional
+A protocol may define:
 
-A aplicação deve ser simples de usar, instalar, manter e entender. O público-alvo não deve depender de conhecimento técnico avançado.
+- required fields;
+- optional fields;
+- formulas;
+- calculation rules;
+- report sections;
+- interpretation constraints;
+- required metadata.
 
-### 10.7 Transparência
+The MVP supports the protocol structure needed for anthropometric and cineanthropometric evaluations, according to the technical source files.
 
-A aplicação deve deixar claro quando um dado é objetivo, subjetivo, estimado, derivado ou dependente da interpretação profissional.
+## 15. Historical snapshots
 
-### 10.8 Responsabilidade Profissional
+An evaluation must preserve the facts of the moment in which it was performed or finalized.
 
-A aplicação apoia o profissional, mas não substitui julgamento clínico, competência legal, formação técnica ou responsabilidade profissional.
+For this reason, each evaluation must store snapshots of the relevant data from:
 
----
+- client;
+- professional;
+- institution, when applicable.
 
-## 11. Escopo Funcional Geral
+This prevents future profile changes from changing the historical meaning of older evaluations.
 
-A aplicação deverá conter, em sua visão completa:
+Example:
 
-- cadastro de instituições;
-- cadastro de profissionais;
-- cadastro de clientes;
-- seleção de instituição ativa;
-- seleção de profissional ativo;
-- registro de anamnese;
-- avaliação postural;
-- avaliação antropométrica;
-- avaliação cineantropométrica;
-- avaliação nutricional;
-- cálculos automáticos;
-- histórico de avaliações;
-- comparação de evolução;
-- geração de relatórios profissionais;
-- exportação em PDF;
-- exportação manual de backup;
-- importação manual de backup;
-- configurações locais;
-- modelos de relatório.
+If a professional changes institution later, an older evaluation must still show the institution linked to the professional at the moment of that evaluation.
 
----
+## 16. Anamnesis
 
-## 12. Módulos Avaliativos
+The client must have a mandatory general anamnesis in the registration flow.
 
-### 12.1 Avaliação Postural
+The general anamnesis details are defined in:
 
-Avaliação presencial com foco em fisioterapeutas e profissionais que atuam com movimento, postura, reabilitação, prevenção e acompanhamento funcional.
+- `ficha-de-anamnese-geral-do-cliente.md`.
 
-O módulo deverá permitir registro de:
+Each evaluation type may also include evaluation-specific anamnesis/checklist fields.
 
-- queixa principal;
-- histórico de traumas e cirurgias;
-- hábitos ergonômicos;
-- inspeção estática em plano anterior;
-- inspeção estática em plano posterior;
-- inspeção estática em plano lateral;
-- avaliação funcional;
-- mobilidade;
-- amplitude de movimento;
-- testes funcionais simples;
-- observações profissionais.
+When an evaluation uses an answer from the general anamnesis, the system simply displays the existing answer.
 
-A avaliação será baseada em coleta presencial. A aplicação não fará análise postural automática por fotos.
+If the user changes an answer that came from the general anamnesis during an evaluation, the system must ask whether the general client anamnesis should also be updated.
 
-### 12.2 Avaliação Antropométrica
+The evaluation must always preserve the answer used in its own historical record.
 
-Avaliação presencial com foco em musculação, estética, hipertrofia, acompanhamento físico e evolução corporal.
+## 17. Truth and awareness confirmation
 
-O módulo deverá permitir registro de:
+Every evaluation must register confirmation that the client/professional reviewed the information and that the client declared the answers to be true to the best of their knowledge.
 
-- massa corporal;
-- estatura;
-- envergadura;
-- perímetros segmentares;
-- simetrias bilaterais;
-- índices proporcionais;
-- relação cintura-quadril;
-- relação cintura-estatura;
-- índice ombro-cintura;
-- definição muscular aparente;
-- pontos fortes e fracos;
-- observações relacionadas ao treinamento.
+This confirmation must appear in the report.
 
-Este módulo é candidato principal para o MVP inicial por entregar valor prático com menor complexidade científica que a cineantropometria completa.
+The confirmation is not a medical diagnosis and does not transfer professional judgment to the application. It records that the information was declared, reviewed and used as part of the professional procedure.
 
-### 12.3 Avaliação Nutricional
+## 18. Reports
 
-Avaliação presencial geral com foco em dieta, comportamento alimentar, necessidades energéticas, recomendações e contexto desportivo.
+Reports must be generated as HTML views from structured saved data.
 
-O módulo deverá permitir registro de:
+The user may preview the report inside the application and export it to PDF when desired.
 
-- recordatório de 24 horas;
-- diário alimentar;
-- frequência alimentar;
-- preferências;
-- alergias;
-- intolerâncias;
-- hábito intestinal;
-- hidratação;
-- sinais clínico-nutricionais;
-- dados bioquímicos;
-- rotina de treinamento;
-- suplementação;
-- energia durante o treino;
-- recuperação;
-- tolerância gastrointestinal;
-- estimativas de necessidade energética;
-- distribuição de macronutrientes.
+The database must not store exported PDF files.
 
-A prescrição dietética individualizada deve ser realizada por profissional legalmente habilitado.
+The report must include:
 
-### 12.4 Avaliação Cineantropométrica
+- evaluation type;
+- client data snapshot;
+- professional data snapshot;
+- institution data snapshot, when applicable;
+- collected data;
+- selected protocol, when applicable;
+- calculated results;
+- relevant anamnesis answers;
+- observations;
+- truth/awareness confirmation;
+- professional textual stamp;
+- institutional header, when applicable.
 
-Avaliação técnica avançada com foco em atletas, desempenho, composição corporal, morfologia, proporcionalidade e bioenergética.
+The HTML report is a generated view. The PDF is an exported artifact. The structured evaluation data is the source of truth.
 
-O módulo deverá permitir registro de:
+## 19. Images
 
-- metadados da coleta;
-- idade cronológica;
-- maturação biológica em jovens atletas;
-- histórico de lesões;
-- lado dominante;
-- modalidade esportiva;
-- horário da coleta;
-- medidas básicas;
-- dobras cutâneas;
-- perímetros;
-- diâmetros ósseos;
-- modelo de 5 componentes;
-- somatotipo Heath-Carter;
-- somatocarta;
-- SAD;
-- Phantom Z-scores;
-- índices de performance;
-- TMB, GET e disponibilidade energética.
+Images are part of the MVP.
 
-Este módulo deve ser implementado de forma modular e posterior ao núcleo inicial, devido à maior complexidade científica e operacional.
+Supported image types:
 
----
+- client photo;
+- professional logo/image, when applicable;
+- institution logo.
 
-## 13. Relatórios Profissionais
+Initial maximum size:
 
-Os relatórios exportados deverão ter aparência técnica e valor profissional.
+- **2MB per image**.
 
-Cada relatório deverá conter, conforme aplicável:
+The application must handle images carefully to preserve quality while avoiding damage to performance, local database size, backup size and PWA usability.
 
-- nome da instituição;
-- logotipo da instituição;
-- dados do profissional;
-- profissão ou formação;
-- registro profissional, quando houver;
-- assinatura ou identificação profissional, quando houver;
-- dados do cliente;
-- data da avaliação;
-- tipo de avaliação;
-- dados coletados;
-- cálculos realizados;
-- protocolo utilizado;
-- referência do protocolo;
-- interpretação profissional;
-- observações;
-- recomendações;
-- data de emissão;
-- rodapé profissional;
-- aviso técnico;
-- numeração de páginas.
+The technical storage strategy may use database storage, local file-like storage or references, as long as backup and restoration remain reliable.
 
-O relatório deve preservar os dados usados no momento da emissão. Alterações futuras no perfil profissional ou institucional não devem modificar relatórios já emitidos.
+## 20. Backup
 
----
+The MVP backup must be manual and local.
 
-## 14. Armazenamento e Portabilidade
+The intended backup package is:
 
-### 14.1 Armazenamento Local
+- a **zip file** containing:
+  - structured JSON data;
+  - images required for restoration.
 
-Os dados serão salvos localmente no dispositivo do usuário, preferencialmente usando IndexedDB ou tecnologia equivalente para persistência local em PWA.
+The backup must restore the functional local application data, including:
 
-### 14.2 Sem Sincronização Inicial
+- clients;
+- professionals;
+- institutions;
+- anamnesis data;
+- evaluations;
+- snapshots;
+- calculation data/results;
+- settings required for use;
+- images, if required for restoration;
+- schema/version metadata.
 
-A primeira versão não terá sincronização automática entre dispositivos. Um celular, computador ou tablet terá sua própria base local.
+The backup is not meant to store exported PDF files.
 
-### 14.3 Exportação e Importação Manual
+Exported PDFs are user-owned documents outside the database and outside the core backup responsibility.
 
-A aplicação deverá permitir:
+## 21. Units and internationalization
 
-- exportar backup local;
-- importar backup previamente gerado;
-- transferir dados manualmente entre dispositivos;
-- preservar estrutura de dados e histórico.
+OSSMA must support internationalization from the start.
 
-A estratégia exata de mesclagem, substituição ou versionamento será definida em documento próprio.
+Initial languages:
 
----
+- English;
+- Brazilian Portuguese.
 
-## 15. Segurança, Privacidade e Responsabilidade
+Public module names must be in English.
 
-A aplicação não terá foco em segurança robusta na primeira versão. Não haverá administrador, senha obrigatória, controle avançado de permissões ou autenticação online.
+Public module naming pattern:
 
-Entretanto, por lidar com dados sensíveis, a aplicação deverá ser transparente sobre suas limitações.
+- **PascalCase**;
+- example pattern: `FirstSecondThird`;
+- examples: `ClientProfile`, `ProfessionalProfile`, `InstitutionProfile`, `AnthropometricEvaluation`, `CineanthropometricEvaluation`.
 
-A aplicação deverá informar ao usuário que:
+Measured data must be stored using canonical units defined by data type.
 
-- os dados são armazenados localmente;
-- a proteção do dispositivo é responsabilidade do usuário;
-- backups exportados devem ser armazenados com cuidado;
-- o uso em dispositivo compartilhado exige responsabilidade dos profissionais envolvidos;
-- a separação entre instituições e profissionais é organizacional, não uma barreira forte de segurança;
-- exclusão, backup e portabilidade dos dados dependem da ação do usuário.
+Examples:
 
-Recursos avançados de segurança poderão ser adicionados em versões futuras, como senha local, criptografia de backup e sincronização segura opcional.
+- body mass in `kg`;
+- height/stature according to field requirement, with conversion when needed;
+- skinfolds in `mm`;
+- perimeters in `cm`;
+- diameters in `cm`;
+- temperature in `°C`, when applicable;
+- age in complete years;
+- pediatric curve age in months, when applicable.
 
----
+Canonical storage units allow future interface conversion according to language, region or configuration.
 
-## 16. Fora do Escopo Inicial
+## 22. Initial implementation roadmap
 
-A primeira versão não deverá incluir:
+The initial implementation should be incremental and avoid large destructive changes.
 
-- app do cliente final;
-- login online;
-- autenticação remota;
-- sincronização automática;
-- servidor obrigatório;
-- SaaS;
-- painel web administrativo;
-- permissões complexas;
-- avaliação automática por foto;
-- diagnóstico automatizado;
-- inteligência artificial para laudo clínico;
-- prescrição automática sem validação profissional;
-- integração com WhatsApp;
-- integração com e-mail;
-- pagamentos;
-- prontuário médico completo;
-- teleatendimento;
-- assinatura digital jurídica avançada;
-- marketplace de protocolos.
+The refined milestone order is:
 
----
+1. **Static HTML navigation prototype**  
+   Build the complete navigation flow using simple static screens and no real data persistence.
 
-## 17. Produto Mínimo Viável — MVP
+2. **Static HTML form prototype**  
+   Build the main forms as static/local UI prototypes, focusing on structure, fields and workflow before database integration.
 
-O MVP deve entregar uma versão pequena, funcional e útil da aplicação, sem tentar cobrir todos os módulos avançados.
+3. **Local database foundation**  
+   Add Dexie.js/IndexedDB schema and local persistence for the core entities.
 
-### 17.1 MVP 1 — Núcleo Local e Antropometria Básica
+4. **Local domain layer**  
+   Implement local business rules, calculation functions and report data preparation. This is the local “backend-like” layer, but it does not require a server.
 
-Funcionalidades recomendadas para a primeira entrega:
+5. **Reports, export and backup**  
+   Implement HTML report generation, PDF export, manual backup and restoration.
 
-- instalação como PWA;
-- funcionamento offline;
-- banco local;
-- cadastro de instituição;
-- cadastro de profissional;
-- seleção de profissional ativo;
-- cadastro de cliente;
-- anamnese geral simples;
-- avaliação antropométrica básica;
-- cálculos antropométricos iniciais;
-- relatório PDF profissional;
-- exportação manual de backup;
-- importação manual de backup.
+6. **Visual refinement and CSS**  
+   Improve styling, responsiveness, accessibility and final interface polish.
 
-### 17.2 Cálculos Iniciais Sugeridos para o MVP
+CSS needed for basic usability may exist before milestone 6, but visual refinement is intentionally kept as a later stage to avoid polishing screens before the workflow and data model are stable.
 
-- IMC;
-- relação cintura-quadril;
-- relação cintura-estatura;
-- índice ombro-cintura;
-- simetria bilateral de perímetros;
-- diferenças segmentares entre avaliações;
-- evolução de massa corporal;
-- evolução de perímetros.
+## 23. Future modules
 
-### 17.3 Critério de Sucesso do MVP
+After the MVP foundation, OSSMA may evolve to include:
 
-O MVP será considerado funcional quando um profissional conseguir:
+- workout plans;
+- diets;
+- food recommendations;
+- sport training protocols;
+- nutritional evaluation;
+- postural evaluation;
+- cardiorespiratory evaluation;
+- physiotherapy evaluation;
+- support/relation evaluation;
+- combined evaluations;
+- advanced report models;
+- digitalized signature;
+- local password;
+- local encryption;
+- network/cloud backup;
+- optional synchronization;
+- additional exports;
+- optional collaborative features if a backend is ever introduced.
 
-1. abrir a aplicação sem internet após o primeiro acesso;
-2. cadastrar seus dados profissionais;
-3. cadastrar um cliente;
-4. realizar uma avaliação antropométrica presencial;
-5. gerar cálculos básicos;
-6. exportar um relatório profissional em PDF;
-7. exportar um backup local;
-8. importar esse backup em outra instalação.
+## 24. MVP summary
 
----
+The OSSMA MVP must deliver a local/offline PWA that allows the user to register professionals, institutions and clients; collect a mandatory general anamnesis; perform anthropometric and cineanthropometric evaluations; save incomplete drafts progressively; preserve historical snapshots; regenerate HTML reports from structured data; export PDF reports; manage lightweight images; and perform manual backup through a zip package containing JSON and required images.
 
-## 18. Roadmap Inicial
-
-### Fase 1 — Fundação
-
-- PWA offline-first.
-- Banco local.
-- Estrutura de projeto.
-- Cadastro de instituição.
-- Cadastro de profissional.
-- Cadastro de cliente.
-- Backup e importação.
-
-### Fase 2 — Avaliação Antropométrica
-
-- Formulário de avaliação.
-- Cálculos básicos.
-- Histórico por cliente.
-- Relatório PDF.
-- Comparação entre avaliações.
-
-### Fase 3 — Avaliação Postural
-
-- Anamnese postural.
-- Inspeção estática.
-- Avaliação funcional.
-- Relatório postural.
-
-### Fase 4 — Avaliação Nutricional
-
-- Anamnese dietética.
-- Registro de exames.
-- Rotina de treino.
-- Cálculo de necessidades energéticas.
-- Recomendações e relatório nutricional.
-
-### Fase 5 — Cineantropometria
-
-- Perfil ISAK completo.
-- Somatotipo Heath-Carter.
-- Modelo de 5 componentes.
-- Phantom Z-scores.
-- Índices de performance.
-- Relatório técnico avançado.
-
-### Fase 6 — Recursos Avançados
-
-- senha local opcional;
-- backup criptografado;
-- sincronização opcional;
-- modelos personalizados de relatório;
-- anexos;
-- assinatura digitalizada;
-- empacotamento desktop/mobile, se necessário.
-
----
-
-## 19. Requisitos de Qualidade
-
-A aplicação deverá buscar:
-
-- baixo consumo de recursos;
-- boa usabilidade em telas pequenas;
-- clareza nos formulários;
-- validação de unidades;
-- mensagens de erro compreensíveis;
-- preservação dos dados brutos;
-- rastreabilidade dos cálculos;
-- testes automatizados para fórmulas;
-- exportação de documentos legíveis;
-- funcionamento confiável offline;
-- código organizado e documentado;
-- facilidade de manutenção por desenvolvedor individual.
-
----
-
-## 20. Critérios de Sucesso do Produto
-
-O produto será bem-sucedido se conseguir:
-
-- ser usado por profissionais sem mensalidade;
-- funcionar de forma confiável offline;
-- gerar relatórios com aparência profissional;
-- reduzir dependência de planilhas improvisadas;
-- preservar histórico de avaliações;
-- aplicar cálculos de forma consistente;
-- permitir auditoria das fórmulas por ser open source;
-- ser simples o suficiente para adoção por profissionais autônomos;
-- ser modular o suficiente para crescer com novos protocolos.
-
----
-
-## 21. Riscos Principais
-
-### 21.1 Escopo Excessivo
-
-O produto envolve várias áreas técnicas e científicas. O risco de tentar implementar tudo de uma vez é alto.
-
-Mitigação: desenvolver por fases, começando pelo núcleo local e antropometria básica.
-
-### 21.2 Erros em Cálculos Científicos
-
-Fórmulas mal implementadas podem gerar resultados incorretos.
-
-Mitigação: documentar referências, unidades, pré-condições e criar testes automatizados para cada fórmula.
-
-### 21.3 Perda de Dados Locais
-
-Como os dados ficam no dispositivo, o usuário pode perdê-los em caso de dano, limpeza do navegador ou troca de aparelho.
-
-Mitigação: implementar backup/exportação desde o MVP e avisos claros sobre responsabilidade do usuário.
-
-### 21.4 Expectativa de Segurança Maior que a Real
-
-Usuários podem imaginar que a separação entre profissionais é uma segurança forte.
-
-Mitigação: deixar claro que a separação é organizacional e que o controle do dispositivo é responsabilidade do usuário.
-
-### 21.5 Complexidade da Cineantropometria
-
-O módulo cineantropométrico exige grande quantidade de medidas, protocolos e referências.
-
-Mitigação: implementá-lo depois da base da aplicação e de avaliações mais simples.
-
----
-
-## 22. Decisões Consolidadas
-
-- A aplicação será uma PWA.
-- A aplicação será offline-first.
-- O uso será exclusivamente profissional.
-- Avaliações serão presenciais.
-- Não haverá avaliação automática por fotos.
-- Os dados serão locais.
-- Não haverá sincronização automática na primeira versão.
-- Não haverá backend obrigatório na primeira versão.
-- Não haverá conta online.
-- Não haverá administrador.
-- A separação entre profissionais será organizacional.
-- O projeto será gratuito.
-- O projeto será open source.
-- A licença será MIT.
-- O primeiro foco funcional será a avaliação antropométrica básica.
-- A cineantropometria completa será tratada como módulo avançado.
-
----
-
-## 23. Questões em Aberto
-
-As seguintes decisões ainda precisam ser fechadas em documentos posteriores:
-
-- nome oficial da aplicação;
-- identidade visual;
-- termo principal para a pessoa avaliada: cliente, aluno, paciente, atleta ou avaliado;
-- stack técnica definitiva;
-- formato exato do backup;
-- estratégia de importação: substituir, mesclar ou escolher;
-- lista inicial de protocolos antropométricos;
-- lista inicial de fórmulas nutricionais;
-- modelo visual do relatório PDF;
-- estrutura detalhada do banco local;
-- estratégia de versionamento de dados;
-- padrão de testes para fórmulas;
-- avisos legais e termos de responsabilidade;
-- política de contribuição open source.
+The goal of the MVP is not to cover the entire professional routine of sport and health professionals. Its goal is to build a reliable, extensible and well-documented foundation for professional evaluations.

@@ -1,64 +1,32 @@
 <script lang="ts">
-	import { goto } from '$app/navigation';
 	import { resolve } from '$app/paths';
-	import { page } from '$app/state';
-	import { browser, dev } from '$app/environment';
-	import { onMount } from 'svelte';
-
-	import { initializeOnboardingState } from '$lib/features/onboarding/onboarding-store';
-	import { initializeInterfacePreferences } from '$lib/features/settings/interface-preferences-store';
-	import AppShell from '$lib/shared/components/layout/AppShell.svelte';
-
-	import '../app.css';
 	import favicon from '$lib/assets/favicon.svg';
 
 	let { children } = $props();
-	let isClientReady = $state(false);
-
-	async function registerServiceWorker() {
-		if (dev || !browser || !('serviceWorker' in navigator)) {
-			return;
-		}
-
-		try {
-			await navigator.serviceWorker.register('/sw.js', { scope: '/' });
-		} catch {
-			// Development and unsupported environments can run without the generated service worker.
-		}
-	}
-
-	function redirectForOnboarding(pathname: string) {
-		const state = initializeOnboardingState();
-		const isOnboardingRoute = pathname === '/onboarding';
-
-		if (!state.completed && !isOnboardingRoute) {
-			void goto(resolve('/onboarding'));
-			return;
-		}
-
-		if (state.completed && isOnboardingRoute) {
-			void goto(resolve('/'));
-		}
-	}
-
-	onMount(() => {
-		initializeInterfacePreferences();
-		isClientReady = true;
-		redirectForOnboarding(page.url.pathname);
-		void registerServiceWorker();
-	});
-
-	$effect(() => {
-		if (!isClientReady) {
-			return;
-		}
-
-		redirectForOnboarding(page.url.pathname);
-	});
 </script>
 
 <svelte:head><link rel="icon" href={favicon} /></svelte:head>
 
-<AppShell>
+<a href="#main-content">Skip to main content</a>
+
+<header>
+	<p><a href={resolve('/')}>OSSMA</a></p>
+
+	<nav aria-label="Main navigation">
+		<ul>
+			<li><a href={resolve('/onboarding')}>Onboarding</a></li>
+			<li><a href={resolve('/clients')}>Clients</a></li>
+			<li><a href={resolve('/professionals')}>Professionals</a></li>
+			<li><a href={resolve('/institutions')}>Institutions</a></li>
+			<li><a href={resolve('/evaluations')}>Evaluations</a></li>
+			<li><a href={resolve('/backup')}>Backup</a></li>
+			<li><a href={resolve('/settings')}>Settings</a></li>
+			<li><a href={resolve('/help')}>Help</a></li>
+			<li><a href={resolve('/documentation')}>Documentation</a></li>
+		</ul>
+	</nav>
+</header>
+
+<main id="main-content">
 	{@render children()}
-</AppShell>
+</main>

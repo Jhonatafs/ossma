@@ -1,33 +1,26 @@
 node_modules
-.pnpm-store
 
-# SvelteKit / build output
-.svelte-kit
-build
-dist
+# Output
+.output
+.vercel
+.netlify
+.wrangler
+/.svelte-kit
+/build
 
-# Environment
-.env
-.env.*
-!.env.example
-
-# Test / coverage
-coverage
-.playwright
-
-# Logs
-*.log
-log.txt
-
-# OS / editor
+# OS
 .DS_Store
 Thumbs.db
 
-# Local IDE
-.vscode/*
-!.vscode/extensions.json
-!.vscode/settings.json
+# Env
+.env
+.env.*
+!.env.example
+!.env.test
 
+# Vite
+vite.config.js.timestamp-*
+vite.config.ts.timestamp-*
 # Paraglide
 src/lib/paraglide
 project.inlang/cache/

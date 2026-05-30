@@ -1,1783 +1,1462 @@
-# 03 — Requisitos
+# Requisitos Iniciais
 
-## 1. Objetivo do Documento
+**Projeto:** OSSMA — Open Source Sport Management Application  
+**Documento:** 03  
+**Status:** versão inicial consolidada  
+**Idioma da documentação:** português brasileiro  
+**Idioma de nomes técnicos:** inglês técnico
 
-Este documento define os requisitos iniciais da aplicação. Ele transforma a visão do produto e o glossário do domínio em requisitos organizados, rastreáveis e testáveis.
-
-A aplicação será uma PWA offline-first e local-first para uso profissional em avaliações presenciais posturais, antropométricas, nutricionais e cineantropométricas, com armazenamento local, cálculos científicos e geração de relatórios profissionais.
-
-A documentação desta fase será escrita em português brasileiro. O código-fonte, nomes técnicos internos, comentários e estruturas de implementação serão escritos em inglês técnico.
-
----
-
-## 2. Escopo deste Documento
-
-Este documento cobre:
-
-- requisitos funcionais;
-- requisitos não funcionais;
-- requisitos de dados;
-- requisitos de navegação;
-- requisitos de relatórios;
-- requisitos de funcionamento offline;
-- requisitos de backup e importação/exportação;
-- requisitos de internacionalização;
-- requisitos científicos;
-- exclusões explícitas da primeira versão.
-
-Este documento não define em detalhe:
-
-- modelo final do banco de dados;
-- layout final das telas;
-- identidade visual final;
-- stack técnica definitiva;
-- catálogo completo de fórmulas;
-- referências científicas completas;
-- templates finais dos relatórios.
-
-Esses pontos serão tratados em documentos posteriores.
+**Autoria e curadoria do projeto:** JhonFs / Jhonata Sande  
+**Redação inicial:** GPT-5.5
 
 ---
 
-## 3. Convenção de Identificação dos Requisitos
+## 1. Finalidade
 
-Os requisitos serão identificados por prefixos:
+Este documento define os requisitos iniciais do OSSMA para orientar documentação, implementação incremental, revisão técnica e geração de prompts para Codex.
 
-| Prefixo | Significado                      |
-| ------- | -------------------------------- |
-| `RF`    | Requisito Funcional              |
-| `RNF`   | Requisito Não Funcional          |
-| `RD`    | Requisito de Dados               |
-| `RR`    | Requisito de Relatório           |
-| `RB`    | Requisito de Backup              |
-| `RI`    | Requisito de Internacionalização |
-| `RC`    | Requisito Científico             |
-| `EX`    | Exclusão explícita               |
+Os requisitos aqui registrados representam decisões já fechadas para a fundação do projeto e para o MVP. O documento não deve substituir os mapas técnicos detalhados de anamnese, antropometria e cineantropometria.
 
-Estados possíveis:
+Arquivos técnicos normativos:
 
-| Estado           | Significado                        |
-| ---------------- | ---------------------------------- |
-| `Obrigatório`    | Deve ser implementado              |
-| `Recomendado`    | Deve ser implementado se viável    |
-| `Futuro`         | Planejado para versões posteriores |
-| `Fora do Escopo` | Não faz parte da versão atual      |
+- `ficha-de-anamnese-geral-do-cliente.md`;
+- `mapa-tecnico-de-calculo-para-antropometrica.md`;
+- `mapa_tecnico_de_cálculo_para_cineantropometria(1).md`.
 
 ---
 
-## 4. Atores
+## 2. Convenção dos requisitos
 
-## 4.1 Profissional
+Os requisitos usam o padrão:
 
-Usuário principal da aplicação. É responsável por cadastrar clientes, coletar dados, realizar avaliações, interpretar resultados e exportar documentos.
+```text
+REQ-CATEGORY-NNN
+```
 
 Exemplos:
 
-- educador físico;
-- fisioterapeuta;
-- nutricionista;
-- treinador esportivo;
-- personal trainer;
-- professor de musculação;
-- professor de artes marciais;
-- avaliador físico.
+- `REQ-APP-001`;
+- `REQ-CLIENT-001`;
+- `REQ-ASSESSMENT-001`;
+- `REQ-REPORT-001`.
+
+Tipos usados:
+
+- **Funcional**;
+- **Não funcional**;
+- **Dados**;
+- **Interface**;
+- **Documentação**;
+- **Segurança/Responsabilidade**;
+- **Planejamento**;
+- **Fora de escopo**.
+
+Prioridades usadas:
+
+- **Fundação**: necessário para estruturar o projeto.
+- **MVP**: obrigatório para a primeira versão útil.
+- **Futuro**: reconhecido, mas fora do MVP.
 
 ---
 
-## 4.2 Cliente
+## 3. Requisitos da aplicação
 
-Pessoa avaliada pelo profissional.
+### REQ-APP-001 — PWA
 
-O cliente não terá acesso direto à aplicação na primeira versão.
+**Tipo:** Não funcional  
+**Prioridade:** MVP
 
-A aplicação deverá permitir personalizar o termo exibido para a pessoa avaliada, podendo usar:
+O OSSMA deve ser desenvolvido inicialmente como uma PWA.
 
-- Cliente;
-- Aluno;
-- Paciente;
-- Atleta;
-- Avaliado.
+**Critérios de aceitação:**
 
----
-
-## 4.3 Instituição
-
-Organização local cadastrada na aplicação, como academia, clínica, consultório, hospital, projeto social, equipe esportiva ou outro estabelecimento.
-
-A instituição será opcional para uso individual.
+- Deve funcionar em navegadores modernos.
+- Deve ser preparado para instalação como PWA.
+- Deve ser a estratégia multiplataforma inicial.
+- Não deve exigir aplicativo nativo separado no MVP.
 
 ---
 
-## 4.4 Instalação Local
+### REQ-APP-002 — Local-first
 
-Instância da aplicação em um dispositivo específico.
+**Tipo:** Não funcional  
+**Prioridade:** MVP
 
-Cada instalação local terá seus próprios dados.
+A aplicação deve ser local-first.
 
-Exemplo:
+**Critérios de aceitação:**
 
-```text
-A aplicação instalada no celular terá uma base local.
-A aplicação aberta no computador terá outra base local.
-Não haverá sincronização automática entre elas na primeira versão.
+- Os dados principais devem ser armazenados localmente.
+- O uso principal não deve depender de servidor remoto.
+- O banco local deve ser a fonte primária de dados no MVP.
+
+---
+
+### REQ-APP-003 — Offline-first
+
+**Tipo:** Não funcional  
+**Prioridade:** MVP
+
+A aplicação deve priorizar funcionamento offline.
+
+**Critérios de aceitação:**
+
+- Fluxos principais devem funcionar sem internet após carregamento/instalação inicial.
+- Cadastro, avaliação, relatório HTML e consulta local não devem exigir conexão permanente.
+- Recursos remotos não devem ser obrigatórios no MVP.
+
+---
+
+### REQ-APP-004 — Sem backend obrigatório
+
+**Tipo:** Não funcional  
+**Prioridade:** MVP
+
+O MVP não deve exigir backend obrigatório.
+
+**Critérios de aceitação:**
+
+- Não deve exigir servidor próprio para fluxos principais.
+- Não deve depender de API remota para cadastrar ou consultar dados locais.
+- Backend futuro deve ser opcional.
+
+---
+
+### REQ-APP-005 — Sem login online obrigatório
+
+**Tipo:** Segurança/Responsabilidade  
+**Prioridade:** MVP
+
+O MVP não deve exigir login online.
+
+**Critérios de aceitação:**
+
+- O usuário deve poder usar o sistema sem conta online.
+- O sistema não deve depender de autenticação remota.
+- `OnlineAccount` fica fora do MVP.
+
+---
+
+### REQ-APP-006 — Sem sincronização automática
+
+**Tipo:** Não funcional  
+**Prioridade:** MVP
+
+O MVP não deve ter sincronização automática entre dispositivos.
+
+**Critérios de aceitação:**
+
+- Dados não devem ser sincronizados automaticamente entre dispositivos.
+- Backup e restauração devem ser manuais.
+- Sincronização futura fica fora do MVP.
+
+---
+
+## 4. Requisitos técnicos
+
+### REQ-TECH-001 — Stack inicial
+
+**Tipo:** Não funcional  
+**Prioridade:** Fundação
+
+A stack inicial deve usar:
+
+- TypeScript;
+- SvelteKit;
+- pnpm;
+- Paraglide;
+- PWA;
+- Dexie.js/IndexedDB, salvo decisão técnica melhor.
+
+**Critérios de aceitação:**
+
+- O projeto deve ser criado com SvelteKit.
+- O gerenciamento de pacotes deve usar pnpm.
+- A internacionalização deve usar Paraglide.
+- O banco local deve considerar Dexie.js/IndexedDB como preferência inicial.
+
+---
+
+### REQ-TECH-002 — Inglês técnico no código
+
+**Tipo:** Não funcional  
+**Prioridade:** Fundação
+
+Código, nomes técnicos, variáveis, funções, tipos e comentários devem usar inglês técnico claro.
+
+**Critérios de aceitação:**
+
+- Evitar português em nomes técnicos de código.
+- Evitar abreviações obscuras.
+- Preferir nomes explícitos, como `professionalProfile`, `institutionProfile`, `assessmentProtocol`.
+
+---
+
+### REQ-TECH-003 — Documentação inicial em português
+
+**Tipo:** Documentação  
+**Prioridade:** Fundação
+
+A documentação inicial deve ser escrita em português brasileiro.
+
+**Critérios de aceitação:**
+
+- Documentos de produto e planejamento devem usar português brasileiro.
+- Termos de código podem permanecer em inglês.
+- A documentação deve ser clara, viva e revisável.
+
+---
+
+### REQ-TECH-004 — Nomes técnicos em PascalCase
+
+**Tipo:** Não funcional  
+**Prioridade:** Fundação
+
+Nomes técnicos de módulos devem usar inglês técnico e PascalCase.
+
+**Critérios de aceitação:**
+
+- Exemplos: `ClientManagement`, `ProfessionalProfiles`, `AssessmentManagement`.
+- Rotas não devem usar PascalCase.
+- Rotas devem ser em inglês e formato web comum.
+
+---
+
+## 5. Requisitos de estrutura, navegação e HTML inicial
+
+### REQ-SHELL-001 — Estrutura global mínima
+
+**Tipo:** Interface  
+**Prioridade:** Fundação
+
+A aplicação deve manter estrutura global mínima baseada em:
+
+```html
+<html>
+	<body>
+		<main>
+			<!-- page content -->
+		</main>
+	</body>
+</html>
 ```
 
----
+**Critérios de aceitação:**
 
-## 5. Premissas do Produto
-
-- A aplicação será usada exclusivamente por profissionais.
-- As avaliações serão realizadas presencialmente.
-- A aplicação não fará avaliação automática por fotos.
-- A aplicação será uma PWA.
-- A aplicação deverá funcionar offline após o primeiro acesso.
-- A aplicação armazenará dados localmente.
-- A primeira versão não dependerá de backend obrigatório.
-- A primeira versão não terá conta online.
-- A primeira versão não terá sincronização automática.
-- A transferência entre dispositivos ocorrerá por exportação e importação manual.
-- O projeto será gratuito.
-- O projeto será open source.
-- A licença será MIT.
-- A documentação inicial será em português brasileiro.
-- O código-fonte será escrito em inglês técnico.
-- A interface deverá suportar inglês e português.
-- O idioma padrão no primeiro acesso será inglês.
+- Conteúdo variável deve ser renderizado dentro de `main`.
+- O layout global deve ser simples e estável.
+- A implementação em SvelteKit deve preservar o esqueleto global.
 
 ---
 
-# 6. Requisitos Funcionais
+### REQ-SHELL-002 — Área útil da aplicação
 
-## 6.1 Primeiro Acesso e Configuração Inicial
+**Tipo:** Interface  
+**Prioridade:** Fundação
 
-### RF-001 — Exibir tela inicial de configuração
+A aplicação deve ser pensada para ocupar 100% da área útil disponível.
 
-**Estado:** Obrigatório
+**Critérios de aceitação:**
 
-No primeiro acesso, a aplicação deve exibir uma tela flutuante, centralizada, com mensagem de boas-vindas em inglês.
-
-Essa tela deverá permitir configurar, no mínimo:
-
-- idioma da interface;
-- tema visual;
-- termo usado para a pessoa avaliada.
-
-Critérios de aceitação:
-
-- Ao abrir uma instalação nova, a tela inicial deve ser exibida.
-- A mensagem inicial deve aparecer em inglês.
-- O usuário deve conseguir escolher idioma e tema.
-- Após concluir a configuração, a aplicação deve salvar as preferências localmente.
-- A tela inicial não deve aparecer novamente, salvo se os dados locais forem limpos ou redefinidos.
+- Deve considerar navegador, PWA instalada e dispositivos móveis.
+- A regra visual final será refinada na etapa de CSS.
+- A intenção estrutural deve ser preservada desde o começo.
 
 ---
 
-### RF-002 — Salvar preferências locais
+### REQ-SHELL-003 — HTML puro na fase inicial
 
-**Estado:** Obrigatório
+**Tipo:** Interface  
+**Prioridade:** Fundação
 
-A aplicação deve salvar localmente as preferências do usuário.
+A fase inicial deve usar HTML semântico puro, sem CSS visual.
 
-Preferências iniciais:
+**Critérios de aceitação:**
 
-- idioma selecionado;
-- tema visual;
-- termo para pessoa avaliada;
-- profissional ativo;
-- instituição ativa.
-
-Critérios de aceitação:
-
-- As preferências devem permanecer após fechar e reabrir a aplicação.
-- As preferências devem funcionar offline.
+- Priorizar estrutura, navegação, formulários e regras de negócio.
+- Adiar CSS para etapa posterior.
+- Não depender de estética para validar fluxo.
 
 ---
 
-## 6.2 Navegação Principal
+### REQ-NAV-001 — Rotas iniciais
 
-### RF-003 — Exibir menu principal
+**Tipo:** Interface  
+**Prioridade:** Fundação
 
-**Estado:** Obrigatório
-
-A aplicação deve possuir o seguinte menu principal:
+O esqueleto inicial deve prever as rotas:
 
 ```text
-Início
-Clientes
-Perfil
-Backup
-Configurações
+/
+/onboarding
+/clients
+/clients/new
+/clients/[id]
+/professionals
+/institutions
+/evaluations
+/evaluations/new
+/evaluations/[id]
+/settings
+/backup
+/help
+/documentation
 ```
 
-Critérios de aceitação:
+**Critérios de aceitação:**
 
-- O menu deve ser exibido após a configuração inicial.
-- Os itens devem respeitar o idioma selecionado.
-- O menu deve ser simples e adequado para telas pequenas.
+- Todas as rotas públicas devem ser em inglês.
+- `/` deve ser a página inicial.
+- `/documentation` deve existir para documentação técnica.
+- As rotas podem começar como páginas HTML simples.
 
 ---
 
-### RF-004 — Organizar a seção Perfil
+### REQ-NAV-002 — Navegação acessível
 
-**Estado:** Obrigatório
+**Tipo:** Interface  
+**Prioridade:** Fundação
 
-A seção Perfil deve agrupar:
+A navegação inicial deve seguir boas práticas de HTML e acessibilidade.
 
-- Profissionais;
-- Instituições.
+**Critérios de aceitação:**
 
-Critérios de aceitação:
+- Deve funcionar sem CSS visual.
+- Deve ser navegável por teclado.
+- Deve ser compreensível por leitores de tela.
+- Deve usar marcação semântica.
 
-- O usuário deve conseguir acessar o cadastro de profissionais por Perfil.
-- O usuário deve conseguir acessar o cadastro de instituições por Perfil.
-
----
-
-### RF-005 — Organizar a seção Clientes como centro operacional
-
-**Estado:** Obrigatório
-
-A seção Clientes deve concentrar o fluxo principal de uso da aplicação.
-
-Ela deve permitir acesso a:
-
-- lista de clientes cadastrados;
-- cadastro de novo cliente;
-- dados do cliente;
-- anamnese geral;
-- avaliações do cliente;
-- histórico de avaliações;
-- relatório/resultado de cada avaliação.
-
-Critérios de aceitação:
-
-- O profissional deve conseguir abrir um cliente a partir da lista.
-- O profissional deve conseguir criar novo cliente.
-- O profissional deve conseguir acessar avaliações e histórico dentro do cliente.
-- O profissional deve conseguir abrir uma avaliação do histórico.
-- Ao abrir uma avaliação, deve ser possível visualizar o resultado/relatório e editar a avaliação.
-
----
-
-## 6.3 Profissionais
-
-### RF-006 — Cadastrar profissional
-
-**Estado:** Obrigatório
-
-A aplicação deve permitir cadastrar profissionais localmente.
-
-Campos possíveis:
-
-- nome completo;
-- profissão;
-- formação;
-- especialidade;
-- registro profissional;
-- telefone;
-- e-mail;
-- endereço;
-- logo ou identificação visual;
-- assinatura digitalizada;
-- observações.
-
-Critérios de aceitação:
-
-- O cadastro deve funcionar offline.
-- O profissional pode existir sem instituição.
-- O profissional pode ser vinculado a uma instituição, quando aplicável.
-
----
-
-### RF-007 — Listar profissionais
-
-**Estado:** Obrigatório
-
-A aplicação deve permitir listar os profissionais cadastrados localmente.
-
-Critérios de aceitação:
-
-- A lista deve estar disponível em Perfil > Profissionais.
-- A lista deve funcionar offline.
-
----
-
-### RF-008 — Editar profissional
-
-**Estado:** Obrigatório
-
-A aplicação deve permitir editar dados de um profissional.
-
-Critérios de aceitação:
-
-- As alterações devem ser salvas localmente.
-- Alterações futuras no perfil profissional não devem alterar relatórios já emitidos ou snapshots já preservados.
-
----
-
-### RF-009 — Excluir profissional
-
-**Estado:** Obrigatório
-
-A aplicação deve permitir excluir profissionais, respeitando regras de integridade.
-
-Critérios de aceitação:
-
-- A aplicação deve alertar se o profissional estiver vinculado a avaliações existentes.
-- Avaliações e relatórios já emitidos devem preservar os dados do profissional usados na época.
-
----
-
-### RF-010 — Selecionar profissional ativo
-
-**Estado:** Obrigatório
-
-A aplicação deve permitir selecionar um profissional ativo.
-
-O profissional ativo será usado como responsável por novas avaliações e documentos.
-
-Critérios de aceitação:
-
-- Uma nova avaliação deve registrar o profissional responsável.
-- A aplicação deve impedir a finalização de uma avaliação sem profissional responsável.
-- O profissional ativo deve ser salvo localmente.
-
----
-
-## 6.4 Instituições
-
-### RF-011 — Cadastrar instituição
-
-**Estado:** Obrigatório
-
-A aplicação deve permitir cadastrar instituições localmente.
-
-Campos possíveis:
-
-- nome da instituição;
-- nome fantasia;
-- documento institucional, se aplicável;
-- telefone;
-- e-mail;
-- endereço;
-- logotipo;
-- rodapé padrão;
-- observações.
-
-Critérios de aceitação:
-
-- O cadastro deve funcionar offline.
-- A instituição deve poder ser usada em relatórios quando selecionada.
-
 ---
-
-### RF-012 — Listar instituições
-
-**Estado:** Obrigatório
-
-A aplicação deve permitir listar instituições cadastradas localmente.
 
-Critérios de aceitação:
+## 6. Requisitos de acessibilidade, usabilidade e performance
 
-- A lista deve estar disponível em Perfil > Instituições.
-- A lista deve funcionar offline.
+### REQ-A11Y-001 — HTML semântico
 
----
-
-### RF-013 — Editar instituição
-
-**Estado:** Obrigatório
+**Tipo:** Não funcional  
+**Prioridade:** MVP
 
-A aplicação deve permitir editar dados de uma instituição.
+A aplicação deve priorizar HTML semântico.
 
-Critérios de aceitação:
+**Critérios de aceitação:**
 
-- As alterações devem ser salvas localmente.
-- Alterações futuras na instituição não devem alterar relatórios já emitidos ou snapshots já preservados.
+- Usar `main` para conteúdo principal.
+- Usar formulários com labels explícitos.
+- Usar hierarquia clara de títulos.
+- Evitar controles sem nome acessível.
 
 ---
 
-### RF-014 — Excluir instituição
+### REQ-A11Y-002 — Navegação por teclado
 
-**Estado:** Obrigatório
+**Tipo:** Não funcional  
+**Prioridade:** MVP
 
-A aplicação deve permitir excluir instituições, respeitando regras de integridade.
+A aplicação deve ser navegável por teclado.
 
-Critérios de aceitação:
+**Critérios de aceitação:**
 
-- A aplicação deve alertar se a instituição estiver vinculada a profissionais, clientes, avaliações ou relatórios.
-- Avaliações e relatórios já emitidos devem preservar os dados institucionais usados na época.
+- Links e controles devem ser alcançáveis por teclado.
+- Fluxos principais não devem depender exclusivamente de mouse ou toque.
 
 ---
 
-### RF-015 — Selecionar instituição ativa
+### REQ-A11Y-003 — Leitores de tela
 
-**Estado:** Obrigatório
+**Tipo:** Não funcional  
+**Prioridade:** MVP
 
-A aplicação deve permitir selecionar uma instituição ativa.
+A estrutura inicial deve considerar leitores de tela.
 
-A instituição ativa será opcional.
+**Critérios de aceitação:**
 
-Critérios de aceitação:
+- Campos devem ter rótulos claros.
+- Mensagens de erro devem ser associáveis ao campo.
+- Navegação deve ter texto significativo.
 
-- O profissional pode usar a aplicação sem instituição ativa.
-- Quando houver instituição ativa, novas avaliações e relatórios poderão ser vinculados a ela.
-
 ---
-
-## 6.5 Clientes
-
-### RF-016 — Cadastrar cliente
 
-**Estado:** Obrigatório
+### REQ-USABILITY-001 — Clareza antes de estética
 
-A aplicação deve permitir cadastrar clientes localmente.
+**Tipo:** Não funcional  
+**Prioridade:** Fundação
 
-Campos possíveis:
+A aplicação deve priorizar clareza, estrutura e uso antes de refinamento visual.
 
-- nome completo;
-- data de nascimento;
-- sexo;
-- telefone;
-- e-mail;
-- documento, se aplicável;
-- endereço, se aplicável;
-- profissão;
-- responsável legal, se aplicável;
-- observações gerais.
+**Critérios de aceitação:**
 
-Critérios de aceitação:
+- CSS visual deve vir depois de navegação, formulários e regras principais.
+- A aplicação deve ser compreensível mesmo sem CSS.
 
-- O cadastro deve funcionar offline.
-- O cadastro não deve depender de validação online.
-
 ---
 
-### RF-017 — Listar clientes
+### REQ-PERF-001 — Leveza
 
-**Estado:** Obrigatório
+**Tipo:** Não funcional  
+**Prioridade:** MVP
 
-A aplicação deve permitir listar clientes cadastrados localmente.
+A aplicação deve priorizar leveza e performance.
 
-Critérios de aceitação:
+**Critérios de aceitação:**
 
-- A lista deve aparecer na seção Clientes.
-- A lista deve funcionar offline.
+- Evitar dependências pesadas sem justificativa.
+- Evitar salvar artefatos pesados no banco local.
+- Priorizar dados estruturados.
+- Limitar imagens a 2MB.
 
 ---
 
-### RF-018 — Pesquisar clientes
+### REQ-PERF-002 — Modularidade
 
-**Estado:** Recomendado
+**Tipo:** Não funcional  
+**Prioridade:** Fundação
 
-A aplicação deve permitir pesquisar clientes cadastrados.
+Funcionalidades devem ser organizadas de forma modular.
 
-Critérios de aceitação:
+**Critérios de aceitação:**
 
-- O profissional deve conseguir buscar cliente por nome.
-- A busca deve funcionar offline.
+- Avaliações futuras devem poder ser adicionadas sem reescrever o núcleo.
+- Protocolos devem ser organizados por tipo de avaliação.
+- Cálculos e relatórios devem ser isoláveis por módulo.
 
 ---
-
-### RF-019 — Visualizar dados do cliente
-
-**Estado:** Obrigatório
-
-A aplicação deve permitir visualizar os dados de um cliente.
-
-A tela do cliente deve dar acesso a:
-
-- perfil do cliente;
-- anamnese geral;
-- nova avaliação;
-- histórico de avaliações;
-- resultados/relatórios.
-
-Critérios de aceitação:
 
-- Ao abrir um cliente, o usuário deve visualizar seus dados principais e ações relacionadas.
+## 7. Requisitos de internacionalização e unidades
 
----
+### REQ-I18N-001 — Paraglide
 
-### RF-020 — Editar cliente
+**Tipo:** Não funcional  
+**Prioridade:** MVP
 
-**Estado:** Obrigatório
+A aplicação deve usar Paraglide para internacionalização.
 
-A aplicação deve permitir editar dados cadastrais do cliente.
+**Critérios de aceitação:**
 
-Critérios de aceitação:
+- Idiomas iniciais: inglês e português brasileiro.
+- Textos de interface devem ser preparados para tradução.
+- Deve permitir expansão futura para novos idiomas.
 
-- As alterações devem ser salvas localmente.
-- Alterações futuras no cliente não devem alterar relatórios já emitidos ou snapshots já preservados.
-
 ---
-
-### RF-021 — Excluir cliente
 
-**Estado:** Obrigatório
+### REQ-I18N-002 — Rotas e código em inglês
 
-A aplicação deve permitir excluir clientes.
+**Tipo:** Não funcional  
+**Prioridade:** Fundação
 
-A exclusão do cliente deve remover ou tornar inacessíveis os dados relacionados, conforme estratégia de exclusão definida posteriormente.
+Rotas públicas e nomes técnicos internos devem permanecer em inglês.
 
-Dados relacionados:
+**Critérios de aceitação:**
 
-- anamnese geral;
-- avaliações;
-- resultados/relatórios;
-- histórico local.
+- Rotas públicas em inglês.
+- Código em inglês.
+- Interface traduzida por idioma.
 
-Critérios de aceitação:
-
-- A aplicação deve solicitar confirmação antes de excluir o cliente.
-- A aplicação deve informar que a exclusão do cliente também afeta a anamnese geral e registros relacionados.
-
 ---
-
-## 6.6 Anamnese Geral
 
-### RF-022 — Criar anamnese geral vinculada ao cliente
+### REQ-I18N-003 — Unidades canônicas
 
-**Estado:** Obrigatório
+**Tipo:** Dados  
+**Prioridade:** MVP
 
-Cada cliente deve possuir uma anamnese geral vinculada a ele.
+Valores mensuráveis devem ser armazenados em unidades canônicas.
 
-A anamnese geral pode ser criada durante o cadastro do cliente ou no primeiro acesso à área de anamnese.
+**Critérios de aceitação:**
 
-Critérios de aceitação:
+- Massa corporal: `kg`.
+- Estatura no cadastro: `cm`.
+- Estatura para IMC: `m`.
+- Dobras cutâneas: `mm`.
+- Perímetros: `cm`.
+- Diâmetros: `cm`.
+- Idade: anos completos.
+- Idade pediátrica: meses, quando aplicável.
+- Temperatura futura: `°C`.
+- A interface poderá converter unidades futuramente, mas o banco deve manter unidades canônicas.
 
-- Cada cliente deve ter no máximo uma anamnese geral.
-- A anamnese geral pertence ao cliente.
-
 ---
-
-### RF-023 — Editar anamnese geral
-
-**Estado:** Obrigatório
-
-A aplicação deve permitir editar a anamnese geral do cliente.
-
-Critérios de aceitação:
-
-- O profissional pode atualizar os dados da anamnese geral.
-- As alterações devem ser salvas localmente.
 
----
+## 8. Requisitos de onboarding
 
-### RF-024 — Impedir exclusão isolada da anamnese geral
+### REQ-ONBOARDING-001 — Primeiro acesso
 
-**Estado:** Obrigatório
+**Tipo:** Interface  
+**Prioridade:** MVP
 
-A aplicação não deve permitir excluir a anamnese geral de forma isolada.
+A aplicação deve ter onboarding no primeiro acesso.
 
-Critérios de aceitação:
+**Critérios de aceitação:**
 
-- Não deve existir ação de exclusão separada para a anamnese geral.
-- A anamnese geral só deve ser excluída junto com o cliente.
+- Apresentar nome da aplicação.
+- Explicar funcionamento local/offline.
+- Permitir configuração de idioma.
+- Permitir configuração de tema.
+- Apresentar mini tutorial.
+- Indicar onde encontrar ajuda depois.
 
 ---
 
-### RF-025 — Permitir edição de campos pertinentes da anamnese durante avaliação
+### REQ-ONBOARDING-002 — Aceite explícito
 
-**Estado:** Obrigatório
+**Tipo:** Segurança/Responsabilidade  
+**Prioridade:** MVP
 
-Durante uma avaliação, a aplicação deve permitir editar partes da anamnese geral que sejam pertinentes à avaliação em andamento.
+O onboarding deve exigir aceite explícito.
 
-Critérios de aceitação:
+**Critérios de aceitação:**
 
-- A avaliação pode exibir campos relevantes da anamnese geral.
-- Ao editar esses campos, a anamnese geral do cliente deve ser atualizada.
-- A avaliação deve preservar os dados necessários para rastreabilidade do relatório.
+- Informar que os dados ficam localmente.
+- Informar que backup é responsabilidade do usuário.
+- Informar que segurança do dispositivo é responsabilidade do usuário.
+- Informar que a aplicação não substitui julgamento profissional.
 
 ---
-
-## 6.7 Avaliações
-
-### RF-026 — Criar avaliação
 
-**Estado:** Obrigatório
+### REQ-ONBOARDING-003 — Informações acessíveis depois
 
-A aplicação deve permitir criar avaliações vinculadas a um cliente.
+**Tipo:** Documentação  
+**Prioridade:** MVP
 
-Tipos iniciais:
+Informações do onboarding devem permanecer acessíveis depois.
 
-- avaliação postural;
-- avaliação antropométrica;
-- avaliação nutricional;
-- avaliação cineantropométrica.
+**Critérios de aceitação:**
 
-Critérios de aceitação:
+- Disponíveis em ajuda, configurações ou documentação.
+- Devem explicar dados locais, backup, restauração e uso básico.
 
-- Uma avaliação deve sempre estar vinculada a um cliente.
-- Uma avaliação deve registrar o profissional responsável.
-- Uma avaliação pode registrar a instituição ativa, se houver.
-- A criação deve funcionar offline.
-
 ---
-
-### RF-027 — Salvar avaliação como rascunho
-
-**Estado:** Obrigatório
 
-A aplicação deve permitir salvar uma avaliação parcialmente preenchida como rascunho.
+## 9. Requisitos de ProfessionalProfile
 
-Critérios de aceitação:
+### REQ-PROFESSIONAL-001 — Cadastro de ProfessionalProfile
 
-- Uma avaliação incompleta pode ser salva.
-- Um rascunho pode ser reaberto e editado posteriormente.
+**Tipo:** Funcional  
+**Prioridade:** MVP
 
----
-
-### RF-028 — Concluir avaliação
-
-**Estado:** Obrigatório
+O sistema deve permitir cadastrar `ProfessionalProfile`.
 
-A aplicação deve permitir marcar uma avaliação como concluída.
+**Critérios de aceitação:**
 
-Critérios de aceitação:
+- Armazenar dados de identificação profissional.
+- Armazenar dados necessários ao carimbo técnico.
+- Permitir vínculo opcional com uma instituição.
+- Permitir logo/imagem profissional no MVP, respeitando 2MB.
 
-- Campos obrigatórios devem ser validados antes da conclusão.
-- Resultados calculados devem ser gerados quando os dados necessários estiverem disponíveis.
-
 ---
 
-### RF-029 — Editar avaliação
+### REQ-PROFESSIONAL-002 — Profissional obrigatório na avaliação
 
-**Estado:** Obrigatório
+**Tipo:** Funcional  
+**Prioridade:** MVP
 
-A aplicação deve permitir editar avaliações existentes.
+Toda avaliação deve ter exatamente um profissional avaliador.
 
-Critérios de aceitação:
+**Critérios de aceitação:**
 
-- O profissional pode abrir uma avaliação pelo histórico e editá-la.
-- Ao alterar dados de entrada, resultados calculados devem ser atualizados quando aplicável.
-- A aplicação deve preservar regras de rastreabilidade para relatórios emitidos.
+- A coleta não deve iniciar sem profissional selecionado.
+- O relatório deve exibir snapshot do profissional.
+- O profissional deve aparecer como responsável técnico.
 
 ---
 
-### RF-030 — Excluir avaliação
+### REQ-PROFESSIONAL-003 — Vínculo com instituição
 
-**Estado:** Obrigatório
+**Tipo:** Funcional  
+**Prioridade:** MVP
 
-A aplicação deve permitir excluir avaliações.
+Um profissional pode estar vinculado a no máximo uma instituição.
 
-Critérios de aceitação:
+**Critérios de aceitação:**
 
-- A aplicação deve solicitar confirmação antes da exclusão.
-- A avaliação deve ser removida do histórico do cliente conforme estratégia de exclusão definida posteriormente.
+- O vínculo deve ser opcional.
+- Se houver vínculo, a instituição deve ser derivada automaticamente para a avaliação.
+- O usuário não deve escolher manualmente instituição na avaliação quando ela já estiver vinculada ao profissional.
 
 ---
 
-### RF-031 — Visualizar histórico de avaliações
+### REQ-PROFESSIONAL-004 — Exclusão de ProfessionalProfile
 
-**Estado:** Obrigatório
+**Tipo:** Funcional  
+**Prioridade:** MVP
 
-A aplicação deve permitir visualizar o histórico de avaliações de um cliente.
+O sistema deve permitir excluir `ProfessionalProfile` com confirmação forte.
 
-Critérios de aceitação:
+**Critérios de aceitação:**
 
-- A tela do cliente deve listar avaliações anteriores.
-- O profissional deve conseguir abrir uma avaliação do histórico.
-- Ao abrir a avaliação, deve ser possível visualizar o resultado/relatório.
-- Ao abrir a avaliação, deve ser possível editá-la.
+- A exclusão é permitida mesmo com avaliações antigas vinculadas.
+- Avaliações antigas preservam snapshots do profissional.
+- O sistema deve avisar que o cadastro original será removido.
+- O sistema deve avisar que novas avaliações não poderão usar o profissional excluído.
+- Snapshots históricos não devem ser apagados.
+- A exclusão deve exigir confirmação explícita.
 
 ---
-
-### RF-032 — Comparar avaliações
 
-**Estado:** Recomendado
+## 10. Requisitos de InstitutionProfile
 
-A aplicação deve permitir comparar avaliações do mesmo tipo para o mesmo cliente.
+### REQ-INSTITUTION-001 — Cadastro de InstitutionProfile
 
-Comparações iniciais sugeridas:
+**Tipo:** Funcional  
+**Prioridade:** MVP
 
-- evolução da massa corporal;
-- evolução de perímetros;
-- evolução da cintura;
-- evolução de índices antropométricos;
-- evolução de resultados calculados relevantes.
+O sistema deve permitir cadastrar `InstitutionProfile`.
 
-Critérios de aceitação:
+**Critérios de aceitação:**
 
-- O profissional deve conseguir comparar pelo menos duas avaliações do mesmo cliente.
-- A comparação deve funcionar offline.
+- Armazenar dados institucionais relevantes para relatório.
+- Permitir logo institucional no MVP, respeitando 2MB.
+- A instituição pode existir sem profissional vinculado.
 
 ---
-
-# 7. Requisitos dos Módulos Avaliativos
-
-## 7.1 Avaliação Postural
 
-### RF-033 — Registrar anamnese e histórico postural
+### REQ-INSTITUTION-002 — Instituição no relatório
 
-**Estado:** Obrigatório
+**Tipo:** Funcional  
+**Prioridade:** MVP
 
-O módulo de avaliação postural deve permitir registrar dados qualitativos e históricos.
+Quando o profissional avaliador estiver vinculado a uma instituição, a avaliação deve registrar snapshot institucional.
 
-Campos iniciais sugeridos:
+**Critérios de aceitação:**
 
-- queixa principal;
-- localização da dor;
-- intensidade da dor;
-- comportamento da dor;
-- tipo suspeito de dor;
-- histórico de traumas;
-- histórico de cirurgias;
-- hábitos ergonômicos;
-- postura predominante no trabalho;
-- postura predominante em repouso.
+- O relatório deve exibir cabeçalho institucional quando houver snapshot.
+- O relatório deve ser gerado sem cabeçalho institucional quando não houver instituição.
+- A instituição deve ser derivada do vínculo do profissional.
 
-Critérios de aceitação:
-
-- O profissional deve conseguir registrar os dados posturais históricos.
-- Os dados devem ser salvos como parte da avaliação.
-
 ---
-
-### RF-034 — Registrar inspeção estática postural
 
-**Estado:** Obrigatório
+### REQ-INSTITUTION-003 — Exclusão de InstitutionProfile
 
-O módulo de avaliação postural deve permitir registrar inspeção estática.
+**Tipo:** Funcional  
+**Prioridade:** MVP
 
-Grupos iniciais:
+O sistema deve permitir excluir `InstitutionProfile` com confirmação forte.
 
-- plano anterior;
-- plano posterior;
-- plano lateral.
+**Critérios de aceitação:**
 
-Critérios de aceitação:
+- A exclusão remove o vínculo em profissionais vinculados.
+- Avaliações antigas preservam snapshots institucionais.
+- O sistema deve avisar sobre o impacto.
+- A exclusão deve exigir confirmação explícita.
 
-- O profissional deve conseguir registrar observações qualitativas.
-- O profissional deve conseguir registrar valores quantitativos quando aplicável.
-
 ---
 
-### RF-035 — Registrar avaliação funcional e mobilidade
+## 11. Requisitos de Client
 
-**Estado:** Obrigatório
+### REQ-CLIENT-001 — Cadastro de cliente
 
-O módulo de avaliação postural deve permitir registrar dados funcionais e de mobilidade.
+**Tipo:** Funcional  
+**Prioridade:** MVP
 
-Campos iniciais sugeridos:
+O sistema deve permitir cadastrar clientes.
 
-- amplitude de movimento;
-- goniometria;
-- inclinometria;
-- distância dedo-chão;
-- teste de Schober;
-- apoio unipodal.
+**Critérios de aceitação:**
 
-Critérios de aceitação:
+- Permitir dados cadastrais obrigatórios.
+- Permitir dados opcionais.
+- Permitir foto do cliente no MVP, respeitando 2MB.
+- Vincular o cliente à anamnese geral.
+- Permitir histórico de avaliações.
 
-- O profissional deve conseguir registrar valores com unidade.
-- O profissional deve conseguir adicionar observações.
-
 ---
 
-### RF-036 — Gerar resultado/relatório postural
+### REQ-CLIENT-002 — Cliente sem vínculo direto
 
-**Estado:** Obrigatório
+**Tipo:** Dados  
+**Prioridade:** MVP
 
-A aplicação deve gerar um resultado/relatório específico para avaliação postural.
+O cliente não deve ser vinculado diretamente a profissional ou instituição no MVP.
 
-Critérios de aceitação:
+**Critérios de aceitação:**
 
-- O relatório deve exibir os dados posturais coletados.
-- O relatório deve exibir a interpretação profissional.
-- O relatório deve conter seção de aviso técnico geral.
-- O relatório deve conter carimbo profissional em todas as páginas.
+- O cadastro do cliente é independente.
+- O vínculo histórico com profissional e instituição ocorre por avaliação.
+- Um cliente pode ter avaliações feitas por profissionais diferentes.
 
 ---
-
-## 7.2 Avaliação Antropométrica
 
-### RF-037 — Registrar dados antropométricos básicos
+### REQ-CLIENT-003 — Idade calculada
 
-**Estado:** Obrigatório
+**Tipo:** Dados  
+**Prioridade:** MVP
 
-O módulo de avaliação antropométrica deve permitir registrar dados básicos.
+A idade do cliente deve ser calculada automaticamente.
 
-Campos iniciais:
+**Critérios de aceitação:**
 
-- massa corporal;
-- estatura;
-- envergadura.
+- Armazenar data de nascimento.
+- Calcular idade na data da avaliação.
+- Salvar idade no snapshot da avaliação.
+- Suportar idade em meses quando necessário para referências pediátricas.
 
-Critérios de aceitação:
-
-- O profissional deve conseguir registrar valores com unidade.
-- A aplicação deve validar campos numéricos.
-
 ---
-
-### RF-038 — Registrar perimetria segmentar
 
-**Estado:** Obrigatório
+### REQ-CLIENT-004 — Exclusão de cliente
 
-O módulo de avaliação antropométrica deve permitir registrar perímetros segmentares.
+**Tipo:** Funcional  
+**Prioridade:** MVP
 
-Campos iniciais sugeridos:
+O sistema deve permitir excluir cliente com confirmação forte.
 
-- ombros;
-- tórax;
-- braço direito relaxado;
-- braço esquerdo relaxado;
-- braço direito contraído;
-- braço esquerdo contraído;
-- antebraço direito;
-- antebraço esquerdo;
-- cintura;
-- abdome;
-- quadril;
-- coxa direita proximal;
-- coxa esquerda proximal;
-- coxa direita média;
-- coxa esquerda média;
-- coxa direita distal;
-- coxa esquerda distal;
-- panturrilha direita;
-- panturrilha esquerda.
+**Critérios de aceitação:**
 
-Critérios de aceitação:
+- Avisar que dados relacionados serão removidos.
+- Incluir anamnese, foto e avaliações relacionadas, salvo decisão técnica posterior diferente.
+- Exigir confirmação explícita.
+- Não haverá lixeira, ativo/inativo ou arquivamento no MVP.
 
-- Os valores devem ser registrados em centímetros.
-- Campos bilaterais devem permitir comparação entre lado direito e esquerdo.
-
 ---
 
-### RF-039 — Calcular índices antropométricos iniciais
+## 12. Requisitos de anamnese
 
-**Estado:** Obrigatório
+### REQ-ANAMNESIS-001 — Anamnese geral obrigatória
 
-A aplicação deve calcular índices antropométricos quando os dados necessários estiverem disponíveis.
+**Tipo:** Funcional  
+**Prioridade:** MVP
 
-Cálculos iniciais:
+Todo cliente deve ter anamnese geral.
 
-- IMC;
-- relação cintura-quadril;
-- relação cintura-estatura;
-- relação ombro-cintura;
-- diferenças de simetria bilateral.
+**Critérios de aceitação:**
 
-Critérios de aceitação:
+- A anamnese geral faz parte do cadastro do cliente.
+- Deve seguir `ficha-de-anamnese-geral-do-cliente.md`.
+- Campos condicionais devem respeitar respostas anteriores.
+- Blocos obrigatórios devem ser tratados como parte do cadastro.
 
-- A aplicação não deve calcular índice quando faltar dado obrigatório.
-- A aplicação deve informar quais dados estão faltando quando um cálculo não puder ser realizado.
-
 ---
-
-### RF-040 — Registrar avaliação muscular qualitativa
 
-**Estado:** Obrigatório
+### REQ-ANAMNESIS-002 — Anamnese específica por avaliação
 
-O módulo antropométrico deve permitir registrar observações qualitativas musculares.
+**Tipo:** Funcional  
+**Prioridade:** MVP
 
-Campos iniciais sugeridos:
+Cada tipo de avaliação pode ter anamnese específica.
 
-- definição muscular aparente;
-- pontos fortes;
-- pontos fracos;
-- postura dinâmica observada;
-- limitações de movimento observadas;
-- observações profissionais.
+**Critérios de aceitação:**
 
-Critérios de aceitação:
+- Antropometria deve seguir sua anamnese própria.
+- Cineantropometria deve seguir sua anamnese própria.
+- Perguntas reutilizadas devem manter o mesmo nome da anamnese geral.
+- Respostas específicas devem ser salvas na avaliação.
 
-- O profissional deve conseguir registrar observações subjetivas.
-- Campos subjetivos devem ser identificados como observações profissionais.
-
 ---
 
-### RF-041 — Gerar resultado/relatório antropométrico
+### REQ-ANAMNESIS-003 — Reutilização de respostas
 
-**Estado:** Obrigatório
+**Tipo:** Funcional  
+**Prioridade:** MVP
 
-A aplicação deve gerar um resultado/relatório específico para avaliação antropométrica.
+Avaliações podem puxar respostas da anamnese geral.
 
-Critérios de aceitação:
+**Critérios de aceitação:**
 
-- O relatório deve exibir dados coletados.
-- O relatório deve exibir índices calculados.
-- O relatório deve exibir interpretação profissional.
-- O relatório deve conter seção de aviso técnico geral.
-- O relatório deve conter carimbo profissional em todas as páginas.
+- Respostas puxadas aparecem sem exigir nova confirmação.
+- O usuário pode manter a resposta.
+- O usuário pode alterar a resposta durante a avaliação.
+- Alterar resposta reaproveitada deve disparar pergunta sobre atualizar a anamnese geral.
 
 ---
-
-## 7.3 Avaliação Nutricional
-
-### RF-042 — Registrar anamnese dietética
 
-**Estado:** Obrigatório
+### REQ-ANAMNESIS-004 — Atualização explícita da anamnese geral
 
-O módulo de avaliação nutricional deve permitir registrar anamnese dietética.
+**Tipo:** Funcional  
+**Prioridade:** MVP
 
-Campos iniciais sugeridos:
+Se uma resposta da anamnese geral for alterada durante uma avaliação, o sistema deve perguntar se o usuário deseja atualizar a anamnese geral.
 
-- recordatório de 24 horas;
-- diário alimentar;
-- frequência alimentar;
-- preferências;
-- aversões;
-- alergias;
-- intolerâncias;
-- crenças alimentares;
-- hábito intestinal;
-- escala de Bristol;
-- ingestão hídrica.
+**Critérios de aceitação:**
 
-Critérios de aceitação:
+- Mostrar alteração de resposta antiga para nova.
+- Se aceitar, atualizar o cadastro geral.
+- Se recusar, salvar apenas na avaliação.
+- A avaliação deve preservar snapshot da resposta usada.
 
-- O profissional deve conseguir registrar dados qualitativos e quantitativos.
-- Os dados devem ser salvos localmente.
-
 ---
-
-### RF-043 — Registrar exame clínico-nutricional
-
-**Estado:** Obrigatório
 
-O módulo nutricional deve permitir registrar observações clínico-nutricionais qualitativas.
+### REQ-ANAMNESIS-005 — Confirmação de ciência e veracidade
 
-Áreas iniciais sugeridas:
+**Tipo:** Segurança/Responsabilidade  
+**Prioridade:** MVP
 
-- cabelos;
-- unhas;
-- pele;
-- mucosas;
-- conjuntivas;
-- saúde bucal;
-- hidratação aparente;
-- cicatrização;
-- distensão abdominal;
-- pirose;
-- refluxo.
+Toda avaliação deve registrar confirmação de ciência e veracidade.
 
-Critérios de aceitação:
+**Critérios de aceitação:**
 
-- O profissional deve conseguir classificar ou descrever observações.
-- O profissional deve conseguir marcar campos como não avaliados.
+- Registrar confirmação do cliente ou responsável, quando aplicável.
+- Registrar confirmação do profissional avaliador.
+- Registrar data e hora.
+- Exibir confirmação no relatório.
 
 ---
 
-### RF-044 — Registrar dados bioquímicos
+## 13. Requisitos de avaliação
 
-**Estado:** Obrigatório
+### REQ-ASSESSMENT-001 — Tipos iniciais
 
-O módulo nutricional deve permitir registrar dados bioquímicos manualmente.
+**Tipo:** Funcional  
+**Prioridade:** MVP
 
-Para cada exame, a aplicação deve permitir:
+O MVP deve suportar avaliações antropométrica e cineantropométrica como tipos separados.
 
-- valor;
-- unidade;
-- referência laboratorial;
-- data do exame;
-- observações.
+**Critérios de aceitação:**
 
-Exames iniciais sugeridos:
+- Antropometria é um tipo próprio.
+- Cineantropometria é um tipo próprio.
+- Cada tipo tem dados, protocolos, cálculos e relatório próprios.
+- Fusão de avaliações fica fora do MVP.
 
-- hemograma completo;
-- glicemia de jejum;
-- insulina;
-- hemoglobina glicada;
-- colesterol total;
-- HDL;
-- LDL;
-- VLDL;
-- triglicerídeos;
-- ferritina;
-- vitamina B12;
-- vitamina D;
-- magnésio;
-- zinco;
-- creatinina;
-- ureia;
-- TGO;
-- TGP;
-- creatinoquinase.
-
-Critérios de aceitação:
-
-- O profissional deve conseguir registrar exames manualmente.
-- A aplicação não deve depender de integração automática com laboratório.
-
 ---
 
-### RF-045 — Registrar contexto nutricional desportivo
+### REQ-ASSESSMENT-002 — Pré-requisitos para coleta
 
-**Estado:** Obrigatório
+**Tipo:** Funcional  
+**Prioridade:** MVP
 
-O módulo nutricional deve permitir registrar contexto nutricional relacionado ao treino.
+Antes de iniciar a coleta, a avaliação deve ter tipo, cliente e profissional avaliador definidos.
 
-Campos iniciais sugeridos:
+**Critérios de aceitação:**
 
-- modalidade praticada;
-- cronograma de treinamento;
-- horário do treino;
-- duração;
-- intensidade;
-- frequência semanal;
-- histórico de suplementação;
-- energia durante o treino;
-- percepção de recuperação;
-- tolerância gastrointestinal sob esforço.
+- Exigir tipo de avaliação.
+- Exigir cliente.
+- Exigir profissional avaliador.
+- Bloquear coleta sem esses três elementos.
 
-Critérios de aceitação:
-
-- O profissional deve conseguir registrar o contexto desportivo.
-- Os dados devem poder ser usados em interpretação e cálculos futuros.
-
 ---
-
-### RF-046 — Calcular estimativas nutricionais iniciais
-
-**Estado:** Recomendado
 
-A aplicação deve calcular estimativas nutricionais quando os dados necessários estiverem disponíveis.
+### REQ-ASSESSMENT-003 — Rascunho
 
-Cálculos iniciais sugeridos:
+**Tipo:** Funcional  
+**Prioridade:** MVP
 
-- taxa metabólica basal;
-- gasto energético total;
-- distribuição de macronutrientes;
-- proteína em g/kg;
-- carboidrato em g/kg;
-- gordura em g/kg;
-- disponibilidade de energia.
+Após definir tipo, cliente e profissional, a avaliação pode existir como rascunho.
 
-Critérios de aceitação:
+**Critérios de aceitação:**
 
-- Os cálculos só devem ser executados quando os dados necessários estiverem disponíveis.
-- A aplicação deve informar dados faltantes.
-- A aplicação deve exibir a fórmula ou protocolo utilizado.
+- Estado inicial: `Draft`.
+- Dados preenchidos devem ser salvos progressivamente.
+- O usuário deve poder retomar avaliação incompleta.
+- O rascunho deve reduzir risco de perda por interrupção.
 
 ---
 
-### RF-047 — Gerar resultado/relatório nutricional
+### REQ-ASSESSMENT-004 — Avaliação finalizada
 
-**Estado:** Obrigatório
+**Tipo:** Funcional  
+**Prioridade:** MVP
 
-A aplicação deve gerar um resultado/relatório específico para avaliação nutricional.
+A avaliação pode ser finalizada quando possuir dados e confirmações necessárias.
 
-Critérios de aceitação:
+**Critérios de aceitação:**
 
-- O relatório deve exibir dados nutricionais coletados.
-- O relatório deve exibir estimativas calculadas quando disponíveis.
-- O relatório deve exibir interpretação profissional.
-- O relatório deve conter seção de aviso técnico geral.
-- O relatório deve conter carimbo profissional em todas as páginas.
+- Estado final: `Completed`.
+- Deve permitir regenerar relatório HTML.
+- Deve permitir exportação PDF.
+- Deve preservar snapshots necessários.
 
 ---
 
-## 7.4 Avaliação Cineantropométrica
+### REQ-ASSESSMENT-005 — Edição de avaliação finalizada
 
-### RF-048 — Registrar metadados cineantropométricos
+**Tipo:** Funcional  
+**Prioridade:** MVP
 
-**Estado:** Recomendado
+Avaliações finalizadas podem ser editadas.
 
-O módulo cineantropométrico deve permitir registrar metadados e contexto.
+**Critérios de aceitação:**
 
-Campos iniciais sugeridos:
+- Preservar `createdAt`.
+- Atualizar `updatedAt`.
+- Histórico campo a campo não é obrigatório no MVP.
+- Manter consistência dos dados usados no relatório.
 
-- idade cronológica;
-- maturação biológica, quando aplicável;
-- histórico de lesões;
-- histórico de cirurgias;
-- lado dominante;
-- modalidade esportiva;
-- nível competitivo;
-- horário da coleta;
-- observações sobre hidratação;
-- condições da coleta.
-
-Critérios de aceitação:
-
-- O profissional deve conseguir registrar dados de contexto.
-- O horário da coleta deve ser salvo para rastreabilidade.
-
 ---
 
-### RF-049 — Registrar perfil ISAK
+### REQ-ASSESSMENT-006 — Exclusão de avaliação
 
-**Estado:** Futuro
+**Tipo:** Funcional  
+**Prioridade:** MVP
 
-O módulo cineantropométrico deve permitir registrar perfil ISAK completo.
+O sistema deve permitir excluir avaliação com confirmação forte.
 
-Grupos de medidas:
+**Critérios de aceitação:**
 
-- medidas básicas;
-- dobras cutâneas;
-- perímetros;
-- diâmetros ósseos.
+- Avisar que a avaliação será removida.
+- Exigir confirmação explícita.
+- Não haverá lixeira no MVP.
+- PDFs exportados fora da aplicação não fazem parte da exclusão.
 
-Critérios de aceitação:
-
-- As medidas devem ser registradas com unidades corretas.
-- A aplicação deve validar campos obrigatórios para cada cálculo.
-
 ---
-
-### RF-050 — Calcular modelo de 5 componentes
 
-**Estado:** Futuro
+### REQ-ASSESSMENT-007 — Snapshots
 
-A aplicação deve calcular composição corporal por modelo de 5 componentes quando os dados necessários estiverem disponíveis.
+**Tipo:** Dados  
+**Prioridade:** MVP
 
-Componentes:
+A avaliação deve salvar snapshots históricos.
 
-- massa adiposa;
-- massa muscular;
-- massa óssea;
-- massa residual;
-- massa epitelial.
+**Critérios de aceitação:**
 
-Critérios de aceitação:
+- Salvar snapshot do cliente.
+- Salvar snapshot do profissional.
+- Salvar snapshot da instituição, quando houver.
+- Salvar dados de anamnese usados.
+- Salvar protocolo escolhido, quando aplicável.
+- Evitar duplicação pesada de imagens quando possível.
 
-- A aplicação deve exibir o protocolo utilizado.
-- A aplicação deve informar dados faltantes quando o cálculo não puder ser realizado.
-
 ---
 
-### RF-051 — Calcular somatotipo Heath-Carter
+## 14. Requisitos de protocolos
 
-**Estado:** Futuro
+### REQ-PROTOCOL-001 — AssessmentProtocol
 
-A aplicação deve calcular somatotipo antropométrico pelo método Heath-Carter quando os dados necessários estiverem disponíveis.
+**Tipo:** Funcional  
+**Prioridade:** MVP
 
-Resultados possíveis:
+Avaliações podem exigir escolha de `AssessmentProtocol`.
 
-- endomorfia;
-- mesomorfia;
-- ectomorfia;
-- coordenada X;
-- coordenada Y;
-- somatocarta;
-- SAD, quando houver somatotipo-alvo.
+**Critérios de aceitação:**
 
-Critérios de aceitação:
+- Protocolos devem ser definidos por tipo de avaliação.
+- O protocolo determina campos obrigatórios, opcionais e condicionais.
+- O protocolo determina cálculos disponíveis.
+- O protocolo escolhido deve ser salvo na avaliação.
 
-- A aplicação só deve calcular quando os dados necessários estiverem disponíveis.
-- A aplicação deve preservar rastreabilidade do cálculo.
-
 ---
 
-### RF-052 — Calcular perfil Phantom
+### REQ-PROTOCOL-002 — Protocolos antropométricos
 
-**Estado:** Futuro
+**Tipo:** Funcional  
+**Prioridade:** MVP
 
-A aplicação deve calcular Z-scores do modelo Phantom quando os dados necessários estiverem disponíveis.
+A avaliação antropométrica deve seguir o arquivo técnico correspondente.
 
-Critérios de aceitação:
+**Critérios de aceitação:**
 
-- A aplicação deve exibir Z-scores por grupo de medida.
-- A aplicação deve exibir protocolo, referência e limitações.
+- Campos e fórmulas devem seguir `mapa-tecnico-de-calculo-para-antropometrica.md`.
+- Campos obrigatórios devem variar conforme protocolo escolhido.
+- Protocolos como Jackson-Pollock 3 dobras e 7 dobras devem poder ser representados quando incluídos na implementação.
 
 ---
 
-### RF-053 — Gerar resultado/relatório cineantropométrico
+### REQ-PROTOCOL-003 — Protocolos cineantropométricos
 
-**Estado:** Futuro
+**Tipo:** Funcional  
+**Prioridade:** MVP
 
-A aplicação deve gerar um resultado/relatório específico para avaliação cineantropométrica.
+A avaliação cineantropométrica deve seguir o arquivo técnico correspondente.
 
-Critérios de aceitação:
+**Critérios de aceitação:**
 
-- O relatório deve exibir medidas brutas.
-- O relatório deve exibir indicadores avançados calculados.
-- O relatório deve exibir interpretação profissional.
-- O relatório deve conter seção de aviso técnico geral.
-- O relatório deve conter carimbo profissional em todas as páginas.
+- Campos e fórmulas devem seguir `mapa_tecnico_de_cálculo_para_cineantropometria(1).md`.
+- Deve suportar perfis e protocolos próprios de cineantropometria.
+- Campos obrigatórios devem variar conforme protocolo escolhido.
 
 ---
-
-# 8. Requisitos de Relatórios e Resultados
 
-### RR-001 — Gerar documento específico por tipo de avaliação
+### REQ-PROTOCOL-004 — Organização dos tipos de avaliação
 
-**Estado:** Obrigatório
+**Tipo:** Interface  
+**Prioridade:** MVP
 
-Cada tipo de avaliação deve possuir seu próprio documento de resultado/relatório.
+Tipos de avaliação devem ser organizados por método estável.
 
-Tipos iniciais:
+**Critérios de aceitação:**
 
-- relatório postural;
-- relatório antropométrico;
-- relatório nutricional;
-- relatório cineantropométrico.
+- Usar categoria e/ou ordem alfabética.
+- Permitir crescimento futuro.
+- Evitar ordem casual de implementação.
 
-Critérios de aceitação:
-
-- Ao abrir uma avaliação, o sistema deve exibir o resultado/relatório correspondente ao tipo da avaliação.
-- A estrutura do relatório deve ser compatível com a avaliação realizada.
-
 ---
-
-### RR-002 — Visualizar relatório pelo histórico
 
-**Estado:** Obrigatório
+## 15. Requisitos de relatório
 
-O profissional deve conseguir abrir uma avaliação pelo histórico do cliente e visualizar seu resultado/relatório.
+### REQ-REPORT-001 — Relatório HTML
 
-Critérios de aceitação:
+**Tipo:** Funcional  
+**Prioridade:** MVP
 
-- O histórico deve permitir abrir avaliações anteriores.
-- O relatório deve ser exibido offline.
+O sistema deve gerar relatório HTML a partir dos dados salvos.
 
----
-
-### RR-003 — Exportar relatório em PDF
-
-**Estado:** Obrigatório
+**Critérios de aceitação:**
 
-A aplicação deve permitir exportar relatórios em PDF.
+- O relatório deve ser visualizável na aplicação.
+- Deve ser regenerado a partir da avaliação.
+- Não é fonte primária dos dados.
+- Deve incluir dados, cálculos, observações, snapshots e confirmações.
 
-Critérios de aceitação:
-
-- A exportação deve funcionar offline.
-- O PDF deve conter identificação profissional.
-- O PDF deve conter dados do cliente.
-- O PDF deve conter dados da avaliação e resultados.
-
 ---
-
-### RR-004 — Exibir carimbo profissional em todas as páginas
 
-**Estado:** Obrigatório
+### REQ-REPORT-002 — Exportação PDF
 
-Toda página do relatório deve conter um carimbo profissional.
+**Tipo:** Funcional  
+**Prioridade:** MVP
 
-O carimbo poderá conter:
+O sistema deve permitir exportar relatório para PDF.
 
-- nome do profissional;
-- profissão;
-- registro profissional;
-- contatos;
-- endereço;
-- instituição;
-- logotipo;
-- outras informações configuradas.
+**Critérios de aceitação:**
 
-Critérios de aceitação:
+- Exportação sob demanda.
+- O usuário salva ou envia o PDF fora da aplicação.
+- O PDF não deve ser salvo no banco.
+- O banco pode registrar metadados futuros, mas não o arquivo PDF.
 
-- O carimbo deve aparecer em todas as páginas do relatório.
-- O carimbo deve cumprir função semelhante a um carimbo físico profissional.
-
 ---
-
-### RR-005 — Incluir seção de aviso técnico geral
-
-**Estado:** Obrigatório
 
-Todo relatório deve conter uma seção de aviso técnico geral dentro do resultado/relatório.
+### REQ-REPORT-003 — Carimbo técnico
 
-O aviso deve ser genérico, claro e abrangente.
+**Tipo:** Funcional  
+**Prioridade:** MVP
 
-O aviso deve explicar que:
+O relatório deve exibir carimbo textual do profissional.
 
-- as avaliações são baseadas em coleta presencial;
-- os resultados dependem da precisão dos dados coletados;
-- cálculos são estimativas baseadas em protocolos selecionados;
-- a interpretação é responsabilidade do profissional;
-- a aplicação não realiza diagnóstico automático;
-- o documento não substitui julgamento profissional qualificado.
+**Critérios de aceitação:**
 
-Critérios de aceitação:
+- Usar snapshot do profissional.
+- Identificar responsável pela avaliação.
+- Não exigir assinatura digitalizada no MVP.
 
-- O relatório deve conter uma seção chamada Aviso Técnico ou equivalente conforme idioma.
-- O aviso deve aparecer no PDF exportado.
-- O aviso não deve ser específico para apenas um tipo de avaliação.
-
 ---
-
-### RR-006 — Preservar snapshot do relatório
 
-**Estado:** Obrigatório
+### REQ-REPORT-004 — Cabeçalho institucional
 
-A aplicação deve preservar os dados relevantes usados na emissão do relatório.
+**Tipo:** Funcional  
+**Prioridade:** MVP
 
-Dados possíveis do snapshot:
+O relatório deve exibir cabeçalho institucional quando houver instituição no snapshot.
 
-- identificação do cliente;
-- dados do profissional;
-- dados da instituição;
-- data da avaliação;
-- data de emissão;
-- dados brutos;
-- resultados calculados;
-- versões de protocolos;
-- configurações do relatório.
+**Critérios de aceitação:**
 
-Critérios de aceitação:
+- Usar snapshot institucional.
+- Omitir cabeçalho se não houver instituição.
+- A instituição é derivada do vínculo do profissional.
 
-- Alterar o profissional depois da emissão não deve alterar relatórios já emitidos.
-- Alterar a instituição depois da emissão não deve alterar relatórios já emitidos.
-- Alterar o cliente depois da emissão não deve alterar relatórios já emitidos.
-
 ---
-
-### RR-007 — Evitar linguagem de diagnóstico automático
 
-**Estado:** Obrigatório
+### REQ-REPORT-005 — Confirmações no relatório
 
-Os relatórios não devem apresentar diagnóstico automático gerado pela aplicação.
+**Tipo:** Segurança/Responsabilidade  
+**Prioridade:** MVP
 
-Termos preferidos:
+O relatório deve exibir confirmação de ciência e veracidade.
 
-- interpretação profissional;
-- achados;
-- observações;
-- indicadores;
-- classificações;
-- recomendações.
+**Critérios de aceitação:**
 
-Critérios de aceitação:
+- Indicar confirmação do cliente.
+- Indicar revisão/confirmação profissional quando aplicável.
+- Incluir data e hora.
+- Considerar responsável legal quando aplicável.
 
-- O sistema não deve gerar frases afirmando diagnóstico automático.
-- A conclusão deve ser atribuída ao profissional responsável.
-
 ---
-
-# 9. Requisitos de Dados
-
-### RD-001 — Armazenar dados localmente
-
-**Estado:** Obrigatório
-
-Todos os dados essenciais devem ser armazenados localmente no dispositivo do usuário.
-
-Dados essenciais:
 
-- preferências;
-- profissionais;
-- instituições;
-- clientes;
-- anamneses;
-- avaliações;
-- resultados calculados;
-- snapshots de relatórios;
-- metadados de backup.
+## 16. Requisitos de imagens
 
----
+### REQ-MEDIA-001 — Imagens no MVP
 
-### RD-002 — Preservar dados brutos
+**Tipo:** Funcional  
+**Prioridade:** MVP
 
-**Estado:** Obrigatório
+O MVP deve permitir imagens para cliente, profissional e instituição.
 
-A aplicação deve preservar os dados brutos coletados nas avaliações.
+**Critérios de aceitação:**
 
-Os dados brutos não devem ser substituídos apenas por resultados calculados.
+- Cliente pode ter foto.
+- Profissional pode ter logo ou imagem.
+- Instituição pode ter logo.
+- Imagens devem respeitar limite de 2MB.
 
 ---
 
-### RD-003 — Preservar resultados calculados com rastreabilidade
+### REQ-MEDIA-002 — Blob no IndexedDB
 
-**Estado:** Obrigatório
+**Tipo:** Dados  
+**Prioridade:** MVP
 
-A aplicação deve armazenar resultados calculados com informações suficientes para rastreabilidade.
+Imagens devem ser armazenadas como `Blob` no IndexedDB.
 
-Dados de rastreabilidade possíveis:
+**Critérios de aceitação:**
 
-- nome da fórmula;
-- versão da fórmula;
-- nome do protocolo;
-- versão do protocolo;
-- valores de entrada;
-- unidades;
-- data do cálculo.
+- A imagem deve ser associada por identificador ao registro correspondente.
+- A estratégia deve evitar duplicação desnecessária.
+- Imagens necessárias à restauração devem entrar no backup.
+- Snapshots devem evitar duplicar imagens pesadas quando uma referência estável for suficiente.
 
 ---
-
-### RD-004 — Usar identificadores locais estáveis
-
-**Estado:** Obrigatório
 
-Entidades principais devem possuir identificadores locais estáveis.
+### REQ-MEDIA-003 — Limite de 2MB
 
-Entidades:
-
-- profissional;
-- instituição;
-- cliente;
-- anamnese;
-- avaliação;
-- snapshot de relatório;
-- backup.
-
----
+**Tipo:** Não funcional  
+**Prioridade:** MVP
 
-### RD-005 — Suportar versionamento de schema
+O limite inicial de imagem deve ser 2MB por imagem.
 
-**Estado:** Obrigatório
+**Critérios de aceitação:**
 
-O banco local deve suportar versionamento de schema para permitir migrações futuras.
+- Rejeitar ou tratar imagens acima de 2MB.
+- Informar o usuário sobre o limite.
+- Aplicar o limite a fotos e logos.
 
 ---
 
-# 10. Requisitos Científicos
+## 17. Requisitos de banco local
 
-### RC-001 — Documentar fórmulas
+### REQ-DATABASE-001 — Banco local
 
-**Estado:** Obrigatório
+**Tipo:** Dados  
+**Prioridade:** MVP
 
-Toda fórmula implementada deve ser documentada.
+A aplicação deve usar banco local para dados estruturados.
 
-A documentação deve conter:
+**Critérios de aceitação:**
 
-- nome da fórmula;
-- equação;
-- entradas necessárias;
-- unidades;
-- população indicada;
-- limitações;
-- referência científica;
-- observações de implementação.
+- Preferência inicial: Dexie.js/IndexedDB.
+- Armazenar clientes, profissionais, instituições, anamneses, avaliações, configurações e metadados.
+- Não armazenar PDFs exportados.
+- Armazenar imagens como Blob no IndexedDB.
 
 ---
 
-### RC-002 — Validar entradas obrigatórias
+### REQ-DATABASE-002 — Dados primários
 
-**Estado:** Obrigatório
+**Tipo:** Dados  
+**Prioridade:** MVP
 
-A aplicação deve validar dados obrigatórios antes de executar cálculos.
+O banco deve armazenar dados primários, calculáveis, snapshots e metadados.
 
-Critérios de aceitação:
+**Critérios de aceitação:**
 
-- A aplicação não deve calcular se faltarem dados necessários.
-- A aplicação deve informar quais dados estão faltando.
+- Salvar dados brutos.
+- Salvar dados necessários para cálculo.
+- Salvar resultados calculados quando necessário.
+- Salvar snapshots.
+- Regenerar relatório HTML a partir dos dados salvos.
 
 ---
 
-### RC-003 — Exibir protocolo utilizado
+### REQ-DATABASE-003 — Metadados
 
-**Estado:** Obrigatório
+**Tipo:** Dados  
+**Prioridade:** MVP
 
-A aplicação deve exibir o protocolo ou fórmula usada em cada resultado calculado.
+Registros principais devem conter metadados mínimos.
 
----
-
-### RC-004 — Alertar limitações de aplicabilidade
-
-**Estado:** Obrigatório
-
-A aplicação deve alertar quando um protocolo puder não se aplicar ao perfil do cliente ou quando a aplicabilidade não puder ser determinada.
-
----
+**Critérios de aceitação:**
 
-### RC-005 — Testar fórmulas automaticamente
+- Registros devem ter `createdAt`.
+- Registros editáveis devem ter `updatedAt`.
+- Avaliações devem preservar estado `Draft` ou `Completed`.
+- Considerar versionamento para migrações futuras.
 
-**Estado:** Obrigatório
-
-Implementações de fórmulas devem possuir testes automatizados.
-
-Critérios de aceitação:
-
-- Cada fórmula implementada deve ter pelo menos um teste.
-- Os testes devem comparar saídas esperadas com entradas conhecidas.
-
 ---
 
-# 11. Requisitos de Backup e Portabilidade
+## 18. Requisitos de backup e restauração
 
-### RB-001 — Exportar backup manual
+### REQ-BACKUP-001 — Backup manual
 
-**Estado:** Obrigatório
+**Tipo:** Segurança/Responsabilidade  
+**Prioridade:** MVP
 
-A aplicação deve permitir exportar dados locais em arquivo de backup.
+O backup do MVP deve ser manual.
 
-Critérios de aceitação:
+**Critérios de aceitação:**
 
-- A exportação deve funcionar offline.
-- O usuário deve conseguir armazenar o arquivo manualmente.
-- O backup deve conter os dados locais necessários para restauração ou transferência.
+- O usuário inicia a exportação.
+- A aplicação explica que backup é responsabilidade do usuário.
+- Não há backup automático em rede no MVP.
 
 ---
 
-### RB-002 — Importar backup manual
+### REQ-BACKUP-002 — Backup em ZIP
 
-**Estado:** Obrigatório
+**Tipo:** Dados  
+**Prioridade:** MVP
 
-A aplicação deve permitir importar um backup previamente exportado.
+O backup deve usar arquivo `.zip`.
 
-Critérios de aceitação:
+**Critérios de aceitação:**
 
-- A importação deve funcionar offline.
-- A aplicação deve validar o arquivo antes da importação.
-- A aplicação deve alertar sobre substituição, mesclagem ou conflito de dados conforme estratégia definida posteriormente.
+- Conter JSON com dados estruturados.
+- Conter imagens necessárias à restauração.
+- Conter metadados de versão.
+- A estrutura pode ser refinada tecnicamente sem alterar a regra base.
 
 ---
 
-### RB-003 — Versionar formato do backup
+### REQ-BACKUP-003 — Restauração substitutiva
 
-**Estado:** Obrigatório
+**Tipo:** Dados  
+**Prioridade:** MVP
 
-Arquivos de backup devem conter metadados de versão do formato.
+A restauração de backup deve substituir a base local atual.
 
-Critérios de aceitação:
+**Critérios de aceitação:**
 
-- O backup deve informar a versão do formato.
-- A aplicação deve verificar compatibilidade antes da importação.
+- Não haverá merge no MVP.
+- Avisar que a base atual será substituída.
+- Exigir confirmação explícita.
+- Validar compatibilidade básica do backup quando possível.
 
 ---
 
-### RB-004 — Informar responsabilidade sobre dados locais
+### REQ-BACKUP-004 — PDFs fora do backup
 
-**Estado:** Obrigatório
+**Tipo:** Dados  
+**Prioridade:** MVP
 
-A aplicação deve informar claramente que os dados são locais e que o usuário é responsável por proteger o dispositivo e os arquivos de backup.
+O backup não deve armazenar PDFs exportados.
 
-Critérios de aceitação:
+**Critérios de aceitação:**
 
-- O aviso deve aparecer na área de Backup.
-- O aviso deve aparecer em Configurações ou área equivalente de informações.
+- PDFs exportados não fazem parte do banco.
+- PDFs exportados não são exigidos no backup.
+- O backup restaura a aplicação, não uma pasta de documentos exportados.
 
 ---
-
-# 12. Requisitos de Internacionalização
 
-### RI-001 — Suportar inglês e português
+## 19. Requisitos de documentação
 
-**Estado:** Obrigatório
+### REQ-DOCUMENTATION-001 — Rota /documentation
 
-A aplicação deve suportar, inicialmente, inglês e português.
-
----
+**Tipo:** Documentação  
+**Prioridade:** Fundação
 
-### RI-002 — Usar inglês no primeiro acesso
+A aplicação deve ter rota `/documentation`.
 
-**Estado:** Obrigatório
+**Critérios de aceitação:**
 
-A tela de primeiro acesso deve ser exibida em inglês por padrão.
+- A rota deve existir no esqueleto inicial.
+- Deve ser destinada à documentação técnica interna da aplicação.
+- Deve ser separada da documentação de produto do repositório.
 
 ---
 
-### RI-003 — Usar estrutura i18n
+### REQ-DOCUMENTATION-002 — Conteúdo técnico
 
-**Estado:** Obrigatório
+**Tipo:** Documentação  
+**Prioridade:** MVP
 
-A aplicação deve usar uma estrutura de internacionalização baseada em i18n.
+A documentação técnica da aplicação deve conter fórmulas, protocolos e boas práticas.
 
-Critérios de aceitação:
+**Critérios de aceitação:**
 
-- Textos da interface devem ser externalizados.
-- A troca de idioma deve alterar os textos da interface.
-- Novos idiomas devem poder ser adicionados futuramente sem reescrever a aplicação.
+- Explicar fórmulas escolhidas.
+- Explicar protocolos usados.
+- Incluir boas práticas de medição.
+- Incluir avisos sobre limites de interpretação.
+- Informar que não substitui formação profissional.
 
 ---
 
-# 13. Requisitos Não Funcionais
+### REQ-DOCUMENTATION-003 — Documentos normativos
 
-### RNF-001 — Funcionar offline após o primeiro acesso
+**Tipo:** Documentação  
+**Prioridade:** MVP
 
-**Estado:** Obrigatório
+Os documentos técnicos de anamnese e avaliações devem servir como referência normativa para implementação.
 
-A aplicação deve funcionar offline após o primeiro carregamento ou instalação.
+**Critérios de aceitação:**
 
----
-
-### RNF-002 — Ser local-first
-
-**Estado:** Obrigatório
+- Anamnese geral segue `ficha-de-anamnese-geral-do-cliente.md`.
+- Antropometria segue `mapa-tecnico-de-calculo-para-antropometrica.md`.
+- Cineantropometria segue `mapa_tecnico_de_cálculo_para_cineantropometria(1).md`.
+- O documento de requisitos não duplica integralmente tabelas e fórmulas desses arquivos.
 
-A aplicação deve priorizar armazenamento local e funcionamento independente de servidor.
-
 ---
 
-### RNF-003 — Não depender de backend obrigatório
+## 20. Requisitos de exclusão
 
-**Estado:** Obrigatório
+### REQ-DELETION-001 — Sem ativo/inativo/arquivado
 
-A primeira versão não deve exigir backend para funcionalidades essenciais.
-
----
+**Tipo:** Funcional  
+**Prioridade:** MVP
 
-### RNF-004 — Não exigir conta online
+O MVP não deve ter ativo, inativo ou arquivado para clientes e profissionais.
 
-**Estado:** Obrigatório
+**Critérios de aceitação:**
 
-A primeira versão não deve exigir cadastro online, login remoto ou autenticação em servidor.
+- Não implementar arquivamento no MVP.
+- Não implementar ativação/desativação no MVP.
+- Usar exclusão com confirmação forte.
 
 ---
 
-### RNF-005 — Ser multiplataforma por PWA
+### REQ-DELETION-002 — Confirmação forte
 
-**Estado:** Obrigatório
+**Tipo:** Segurança/Responsabilidade  
+**Prioridade:** MVP
 
-A aplicação deve ser acessível em navegadores modernos e instalável como PWA quando suportado.
+Exclusões relevantes devem exigir confirmação forte.
 
-Plataformas-alvo:
+**Critérios de aceitação:**
 
-- Android;
-- iOS;
-- Windows;
-- Linux;
-- macOS;
-- ChromeOS.
+- Excluir cliente exige confirmação forte.
+- Excluir profissional exige confirmação forte.
+- Excluir instituição exige confirmação forte.
+- Excluir avaliação exige confirmação forte.
+- O aviso deve explicar o impacto da exclusão.
 
 ---
-
-### RNF-006 — Ser gratuita e open source
-
-**Estado:** Obrigatório
-
-A aplicação deve ser gratuita e distribuída como projeto open source sob licença MIT.
-
----
-
-### RNF-007 — Usar código em inglês técnico
 
-**Estado:** Obrigatório
+## 21. Itens fora do MVP
 
-O código-fonte deve ser escrito completamente em inglês técnico.
+### REQ-OUT-001 — Fichas de treino fora do MVP
 
-Isso inclui:
+**Tipo:** Fora de escopo  
+**Prioridade:** Futuro
 
-- nomes de arquivos;
-- nomes de pastas;
-- variáveis;
-- funções;
-- tipos;
-- classes;
-- comentários;
-- documentação técnica interna.
+Fichas de treino ficam fora do MVP.
 
 ---
 
-### RNF-008 — Ser adequada para desenvolvimento individual
+### REQ-OUT-002 — Dietas fora do MVP
 
-**Estado:** Obrigatório
+**Tipo:** Fora de escopo  
+**Prioridade:** Futuro
 
-A arquitetura deve ser viável para desenvolvimento e manutenção por um desenvolvedor individual júnior, com apoio de ferramentas de IA.
+Dietas ficam fora do MVP.
 
 ---
 
-### RNF-009 — Ter boa usabilidade em telas pequenas
+### REQ-OUT-003 — Recomendações alimentares fora do MVP
 
-**Estado:** Obrigatório
+**Tipo:** Fora de escopo  
+**Prioridade:** Futuro
 
-A aplicação deve ser confortável para uso em celular, tablet, notebook e desktop.
+Recomendações alimentares ficam fora do MVP.
 
 ---
 
-### RNF-010 — Ser transparente sobre limitações
+### REQ-OUT-004 — Protocolos de treinamento esportivo fora do MVP
 
-**Estado:** Obrigatório
+**Tipo:** Fora de escopo  
+**Prioridade:** Futuro
 
-A aplicação deve informar limitações técnicas, científicas e de responsabilidade profissional quando aplicável.
+Protocolos de treinamento esportivo ficam fora do MVP.
 
 ---
 
-# 14. Exclusões Explícitas da Primeira Versão
+### REQ-OUT-005 — Avaliações futuras fora do MVP
 
-### EX-001 — Sem aplicativo do cliente
+**Tipo:** Fora de escopo  
+**Prioridade:** Futuro
 
-**Estado:** Fora do Escopo
+Avaliações nutricionais, posturais, cardiorrespiratórias, fisioterapêuticas e de relação de apoio ficam fora do MVP.
 
-A primeira versão não terá acesso direto para clientes, alunos, pacientes ou atletas.
-
 ---
 
-### EX-002 — Sem sincronização automática
+### REQ-OUT-006 — Segurança avançada fora do MVP
 
-**Estado:** Fora do Escopo
+**Tipo:** Fora de escopo  
+**Prioridade:** Futuro
 
-A primeira versão não terá sincronização automática entre dispositivos.
+Senha local e criptografia local ficam fora do MVP.
 
 ---
 
-### EX-003 — Sem backend obrigatório
+### REQ-OUT-007 — Sincronização e cloud fora do MVP
 
-**Estado:** Fora do Escopo
+**Tipo:** Fora de escopo  
+**Prioridade:** Futuro
 
-A primeira versão não dependerá de backend obrigatório para funcionar.
+Sincronização automática, backup em rede e conta conectada ficam fora do MVP.
 
 ---
-
-### EX-004 — Sem conta online
-
-**Estado:** Fora do Escopo
 
-A primeira versão não exigirá criação de conta online.
+### REQ-OUT-008 — PDF no banco proibido
 
----
+**Tipo:** Fora de escopo  
+**Prioridade:** MVP
 
-### EX-005 — Sem administrador
+O sistema não deve salvar PDFs exportados no banco.
 
-**Estado:** Fora do Escopo
+Este item é uma restrição de arquitetura, não apenas adiamento.
 
-A primeira versão não terá administrador, hierarquia de permissões ou controle de acesso robusto.
-
 ---
-
-### EX-006 — Sem avaliação automática por foto
 
-**Estado:** Fora do Escopo
+### REQ-OUT-009 — Assinatura digitalizada fora do MVP
 
-A aplicação não fará avaliação postural, antropométrica ou qualquer outra avaliação automática por foto.
+**Tipo:** Fora de escopo  
+**Prioridade:** Futuro
 
-Fotos, se existirem futuramente, serão apenas anexos documentais.
+Assinatura digitalizada fica fora do MVP. O relatório terá carimbo textual.
 
 ---
 
-### EX-007 — Sem diagnóstico automático
+### REQ-OUT-010 — Avaliações combinadas fora do MVP
 
-**Estado:** Fora do Escopo
+**Tipo:** Fora de escopo  
+**Prioridade:** Futuro
 
-A aplicação não realizará diagnóstico automático.
+Execução combinada ou fusão de avaliações fica fora do MVP.
 
 ---
 
-### EX-008 — Sem prescrição automática autônoma
+## 22. Marcos de implementação
 
-**Estado:** Fora do Escopo
+### REQ-MILESTONE-001 — Ordem incremental
 
-A aplicação não deve gerar prescrição profissional automática sem interpretação e responsabilidade do profissional.
+**Tipo:** Planejamento  
+**Prioridade:** Fundação
 
----
-
-### EX-009 — Sem pagamento ou assinatura
-
-**Estado:** Fora do Escopo
+A implementação deve seguir ordem incremental:
 
-A primeira versão não terá sistema de cobrança, assinatura ou pagamento.
+1. HTML puro com navegação completa;
+2. HTML puro com formulários;
+3. banco de dados local;
+4. camada local de domínio, cálculos e geração de relatórios;
+5. exportação, backup e restauração;
+6. CSS, responsividade e refinamentos visuais;
+7. melhorias posteriores.
 
 ---
 
-### EX-010 — Sem teleatendimento
+### REQ-MILESTONE-002 — Tarefas pequenas para Codex
 
-**Estado:** Fora do Escopo
+**Tipo:** Planejamento  
+**Prioridade:** Fundação
 
-A primeira versão não terá recursos de teleatendimento.
+Cada marco deve ser implementado em tarefas pequenas e revisáveis.
 
----
-
-# 15. Questões em Aberto
+**Critérios de aceitação:**
 
-As seguintes decisões precisam ser refinadas em documentos posteriores:
+- Não pedir ao Codex para implementar o sistema inteiro.
+- Não misturar banco, cálculos, PDF e CSS na mesma tarefa inicial.
+- Cada prompt deve ter escopo pequeno.
+- Cada alteração deve ser testável.
 
-- estratégia exata de exclusão de dados relacionados ao cliente;
-- estratégia de importação de backup: substituir, mesclar ou escolher;
-- formato técnico do backup;
-- stack técnica definitiva;
-- modelo de dados local;
-- template visual dos relatórios;
-- texto final do aviso técnico geral;
-- política de responsabilidade profissional;
-- lista inicial de fórmulas e protocolos científicos;
-- estratégia de versionamento de fórmulas;
-- design final das telas;
-- critérios exatos do MVP 1.
-
 ---
-
-# 16. Próximo Documento Recomendado
 
-Após este documento, os próximos documentos recomendados são:
+## 23. Resumo obrigatório do MVP
 
-```text
-04-business-rules.md
-05-evaluation-modules.md
-06-mvp-scope.md
-```
+O MVP do OSSMA deve cumprir:
 
-O próximo mais importante é `04-business-rules.md`, pois ele transformará estes requisitos em regras de negócio objetivas para orientar banco de dados, interface e validações.
+- PWA;
+- local-first;
+- offline-first;
+- SvelteKit;
+- TypeScript;
+- pnpm;
+- Paraglide;
+- Dexie.js/IndexedDB como preferência inicial;
+- HTML semântico puro na fase inicial;
+- rotas públicas em inglês;
+- interface traduzível;
+- cadastro de clientes;
+- cadastro de profissionais;
+- cadastro de instituições;
+- anamnese geral obrigatória;
+- avaliações antropométrica e cineantropométrica separadas;
+- `AssessmentProtocol`;
+- tipo, cliente e profissional obrigatórios antes da coleta;
+- estados `Draft` e `Completed`;
+- salvamento progressivo;
+- snapshots históricos;
+- relatório HTML regenerável;
+- exportação PDF sem salvar PDF no banco;
+- imagens como Blob no IndexedDB;
+- limite de 2MB por imagem;
+- backup manual `.zip` com JSON e imagens;
+- restauração substitutiva, sem merge;
+- exclusões com confirmação forte;
+- sem login online;
+- sem backend obrigatório;
+- sem sincronização automática;
+- sem senha local;
+- sem criptografia local;
+- sem arquivamento ativo/inativo no MVP.
