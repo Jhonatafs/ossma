@@ -4,24 +4,25 @@
 
 Esses campos pertencem ao cadastro básico e serão usados em relatórios, histórico e identificação.
 
-| Campo                                  |          Tipo | Obrigatório |
-| -------------------------------------- | ------------: | ----------: |
-| Nome completo                          |         texto |         sim |
-| Nome social/apelido, se houver         |         texto |         não |
-| Data de nascimento                     |          data |         sim |
-| Sexo biológico                         |       seleção |         sim |
-| Gênero, se necessário para atendimento | seleção/texto |         não |
-| CPF/documento                          |         texto |    opcional |
-| Telefone/WhatsApp                      |         texto |         sim |
-| E-mail                                 |         texto |    opcional |
-| Endereço/cidade                        |         texto |    opcional |
-| Profissão/ocupação                     |         texto |    opcional |
-| Responsável legal, se menor de idade   |         texto | condicional |
-| Telefone do responsável                |         texto | condicional |
-| Contato de emergência                  |         texto |         sim |
-| Telefone do contato de emergência      |         texto |         sim |
+| Campo                                                        |     Tipo | Obrigatório |
+| ------------------------------------------------------------ | -------: | ----------: |
+| Nome completo                                                |    texto |         sim |
+| Nome social/apelido, se houver                               |    texto |         não |
+| Data de nascimento                                           |     data |         sim |
+| Sexo biológico                                               |  seleção |         sim |
+| Telefone                                                     |    texto |         sim |
+| Telefone principal também é usado em aplicativos de mensagem | checkbox |         não |
+| Telefone para aplicativos de mensagem                        |    texto | condicional |
+| E-mail                                                       |    texto |    opcional |
+| Endereço/cidade                                              |    texto |    opcional |
+| Profissão/ocupação                                           |    texto |    opcional |
+| Foto do cliente                                              |   imagem |    opcional |
+| Responsável legal, se menor de idade                         |    texto | condicional |
+| Telefone do responsável                                      |    texto | condicional |
+| Contato de emergência                                        |    texto |         sim |
+| Telefone do contato de emergência                            |    texto |         sim |
 
-**Observação de produto:** CPF, endereço e gênero não devem ser obrigatórios no MVP, salvo se a clínica precisar. São úteis, mas aumentam coleta de dados sensíveis ou identificáveis.
+**Observação de produto:** endereço e foto são úteis para identificação, mas devem continuar opcionais no MVP para reduzir coleta desnecessária de dados identificáveis.
 
 ---
 
@@ -49,12 +50,12 @@ Texto sugerido:
 
 Aqui você evita perguntas demais e já dá contexto para qualquer avaliação futura.
 
-| Campo                       |             Tipo | Obrigatório |
-| --------------------------- | ---------------: | ----------: |
-| Objetivo principal          | seleção múltipla |         sim |
-| Descrição livre do objetivo |      texto curto |    opcional |
-| Prazo ou evento-alvo        |       texto/data |    opcional |
-| Prioridade do cliente       |          seleção |    opcional |
+| Campo                 |                Tipo | Obrigatório |
+| --------------------- | ------------------: | ----------: |
+| Objetivo principal    | grupo de checkboxes |         sim |
+| Descrição de “Outro”  |         texto curto | condicional |
+| Prazo ou evento-alvo  |          texto/data |    opcional |
+| Prioridade do cliente |             seleção |    opcional |
 
 Sugestões para **objetivo principal**:
 
@@ -239,7 +240,7 @@ Para não ficar grande demais, eu dividiria a anamnese assim:
 3. Consentimento e ciência
 4. Objetivo principal
 5. Histórico familiar
-6. Saúde feminina/reprodutiva (Se melher biológica)
+6. Saúde feminina/reprodutiva, quando aplicável
 7. Estado geral de saúde
 8. Sinais de alerta
 9. Medicamentos e alergias
