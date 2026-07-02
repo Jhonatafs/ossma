@@ -1,0 +1,52 @@
+# Dependencies and package-manager state
+/node_modules/
+/.pnpm-store/
+
+# SvelteKit, Vite and deployment output
+/.svelte-kit/
+/build/
+/.output/
+/.vercel/
+/.netlify/
+/.wrangler/
+vite.config.js.timestamp-*
+vite.config.ts.timestamp-*
+*.tsbuildinfo
+
+# Tests and coverage
+/coverage/
+/test-results/
+/playwright-report/
+/blob-report/
+
+# Generated localization files
+/src/lib/paraglide/
+/project.inlang/cache/
+
+# Environment files
+.env
+.env.*
+!.env.example
+!.env.test
+
+# Logs
+*.log
+npm-debug.log*
+pnpm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Editors and local tooling
+/.idea/
+/.vscode/*
+!/.vscode/extensions.json
+/.agents/
+/.codex/
+*.swp
+*.swo
+*~
+
+# Operating-system files
+.DS_Store
+Thumbs.db
+Desktop.ini

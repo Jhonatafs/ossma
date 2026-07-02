@@ -1,0 +1,828 @@
+{
+	"formId": "professionalProfileForm",
+	"entity": "ProfessionalProfile",
+	"version": 1,
+	"defaultLocale": "en",
+	"supportedLocales": ["pt-BR", "en"],
+	"title": {
+		"pt-BR": "Cadastro de profissional",
+		"en": "Professional profile registration"
+	},
+	"description": {
+		"pt-BR": "Ficha para identificar o profissional responsável por avaliações e definir os dados exibidos em relatórios técnicos.",
+		"en": "Form used to identify the professional responsible for assessments and define the data shown in technical reports."
+	},
+	"sections": [
+		{
+			"id": "systemControl",
+			"order": 0,
+			"title": {
+				"pt-BR": "Controle interno",
+				"en": "Internal control"
+			},
+			"visible": false,
+			"fields": [
+				{
+					"key": "professionalId",
+					"type": "uuid",
+					"required": true,
+					"visible": false,
+					"editable": false,
+					"computed": true,
+					"calculation": "crypto.randomUUID()",
+					"label": {
+						"pt-BR": "ID do profissional",
+						"en": "Professional ID"
+					}
+				},
+				{
+					"key": "status",
+					"type": "enum",
+					"required": true,
+					"visible": false,
+					"editable": true,
+					"defaultValue": "active",
+					"label": {
+						"pt-BR": "Status",
+						"en": "Status"
+					},
+					"options": [
+						{
+							"value": "active",
+							"label": {
+								"pt-BR": "Ativo",
+								"en": "Active"
+							}
+						},
+						{
+							"value": "archived",
+							"label": {
+								"pt-BR": "Arquivado",
+								"en": "Archived"
+							}
+						}
+					]
+				},
+				{
+					"key": "createdAt",
+					"type": "datetime",
+					"required": true,
+					"visible": false,
+					"editable": false,
+					"computed": true,
+					"calculation": "new Date().toISOString()"
+				},
+				{
+					"key": "updatedAt",
+					"type": "datetime",
+					"required": true,
+					"visible": false,
+					"editable": false,
+					"computed": true,
+					"calculation": "new Date().toISOString()"
+				}
+			]
+		},
+		{
+			"id": "basicIdentification",
+			"order": 1,
+			"title": {
+				"pt-BR": "Identificação básica",
+				"en": "Basic identification"
+			},
+			"fields": [
+				{
+					"key": "localIdentifier",
+					"type": "string",
+					"required": true,
+					"visible": true,
+					"editable": true,
+					"label": {
+						"pt-BR": "Identificador local",
+						"en": "Local identifier"
+					},
+					"helpText": {
+						"pt-BR": "Usado apenas para organização local. Não é login.",
+						"en": "Used only for local organization. It is not a login."
+					},
+					"placeholder": {
+						"pt-BR": "ex.: carlos-andrade",
+						"en": "ex.: carlos-andrade"
+					},
+					"validation": {
+						"minLength": 3,
+						"maxLength": 60,
+						"pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$",
+						"mustBeUnique": true,
+						"trim": true,
+						"toLowerCase": true
+					},
+					"errorMessages": {
+						"required": {
+							"pt-BR": "Informe um identificador local.",
+							"en": "Enter a local identifier."
+						},
+						"invalid": {
+							"pt-BR": "Use apenas letras minúsculas, números e hífen. Não use espaços.",
+							"en": "Use only lowercase letters, numbers, and hyphens. Do not use spaces."
+						},
+						"notUnique": {
+							"pt-BR": "Este identificador local já está em uso.",
+							"en": "This local identifier is already in use."
+						}
+					}
+				},
+				{
+					"key": "fullName",
+					"type": "string",
+					"required": true,
+					"visible": true,
+					"editable": true,
+					"label": {
+						"pt-BR": "Nome completo",
+						"en": "Full name"
+					},
+					"placeholder": {
+						"pt-BR": "Ex.: Carlos Henrique Andrade",
+						"en": "Ex.: Carlos Henrique Andrade"
+					},
+					"validation": {
+						"minLength": 1,
+						"maxLength": 250,
+						"trim": true,
+						"collapseSpaces": true,
+						"rejectOnlyNumbers": true,
+						"rejectOnlySymbols": true
+					},
+					"errorMessages": {
+						"required": {
+							"pt-BR": "Informe o nome completo do profissional.",
+							"en": "Enter the professional's full name."
+						},
+						"invalid": {
+							"pt-BR": "Informe um nome completo válido.",
+							"en": "Enter a valid full name."
+						}
+					}
+				},
+				{
+					"key": "displayName",
+					"type": "string",
+					"required": true,
+					"visible": true,
+					"editable": true,
+					"label": {
+						"pt-BR": "Nome exibido",
+						"en": "Display name"
+					},
+					"helpText": {
+						"pt-BR": "Nome usado em listas, seleção de profissional e relatórios.",
+						"en": "Name used in lists, professional selection, and reports."
+					},
+					"placeholder": {
+						"pt-BR": "Ex.: Carlos Andrade",
+						"en": "Ex.: Carlos Andrade"
+					},
+					"validation": {
+						"minLength": 1,
+						"maxLength": 150,
+						"trim": true,
+						"collapseSpaces": true
+					},
+					"errorMessages": {
+						"required": {
+							"pt-BR": "Informe o nome exibido do profissional.",
+							"en": "Enter the professional's display name."
+						}
+					}
+				},
+				{
+					"key": "profileImage",
+					"type": "image",
+					"required": false,
+					"visible": true,
+					"editable": true,
+					"label": {
+						"pt-BR": "Foto ou imagem do profissional",
+						"en": "Professional photo or image"
+					},
+					"acceptedMimeTypes": ["image/jpeg", "image/png", "image/webp"],
+					"maxInputSizeBytes": 20971520,
+					"maxFinalSizeBytes": 2097152,
+					"recommendedFinalSizeBytes": 153600,
+					"recommendedMaxWidth": 500,
+					"recommendedMaxHeight": 500,
+					"processing": {
+						"resize": true,
+						"compress": true,
+						"preserveAspectRatio": true,
+						"stripMetadata": true,
+						"preferredOutputMimeType": "image/webp",
+						"fallbackOutputMimeType": "image/jpeg"
+					},
+					"valueShape": {
+						"imageId": "string",
+						"mimeType": "image/jpeg | image/png | image/webp",
+						"sizeBytes": "number",
+						"width": "number",
+						"height": "number",
+						"updatedAt": "datetime"
+					}
+				}
+			]
+		},
+		{
+			"id": "professionalActivity",
+			"order": 2,
+			"title": {
+				"pt-BR": "Atuação profissional",
+				"en": "Professional activity"
+			},
+			"fields": [
+				{
+					"key": "professionName",
+					"type": "string",
+					"required": true,
+					"visible": true,
+					"editable": true,
+					"label": {
+						"pt-BR": "Profissão ou área de atuação",
+						"en": "Profession or field of practice"
+					},
+					"placeholder": {
+						"pt-BR": "Ex.: Profissional de Educação Física",
+						"en": "Ex.: Physical Education Professional"
+					},
+					"validation": {
+						"minLength": 1,
+						"maxLength": 150,
+						"trim": true,
+						"collapseSpaces": true
+					},
+					"errorMessages": {
+						"required": {
+							"pt-BR": "Informe a profissão ou área de atuação.",
+							"en": "Enter the profession or field of practice."
+						}
+					}
+				},
+				{
+					"key": "professionalTitle",
+					"type": "string",
+					"required": true,
+					"visible": true,
+					"editable": true,
+					"label": {
+						"pt-BR": "Título profissional no relatório",
+						"en": "Professional title in report"
+					},
+					"placeholder": {
+						"pt-BR": "Ex.: Profissional de Educação Física",
+						"en": "Ex.: Physical Education Professional"
+					},
+					"validation": {
+						"minLength": 1,
+						"maxLength": 150,
+						"trim": true,
+						"collapseSpaces": true
+					},
+					"errorMessages": {
+						"required": {
+							"pt-BR": "Informe o título profissional que aparecerá no relatório.",
+							"en": "Enter the professional title that will appear in the report."
+						}
+					}
+				},
+				{
+					"key": "specialty",
+					"type": "string",
+					"required": false,
+					"visible": true,
+					"editable": true,
+					"label": {
+						"pt-BR": "Especialidade ou foco de atuação",
+						"en": "Specialty or practice focus"
+					},
+					"placeholder": {
+						"pt-BR": "Ex.: Avaliação física, treinamento resistido, reabilitação",
+						"en": "Ex.: Physical assessment, resistance training, rehabilitation"
+					},
+					"validation": {
+						"maxLength": 250,
+						"trim": true,
+						"collapseSpaces": true,
+						"emptyToNull": true
+					}
+				}
+			]
+		},
+		{
+			"id": "professionalRegistrations",
+			"order": 3,
+			"title": {
+				"pt-BR": "Registro profissional",
+				"en": "Professional registration"
+			},
+			"fields": [
+				{
+					"key": "hasProfessionalRegistration",
+					"type": "boolean",
+					"required": true,
+					"visible": true,
+					"editable": true,
+					"defaultValue": false,
+					"label": {
+						"pt-BR": "Possui registro profissional?",
+						"en": "Has professional registration?"
+					}
+				},
+				{
+					"key": "professionalRegistrations",
+					"type": "array",
+					"required": false,
+					"requiredWhen": "hasProfessionalRegistration === true",
+					"visibleWhen": "hasProfessionalRegistration === true",
+					"editable": true,
+					"minItemsWhenRequired": 1,
+					"maxItemsRecommended": 3,
+					"label": {
+						"pt-BR": "Registros profissionais",
+						"en": "Professional registrations"
+					},
+					"item": {
+						"type": "object",
+						"fields": [
+							{
+								"key": "registrationId",
+								"type": "uuid",
+								"required": true,
+								"visible": false,
+								"editable": false,
+								"computed": true,
+								"calculation": "crypto.randomUUID()"
+							},
+							{
+								"key": "issuingBodyName",
+								"type": "string",
+								"required": true,
+								"visible": true,
+								"editable": true,
+								"label": {
+									"pt-BR": "Órgão, conselho ou entidade emissora",
+									"en": "Issuing board, council, or authority"
+								},
+								"placeholder": {
+									"pt-BR": "Ex.: CREF, CRN, CREFITO, CRM, órgão local",
+									"en": "Ex.: CREF, CRN, CREFITO, medical board, local authority"
+								},
+								"validation": {
+									"minLength": 1,
+									"maxLength": 150,
+									"trim": true,
+									"collapseSpaces": true
+								}
+							},
+							{
+								"key": "registrationNumber",
+								"type": "string",
+								"required": true,
+								"visible": true,
+								"editable": true,
+								"label": {
+									"pt-BR": "Número ou código do registro",
+									"en": "Registration number or code"
+								},
+								"placeholder": {
+									"pt-BR": "Ex.: 000000-G/BA",
+									"en": "Ex.: 000000-G/BA"
+								},
+								"validation": {
+									"minLength": 1,
+									"maxLength": 80,
+									"trim": true,
+									"collapseSpaces": true
+								}
+							},
+							{
+								"key": "issuingCountry",
+								"type": "countryCode",
+								"required": false,
+								"visible": true,
+								"editable": true,
+								"label": {
+									"pt-BR": "País do registro",
+									"en": "Registration country"
+								},
+								"placeholder": {
+									"pt-BR": "Ex.: BR",
+									"en": "Ex.: BR"
+								},
+								"validation": {
+									"format": "ISO 3166-1 alpha-2",
+									"emptyToNull": true
+								}
+							},
+							{
+								"key": "issuingRegion",
+								"type": "string",
+								"required": false,
+								"visible": true,
+								"editable": true,
+								"label": {
+									"pt-BR": "Estado, província ou região",
+									"en": "State, province, or region"
+								},
+								"placeholder": {
+									"pt-BR": "Ex.: BA",
+									"en": "Ex.: BA"
+								},
+								"validation": {
+									"maxLength": 80,
+									"trim": true,
+									"collapseSpaces": true,
+									"emptyToNull": true
+								}
+							},
+							{
+								"key": "registrationCategory",
+								"type": "string",
+								"required": false,
+								"visible": true,
+								"editable": true,
+								"label": {
+									"pt-BR": "Categoria, classe ou tipo de registro",
+									"en": "Registration category, class, or type"
+								},
+								"placeholder": {
+									"pt-BR": "Ex.: Licenciado, bacharel, técnico, especialista",
+									"en": "Ex.: Licensed, bachelor, technician, specialist"
+								},
+								"validation": {
+									"maxLength": 120,
+									"trim": true,
+									"collapseSpaces": true,
+									"emptyToNull": true
+								}
+							},
+							{
+								"key": "displayInReports",
+								"type": "boolean",
+								"required": true,
+								"visible": true,
+								"editable": true,
+								"defaultValue": true,
+								"label": {
+									"pt-BR": "Exibir este registro nos relatórios",
+									"en": "Show this registration in reports"
+								}
+							}
+						]
+					},
+					"validation": {
+						"minItemsWhenRequired": 1
+					},
+					"errorMessages": {
+						"required": {
+							"pt-BR": "Informe pelo menos um registro profissional.",
+							"en": "Enter at least one professional registration."
+						},
+						"invalid": {
+							"pt-BR": "Preencha corretamente os dados do registro profissional.",
+							"en": "Fill in the professional registration data correctly."
+						}
+					}
+				}
+			]
+		},
+		{
+			"id": "professionalContact",
+			"order": 4,
+			"title": {
+				"pt-BR": "Contato profissional",
+				"en": "Professional contact"
+			},
+			"fields": [
+				{
+					"key": "professionalPhone",
+					"type": "phone",
+					"required": false,
+					"visible": true,
+					"editable": true,
+					"label": {
+						"pt-BR": "Telefone profissional",
+						"en": "Professional phone"
+					},
+					"displayPattern": "+{countryCode} ({areaCode}) {number}",
+					"parts": [
+						{
+							"key": "countryCode",
+							"type": "string",
+							"required": false,
+							"visible": true,
+							"editable": true,
+							"defaultValue": "55",
+							"validation": {
+								"digitsOnly": true,
+								"minLength": 1,
+								"maxLength": 4
+							}
+						},
+						{
+							"key": "areaCode",
+							"type": "string",
+							"required": false,
+							"visible": true,
+							"editable": true,
+							"validation": {
+								"digitsOnly": true,
+								"minLength": 1,
+								"maxLength": 4
+							}
+						},
+						{
+							"key": "number",
+							"type": "string",
+							"required": false,
+							"visible": true,
+							"editable": true,
+							"validation": {
+								"digitsOnly": true,
+								"minLength": 6,
+								"maxLength": 12
+							}
+						},
+						{
+							"key": "clean",
+							"type": "string",
+							"required": false,
+							"visible": false,
+							"editable": false,
+							"computed": true,
+							"calculation": "digitsOnly(countryCode + areaCode + number)"
+						}
+					]
+				},
+				{
+					"key": "professionalEmail",
+					"type": "email",
+					"required": false,
+					"visible": true,
+					"editable": true,
+					"label": {
+						"pt-BR": "E-mail profissional",
+						"en": "Professional email"
+					},
+					"placeholder": {
+						"pt-BR": "profissional@email.com",
+						"en": "professional@email.com"
+					},
+					"validation": {
+						"maxLength": 254,
+						"trim": true,
+						"toLowerCase": true,
+						"emptyToNull": true
+					},
+					"errorMessages": {
+						"invalid": {
+							"pt-BR": "Informe um e-mail válido ou deixe o campo vazio.",
+							"en": "Enter a valid email or leave the field empty."
+						}
+					}
+				}
+			]
+		},
+		{
+			"id": "reportDisplaySettings",
+			"order": 5,
+			"title": {
+				"pt-BR": "Exibição nos relatórios",
+				"en": "Report display settings"
+			},
+			"fields": [
+				{
+					"key": "reportDisplayName",
+					"type": "string",
+					"required": true,
+					"visible": true,
+					"editable": true,
+					"label": {
+						"pt-BR": "Nome para assinatura técnica",
+						"en": "Technical signature name"
+					},
+					"placeholder": {
+						"pt-BR": "Ex.: Carlos Andrade",
+						"en": "Ex.: Carlos Andrade"
+					},
+					"defaultFrom": "displayName",
+					"validation": {
+						"minLength": 1,
+						"maxLength": 150,
+						"trim": true,
+						"collapseSpaces": true
+					},
+					"errorMessages": {
+						"required": {
+							"pt-BR": "Informe o nome para assinatura técnica.",
+							"en": "Enter the technical signature name."
+						}
+					}
+				},
+				{
+					"key": "showProfessionalTitleInReports",
+					"type": "boolean",
+					"required": true,
+					"visible": true,
+					"editable": true,
+					"defaultValue": true,
+					"label": {
+						"pt-BR": "Exibir título profissional nos relatórios",
+						"en": "Show professional title in reports"
+					}
+				},
+				{
+					"key": "showRegistrationsInReports",
+					"type": "boolean",
+					"required": true,
+					"visible": true,
+					"editable": true,
+					"defaultValue": true,
+					"label": {
+						"pt-BR": "Exibir registro profissional nos relatórios",
+						"en": "Show professional registration in reports"
+					}
+				},
+				{
+					"key": "showPhoneInReports",
+					"type": "boolean",
+					"required": true,
+					"visible": true,
+					"editable": true,
+					"defaultValue": false,
+					"label": {
+						"pt-BR": "Exibir telefone nos relatórios",
+						"en": "Show phone in reports"
+					}
+				},
+				{
+					"key": "showEmailInReports",
+					"type": "boolean",
+					"required": true,
+					"visible": true,
+					"editable": true,
+					"defaultValue": false,
+					"label": {
+						"pt-BR": "Exibir e-mail nos relatórios",
+						"en": "Show email in reports"
+					}
+				},
+				{
+					"key": "signatureNote",
+					"type": "textarea",
+					"required": false,
+					"visible": true,
+					"editable": true,
+					"label": {
+						"pt-BR": "Observação padrão da assinatura",
+						"en": "Default signature note"
+					},
+					"placeholder": {
+						"pt-BR": "Ex.: Avaliação realizada conforme dados informados e medidas coletadas na data do atendimento.",
+						"en": "Ex.: Assessment performed according to provided data and measurements collected on the service date."
+					},
+					"validation": {
+						"maxLength": 1000,
+						"trim": true,
+						"emptyToNull": true
+					}
+				}
+			]
+		},
+		{
+			"id": "institutionLink",
+			"order": 6,
+			"title": {
+				"pt-BR": "Instituição vinculada",
+				"en": "Linked institution"
+			},
+			"fields": [
+				{
+					"key": "institutionId",
+					"type": "foreignKey",
+					"required": false,
+					"visible": true,
+					"editable": true,
+					"references": "InstitutionProfile",
+					"label": {
+						"pt-BR": "Instituição",
+						"en": "Institution"
+					},
+					"placeholder": {
+						"pt-BR": "Selecionar instituição, se houver",
+						"en": "Select institution, if any"
+					},
+					"helpText": {
+						"pt-BR": "Opcional. Usada para exibir dados institucionais nos relatórios quando aplicável.",
+						"en": "Optional. Used to show institutional data in reports when applicable."
+					}
+				}
+			]
+		}
+	],
+	"computedFields": [
+		{
+			"key": "professionalId",
+			"source": "formCreate",
+			"calculation": "crypto.randomUUID()",
+			"visible": false,
+			"editable": false
+		},
+		{
+			"key": "createdAt",
+			"source": "formCreate",
+			"calculation": "new Date().toISOString()",
+			"visible": false,
+			"editable": false
+		},
+		{
+			"key": "updatedAt",
+			"source": "formSubmit",
+			"calculation": "new Date().toISOString()",
+			"visible": false,
+			"editable": false
+		},
+		{
+			"key": "professionalPhone.clean",
+			"source": [
+				"professionalPhone.countryCode",
+				"professionalPhone.areaCode",
+				"professionalPhone.number"
+			],
+			"calculation": "digitsOnly(countryCode + areaCode + number)",
+			"visible": false,
+			"editable": false
+		}
+	],
+	"submitRules": {
+		"canSubmitWhen": [
+			"professionalId is valid",
+			"localIdentifier is valid and unique",
+			"fullName is valid",
+			"displayName is valid",
+			"professionName is valid",
+			"professionalTitle is valid",
+			"reportDisplayName is valid",
+			"if hasProfessionalRegistration is true, professionalRegistrations has at least one valid item"
+		],
+		"onSubmit": [
+			"normalize localIdentifier",
+			"normalize fullName",
+			"normalize displayName",
+			"normalize professionName",
+			"normalize professionalTitle",
+			"normalize professionalEmail",
+			"compute professionalPhone.clean when phone is provided",
+			"process profileImage if provided",
+			"set createdAt on first save",
+			"set updatedAt on every save"
+		]
+	},
+	"examplePayload": {
+		"professionalId": "8a0d2b73-3f74-4f4e-9e35-91b529d4e418",
+		"status": "active",
+		"createdAt": "2026-06-30T10:12:00-03:00",
+		"updatedAt": "2026-06-30T10:12:00-03:00",
+		"localIdentifier": "carlos-andrade",
+		"fullName": "Carlos Henrique Andrade",
+		"displayName": "Carlos Andrade",
+		"profileImage": null,
+		"professionName": "Profissional de Educação Física",
+		"professionalTitle": "Profissional de Educação Física",
+		"specialty": "Avaliação física e treinamento resistido",
+		"hasProfessionalRegistration": true,
+		"professionalRegistrations": [
+			{
+				"registrationId": "5cd2b6c3-9bb6-498b-9a0c-5bc789e8e65a",
+				"issuingBodyName": "CREF",
+				"registrationNumber": "000000-G",
+				"issuingCountry": "BR",
+				"issuingRegion": "BA",
+				"registrationCategory": "Bacharel",
+				"displayInReports": true
+			}
+		],
+		"professionalPhone": {
+			"countryCode": "55",
+			"areaCode": "77",
+			"number": "999991111",
+			"clean": "5577999991111"
+		},
+		"professionalEmail": "carlos@email.com",
+		"reportDisplayName": "Carlos Andrade",
+		"showProfessionalTitleInReports": true,
+		"showRegistrationsInReports": true,
+		"showPhoneInReports": true,
+		"showEmailInReports": false,
+		"signatureNote": "Avaliação realizada conforme dados informados e medidas coletadas na data do atendimento.",
+		"institutionId": null
+	}
+}

@@ -1,0 +1,853 @@
+{
+	"formId": "clientRegistrationForm",
+	"entity": "Client",
+	"version": 1,
+	"defaultLocale": "en",
+	"supportedLocales": ["pt-BR", "en"],
+	"title": {
+		"pt-BR": "Cadastro de cliente",
+		"en": "Client registration"
+	},
+	"description": {
+		"pt-BR": "Ficha objetiva para identificação, contato, responsável legal, emergência e consentimento mínimo do cliente.",
+		"en": "Objective form for client identification, contact, legal guardian, emergency contact, and minimum consent."
+	},
+	"sections": [
+		{
+			"id": "photoAndIdentification",
+			"order": 1,
+			"title": {
+				"pt-BR": "Foto e identificação",
+				"en": "Photo and identification"
+			},
+			"fields": [
+				{
+					"key": "photo",
+					"type": "image",
+					"required": false,
+					"visible": true,
+					"editable": true,
+					"label": {
+						"pt-BR": "Foto do cliente",
+						"en": "Client photo"
+					},
+					"helpText": {
+						"pt-BR": "Opcional. Usada apenas para identificação visual do cliente.",
+						"en": "Optional. Used only for visual identification of the client."
+					},
+					"acceptedMimeTypes": ["image/jpeg", "image/png", "image/webp"],
+					"maxInputSizeBytes": 20971520,
+					"maxFinalSizeBytes": 2097152,
+					"recommendedFinalSizeBytes": 153600,
+					"recommendedMaxWidth": 500,
+					"recommendedMaxHeight": 500,
+					"processing": {
+						"resize": true,
+						"compress": true,
+						"preserveAspectRatio": true,
+						"stripMetadata": true,
+						"preferredOutputMimeType": "image/webp",
+						"fallbackOutputMimeType": "image/jpeg"
+					},
+					"valueShape": {
+						"imageId": "string",
+						"mimeType": "image/jpeg | image/png | image/webp",
+						"sizeBytes": "number",
+						"width": "number",
+						"height": "number",
+						"updatedAt": "datetime"
+					}
+				},
+				{
+					"key": "fullName",
+					"type": "string",
+					"required": true,
+					"visible": true,
+					"editable": true,
+					"label": {
+						"pt-BR": "Nome completo",
+						"en": "Full name"
+					},
+					"placeholder": {
+						"pt-BR": "Ex.: Lucas Almeida Santos",
+						"en": "Ex.: Lucas Almeida Santos"
+					},
+					"validation": {
+						"minLength": 1,
+						"maxLength": 250,
+						"trim": true,
+						"collapseSpaces": true,
+						"rejectOnlyNumbers": true,
+						"rejectOnlySymbols": true
+					},
+					"errorMessages": {
+						"required": {
+							"pt-BR": "Informe o nome completo do cliente.",
+							"en": "Enter the client's full name."
+						},
+						"invalid": {
+							"pt-BR": "Informe um nome completo válido.",
+							"en": "Enter a valid full name."
+						}
+					}
+				},
+				{
+					"key": "dateOfBirth",
+					"type": "date",
+					"required": true,
+					"visible": true,
+					"editable": true,
+					"label": {
+						"pt-BR": "Data de nascimento",
+						"en": "Date of birth"
+					},
+					"validation": {
+						"format": "yyyy-mm-dd",
+						"rejectFutureDate": true,
+						"minimumPlausibleDate": "1900-01-01"
+					},
+					"errorMessages": {
+						"required": {
+							"pt-BR": "Informe a data de nascimento.",
+							"en": "Enter the date of birth."
+						},
+						"invalid": {
+							"pt-BR": "Informe uma data de nascimento válida.",
+							"en": "Enter a valid date of birth."
+						}
+					}
+				},
+				{
+					"key": "ageYears",
+					"type": "integer",
+					"required": true,
+					"visible": true,
+					"editable": false,
+					"computed": true,
+					"source": "dateOfBirth",
+					"calculation": "completedYearsBetween(dateOfBirth, today)",
+					"label": {
+						"pt-BR": "Idade",
+						"en": "Age"
+					},
+					"validation": {
+						"min": 0,
+						"max": 999
+					}
+				},
+				{
+					"key": "biologicalSex",
+					"type": "enum",
+					"required": true,
+					"visible": true,
+					"editable": true,
+					"label": {
+						"pt-BR": "Sexo biológico",
+						"en": "Biological sex"
+					},
+					"helpText": {
+						"pt-BR": "Campo técnico usado em avaliações, cálculos e referências.",
+						"en": "Technical field used in assessments, calculations, and references."
+					},
+					"options": [
+						{
+							"value": "male",
+							"label": {
+								"pt-BR": "Masculino",
+								"en": "Male"
+							}
+						},
+						{
+							"value": "female",
+							"label": {
+								"pt-BR": "Feminino",
+								"en": "Female"
+							}
+						}
+					],
+					"errorMessages": {
+						"required": {
+							"pt-BR": "Selecione o sexo biológico.",
+							"en": "Select the biological sex."
+						}
+					}
+				}
+			]
+		},
+		{
+			"id": "primaryContact",
+			"order": 2,
+			"title": {
+				"pt-BR": "Contato principal",
+				"en": "Primary contact"
+			},
+			"fields": [
+				{
+					"key": "primaryPhone",
+					"type": "phone",
+					"required": true,
+					"visible": true,
+					"editable": true,
+					"label": {
+						"pt-BR": "Telefone principal",
+						"en": "Primary phone"
+					},
+					"displayPattern": "+{countryCode} ({areaCode}) {number}",
+					"parts": [
+						{
+							"key": "countryCode",
+							"type": "string",
+							"required": true,
+							"visible": true,
+							"editable": true,
+							"label": {
+								"pt-BR": "DDI",
+								"en": "Country code"
+							},
+							"defaultValue": "55",
+							"validation": {
+								"digitsOnly": true,
+								"minLength": 1,
+								"maxLength": 4
+							}
+						},
+						{
+							"key": "areaCode",
+							"type": "string",
+							"required": true,
+							"visible": true,
+							"editable": true,
+							"label": {
+								"pt-BR": "DDD/área",
+								"en": "Area code"
+							},
+							"validation": {
+								"digitsOnly": true,
+								"minLength": 1,
+								"maxLength": 4
+							}
+						},
+						{
+							"key": "number",
+							"type": "string",
+							"required": true,
+							"visible": true,
+							"editable": true,
+							"label": {
+								"pt-BR": "Número",
+								"en": "Number"
+							},
+							"validation": {
+								"digitsOnly": true,
+								"minLength": 6,
+								"maxLength": 12
+							}
+						},
+						{
+							"key": "clean",
+							"type": "string",
+							"required": true,
+							"visible": false,
+							"editable": false,
+							"computed": true,
+							"calculation": "digitsOnly(countryCode + areaCode + number)"
+						}
+					],
+					"errorMessages": {
+						"required": {
+							"pt-BR": "Informe o telefone principal completo.",
+							"en": "Enter the full primary phone number."
+						},
+						"invalid": {
+							"pt-BR": "Informe um telefone válido.",
+							"en": "Enter a valid phone number."
+						}
+					}
+				},
+				{
+					"key": "email",
+					"type": "email",
+					"required": false,
+					"visible": true,
+					"editable": true,
+					"label": {
+						"pt-BR": "E-mail",
+						"en": "Email"
+					},
+					"placeholder": {
+						"pt-BR": "cliente@email.com",
+						"en": "client@email.com"
+					},
+					"validation": {
+						"maxLength": 254,
+						"trim": true,
+						"toLowerCase": true,
+						"emptyToNull": true
+					},
+					"errorMessages": {
+						"invalid": {
+							"pt-BR": "Informe um e-mail válido ou deixe o campo vazio.",
+							"en": "Enter a valid email or leave the field empty."
+						}
+					}
+				}
+			]
+		},
+		{
+			"id": "legalGuardian",
+			"order": 3,
+			"title": {
+				"pt-BR": "Responsável legal",
+				"en": "Legal guardian"
+			},
+			"fields": [
+				{
+					"key": "legalGuardianRequired",
+					"type": "boolean",
+					"required": true,
+					"visible": true,
+					"editable": true,
+					"defaultValue": false,
+					"label": {
+						"pt-BR": "Exige responsável legal?",
+						"en": "Requires legal guardian?"
+					},
+					"helpText": {
+						"pt-BR": "Pode ser marcado manualmente pelo profissional.",
+						"en": "Can be manually selected by the professional."
+					}
+				},
+				{
+					"key": "legalGuardian",
+					"type": "object",
+					"required": false,
+					"visibleWhen": "legalGuardianRequired === true",
+					"requiredWhen": "legalGuardianRequired === true",
+					"fields": [
+						{
+							"key": "fullName",
+							"type": "string",
+							"required": true,
+							"visible": true,
+							"editable": true,
+							"label": {
+								"pt-BR": "Nome completo do responsável",
+								"en": "Guardian full name"
+							},
+							"validation": {
+								"minLength": 1,
+								"maxLength": 250,
+								"trim": true,
+								"collapseSpaces": true,
+								"rejectOnlyNumbers": true,
+								"rejectOnlySymbols": true
+							}
+						},
+						{
+							"key": "relationship",
+							"type": "enum",
+							"required": true,
+							"visible": true,
+							"editable": true,
+							"label": {
+								"pt-BR": "Relação com o cliente",
+								"en": "Relationship to client"
+							},
+							"options": [
+								{
+									"value": "parent",
+									"label": {
+										"pt-BR": "Pai/mãe",
+										"en": "Parent"
+									}
+								},
+								{
+									"value": "grandparent",
+									"label": {
+										"pt-BR": "Avô/avó",
+										"en": "Grandparent"
+									}
+								},
+								{
+									"value": "sibling",
+									"label": {
+										"pt-BR": "Irmão/irmã",
+										"en": "Sibling"
+									}
+								},
+								{
+									"value": "spouse",
+									"label": {
+										"pt-BR": "Cônjuge",
+										"en": "Spouse"
+									}
+								},
+								{
+									"value": "tutor",
+									"label": {
+										"pt-BR": "Tutor/guardião",
+										"en": "Tutor/guardian"
+									}
+								},
+								{
+									"value": "other",
+									"label": {
+										"pt-BR": "Outro",
+										"en": "Other"
+									}
+								}
+							]
+						},
+						{
+							"key": "relationshipOther",
+							"type": "string",
+							"required": false,
+							"requiredWhen": "legalGuardian.relationship === 'other'",
+							"visibleWhen": "legalGuardian.relationship === 'other'",
+							"editable": true,
+							"label": {
+								"pt-BR": "Descrever relação",
+								"en": "Describe relationship"
+							},
+							"validation": {
+								"minLength": 1,
+								"maxLength": 100,
+								"trim": true,
+								"collapseSpaces": true
+							}
+						},
+						{
+							"key": "phone",
+							"type": "phone",
+							"required": true,
+							"visible": true,
+							"editable": true,
+							"label": {
+								"pt-BR": "Telefone do responsável",
+								"en": "Guardian phone"
+							},
+							"displayPattern": "+{countryCode} ({areaCode}) {number}",
+							"parts": [
+								{
+									"key": "countryCode",
+									"type": "string",
+									"required": true,
+									"defaultValue": "55",
+									"validation": {
+										"digitsOnly": true,
+										"minLength": 1,
+										"maxLength": 4
+									}
+								},
+								{
+									"key": "areaCode",
+									"type": "string",
+									"required": true,
+									"validation": {
+										"digitsOnly": true,
+										"minLength": 1,
+										"maxLength": 4
+									}
+								},
+								{
+									"key": "number",
+									"type": "string",
+									"required": true,
+									"validation": {
+										"digitsOnly": true,
+										"minLength": 6,
+										"maxLength": 12
+									}
+								},
+								{
+									"key": "clean",
+									"type": "string",
+									"required": true,
+									"visible": false,
+									"editable": false,
+									"computed": true,
+									"calculation": "digitsOnly(countryCode + areaCode + number)"
+								}
+							]
+						},
+						{
+							"key": "useAsEmergencyContact",
+							"type": "boolean",
+							"required": false,
+							"visible": true,
+							"editable": true,
+							"defaultValue": false,
+							"label": {
+								"pt-BR": "Usar responsável como contato de emergência",
+								"en": "Use guardian as emergency contact"
+							}
+						},
+						{
+							"key": "consentAccepted",
+							"type": "boolean",
+							"required": true,
+							"visible": true,
+							"editable": true,
+							"defaultValue": false,
+							"label": {
+								"pt-BR": "Responsável confirma ciência",
+								"en": "Guardian confirms awareness"
+							}
+						}
+					],
+					"errorMessages": {
+						"required": {
+							"pt-BR": "Preencha os dados obrigatórios do responsável legal.",
+							"en": "Fill in the required legal guardian information."
+						}
+					}
+				}
+			]
+		},
+		{
+			"id": "emergencyContacts",
+			"order": 4,
+			"title": {
+				"pt-BR": "Contato de emergência",
+				"en": "Emergency contact"
+			},
+			"fields": [
+				{
+					"key": "emergencyContacts",
+					"type": "array",
+					"required": true,
+					"visible": true,
+					"editable": true,
+					"minItems": 1,
+					"maxItemsRecommended": 3,
+					"label": {
+						"pt-BR": "Contatos de emergência",
+						"en": "Emergency contacts"
+					},
+					"item": {
+						"type": "object",
+						"fields": [
+							{
+								"key": "fullName",
+								"type": "string",
+								"required": true,
+								"visible": true,
+								"editable": true,
+								"label": {
+									"pt-BR": "Nome do contato",
+									"en": "Contact name"
+								},
+								"validation": {
+									"minLength": 1,
+									"maxLength": 250,
+									"trim": true,
+									"collapseSpaces": true,
+									"rejectOnlyNumbers": true,
+									"rejectOnlySymbols": true
+								}
+							},
+							{
+								"key": "relationship",
+								"type": "string",
+								"required": false,
+								"visible": true,
+								"editable": true,
+								"label": {
+									"pt-BR": "Relação com o cliente",
+									"en": "Relationship to client"
+								},
+								"validation": {
+									"maxLength": 100,
+									"trim": true,
+									"collapseSpaces": true,
+									"emptyToNull": true
+								}
+							},
+							{
+								"key": "phone",
+								"type": "phone",
+								"required": true,
+								"visible": true,
+								"editable": true,
+								"label": {
+									"pt-BR": "Telefone do contato",
+									"en": "Contact phone"
+								},
+								"displayPattern": "+{countryCode} ({areaCode}) {number}",
+								"parts": [
+									{
+										"key": "countryCode",
+										"type": "string",
+										"required": true,
+										"defaultValue": "55",
+										"validation": {
+											"digitsOnly": true,
+											"minLength": 1,
+											"maxLength": 4
+										}
+									},
+									{
+										"key": "areaCode",
+										"type": "string",
+										"required": true,
+										"validation": {
+											"digitsOnly": true,
+											"minLength": 1,
+											"maxLength": 4
+										}
+									},
+									{
+										"key": "number",
+										"type": "string",
+										"required": true,
+										"validation": {
+											"digitsOnly": true,
+											"minLength": 6,
+											"maxLength": 12
+										}
+									},
+									{
+										"key": "clean",
+										"type": "string",
+										"required": true,
+										"visible": false,
+										"editable": false,
+										"computed": true,
+										"calculation": "digitsOnly(countryCode + areaCode + number)"
+									}
+								]
+							},
+							{
+								"key": "isPrimary",
+								"type": "boolean",
+								"required": true,
+								"visible": true,
+								"editable": true,
+								"defaultValue": false,
+								"label": {
+									"pt-BR": "Contato principal",
+									"en": "Primary contact"
+								}
+							}
+						]
+					},
+					"validation": {
+						"minItems": 1,
+						"atMostOnePrimary": true,
+						"autoSetFirstAsPrimaryIfNone": true
+					},
+					"errorMessages": {
+						"required": {
+							"pt-BR": "Informe pelo menos um contato de emergência.",
+							"en": "Enter at least one emergency contact."
+						},
+						"invalid": {
+							"pt-BR": "Todos os contatos de emergência devem ter nome e telefone válidos.",
+							"en": "All emergency contacts must have a valid name and phone number."
+						},
+						"multiplePrimary": {
+							"pt-BR": "Marque apenas um contato de emergência como principal.",
+							"en": "Select only one emergency contact as primary."
+						}
+					}
+				}
+			]
+		},
+		{
+			"id": "consent",
+			"order": 5,
+			"title": {
+				"pt-BR": "Consentimento",
+				"en": "Consent"
+			},
+			"fields": [
+				{
+					"key": "truthDeclarationAccepted",
+					"type": "boolean",
+					"required": true,
+					"visible": true,
+					"editable": true,
+					"defaultValue": false,
+					"label": {
+						"pt-BR": "Cliente declara que as informações fornecidas são verdadeiras",
+						"en": "Client declares that the provided information is true"
+					},
+					"validation": {
+						"mustBeTrue": true
+					}
+				},
+				{
+					"key": "dataUseAuthorized",
+					"type": "boolean",
+					"required": true,
+					"visible": true,
+					"editable": true,
+					"defaultValue": false,
+					"label": {
+						"pt-BR": "Cliente autoriza o uso dos dados para cadastro, avaliações e relatórios profissionais",
+						"en": "Client authorizes data use for registration, assessments, and professional reports"
+					},
+					"validation": {
+						"mustBeTrue": true
+					}
+				},
+				{
+					"key": "professionalLimitAcknowledged",
+					"type": "boolean",
+					"required": true,
+					"visible": true,
+					"editable": true,
+					"defaultValue": false,
+					"label": {
+						"pt-BR": "Cliente entende que a ficha não substitui avaliação de profissional habilitado quando necessário",
+						"en": "Client understands that this form does not replace evaluation by a qualified professional when needed"
+					},
+					"validation": {
+						"mustBeTrue": true
+					}
+				},
+				{
+					"key": "careContactAuthorized",
+					"type": "boolean",
+					"required": false,
+					"visible": true,
+					"editable": true,
+					"defaultValue": false,
+					"label": {
+						"pt-BR": "Cliente autoriza contato para assuntos relacionados ao atendimento",
+						"en": "Client authorizes contact regarding service-related matters"
+					}
+				},
+				{
+					"key": "authorizedContactChannels",
+					"type": "arrayEnum",
+					"required": false,
+					"requiredWhen": "careContactAuthorized === true",
+					"visibleWhen": "careContactAuthorized === true",
+					"editable": true,
+					"label": {
+						"pt-BR": "Canais autorizados de contato",
+						"en": "Authorized contact channels"
+					},
+					"options": [
+						{
+							"value": "phone",
+							"label": {
+								"pt-BR": "Telefone",
+								"en": "Phone"
+							}
+						},
+						{
+							"value": "email",
+							"label": {
+								"pt-BR": "E-mail",
+								"en": "Email"
+							}
+						},
+						{
+							"value": "messagingApp",
+							"label": {
+								"pt-BR": "Aplicativo de mensagem",
+								"en": "Messaging app"
+							}
+						},
+						{
+							"value": "sms",
+							"label": {
+								"pt-BR": "SMS",
+								"en": "SMS"
+							}
+						}
+					],
+					"validation": {
+						"minItemsWhenRequired": 1
+					}
+				},
+				{
+					"key": "responsibleProfessionalId",
+					"type": "foreignKey",
+					"required": true,
+					"visible": true,
+					"editable": true,
+					"references": "ProfessionalProfile",
+					"label": {
+						"pt-BR": "Profissional responsável pelo cadastro",
+						"en": "Professional responsible for registration"
+					},
+					"errorMessages": {
+						"required": {
+							"pt-BR": "Selecione o profissional responsável pelo cadastro.",
+							"en": "Select the professional responsible for registration."
+						}
+					}
+				},
+				{
+					"key": "consentVersion",
+					"type": "string",
+					"required": true,
+					"visible": false,
+					"editable": false,
+					"computed": true,
+					"defaultValue": "client-registration-consent-v1"
+				},
+				{
+					"key": "acceptedAt",
+					"type": "datetime",
+					"required": true,
+					"visible": false,
+					"editable": false,
+					"computed": true,
+					"calculation": "new Date().toISOString()"
+				}
+			],
+			"errorMessages": {
+				"required": {
+					"pt-BR": "Aceite as declarações obrigatórias para salvar o cadastro.",
+					"en": "Accept the required declarations to save the registration."
+				}
+			}
+		}
+	],
+	"computedFields": [
+		{
+			"key": "ageYears",
+			"source": "dateOfBirth",
+			"calculation": "completedYearsBetween(dateOfBirth, today)",
+			"visible": true,
+			"editable": false
+		},
+		{
+			"key": "primaryPhone.clean",
+			"source": ["primaryPhone.countryCode", "primaryPhone.areaCode", "primaryPhone.number"],
+			"calculation": "digitsOnly(countryCode + areaCode + number)",
+			"visible": false,
+			"editable": false
+		},
+		{
+			"key": "acceptedAt",
+			"source": "formSubmit",
+			"calculation": "new Date().toISOString()",
+			"visible": false,
+			"editable": false
+		}
+	],
+	"submitRules": {
+		"canSubmitWhen": [
+			"all required fields are valid",
+			"all conditional required fields are valid",
+			"truthDeclarationAccepted === true",
+			"dataUseAuthorized === true",
+			"professionalLimitAcknowledged === true",
+			"emergencyContacts.length >= 1"
+		],
+		"onSubmit": [
+			"normalize fullName",
+			"compute ageYears",
+			"compute all phone clean values",
+			"process photo if provided",
+			"set acceptedAt automatically",
+			"validate emergencyContacts",
+			"validate legalGuardian if required"
+		]
+	}
+}

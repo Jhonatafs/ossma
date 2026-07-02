@@ -1,0 +1,1863 @@
+{
+	"formId": "anthropometricAssessmentForm",
+	"entity": "AnthropometricAssessment",
+	"version": 1,
+	"defaultLocale": "pt-BR",
+	"supportedLocales": ["pt-BR", "en"],
+	"title": {
+		"pt-BR": "Avaliação antropométrica básica",
+		"en": "Basic anthropometric assessment"
+	},
+	"description": {
+		"pt-BR": "Formulário de coleta para avaliação antropométrica básica com balança, estadiômetro, fita métrica e adipômetro.",
+		"en": "Data collection form for a basic anthropometric assessment using scale, stadiometer, measuring tape, and skinfold caliper."
+	},
+	"constraints": {
+		"usesMeasuringTape": true,
+		"usesSkinfoldCaliper": true,
+		"usesBoneCaliper": false,
+		"usesBoneDiameters": false,
+		"usesFullCineanthropometry": false
+	},
+	"sections": [
+		{
+			"id": "systemControl",
+			"order": 0,
+			"visible": false,
+			"title": {
+				"pt-BR": "Controle interno",
+				"en": "Internal control"
+			},
+			"fields": [
+				{
+					"key": "assessmentId",
+					"type": "uuid",
+					"required": true,
+					"visible": false,
+					"editable": false,
+					"computed": true,
+					"calculation": "crypto.randomUUID()"
+				},
+				{
+					"key": "assessmentStatus",
+					"type": "enum",
+					"required": true,
+					"visible": false,
+					"editable": false,
+					"defaultValue": "draft",
+					"options": ["draft", "completed"]
+				},
+				{
+					"key": "createdAt",
+					"type": "datetime",
+					"required": true,
+					"visible": false,
+					"editable": false,
+					"computed": true,
+					"calculation": "new Date().toISOString()"
+				},
+				{
+					"key": "updatedAt",
+					"type": "datetime",
+					"required": true,
+					"visible": false,
+					"editable": false,
+					"computed": true,
+					"calculation": "new Date().toISOString()"
+				},
+				{
+					"key": "completedAt",
+					"type": "datetime",
+					"required": false,
+					"visible": false,
+					"editable": false,
+					"computed": true,
+					"calculation": "assessmentStatus === 'completed' ? new Date().toISOString() : null"
+				}
+			]
+		},
+		{
+			"id": "assessmentStart",
+			"order": 1,
+			"title": {
+				"pt-BR": "Início da avaliação",
+				"en": "Assessment start"
+			},
+			"fields": [
+				{
+					"key": "assessmentType",
+					"type": "enum",
+					"required": true,
+					"visible": true,
+					"editable": false,
+					"defaultValue": "basicAnthropometric",
+					"label": {
+						"pt-BR": "Tipo de avaliação",
+						"en": "Assessment type"
+					},
+					"options": [
+						{
+							"value": "basicAnthropometric",
+							"label": {
+								"pt-BR": "Avaliação antropométrica básica",
+								"en": "Basic anthropometric assessment"
+							}
+						}
+					]
+				},
+				{
+					"key": "clientId",
+					"type": "foreignKey",
+					"required": true,
+					"visible": true,
+					"editable": true,
+					"references": "Client",
+					"label": {
+						"pt-BR": "Cliente",
+						"en": "Client"
+					},
+					"behavior": {
+						"ifOpenedFromClientProfile": "preselectClientAndAllowChangeIfUserHasPermission",
+						"ifOpenedFromAssessmentsArea": "requireManualSelection"
+					},
+					"errorMessages": {
+						"required": {
+							"pt-BR": "Selecione o cliente avaliado.",
+							"en": "Select the assessed client."
+						}
+					}
+				},
+				{
+					"key": "professionalId",
+					"type": "foreignKey",
+					"required": true,
+					"visible": true,
+					"editable": true,
+					"references": "ProfessionalProfile",
+					"label": {
+						"pt-BR": "Profissional avaliador",
+						"en": "Assessing professional"
+					},
+					"errorMessages": {
+						"required": {
+							"pt-BR": "Selecione o profissional avaliador.",
+							"en": "Select the assessing professional."
+						}
+					}
+				},
+				{
+					"key": "evaluatedAt",
+					"type": "datetime",
+					"required": true,
+					"visible": true,
+					"editable": true,
+					"computed": true,
+					"defaultValue": "new Date().toISOString()",
+					"label": {
+						"pt-BR": "Data e hora da avaliação",
+						"en": "Assessment date and time"
+					}
+				}
+			]
+		},
+		{
+			"id": "protocolsAndCalculations",
+			"order": 2,
+			"title": {
+				"pt-BR": "Protocolos e cálculos",
+				"en": "Protocols and calculations"
+			},
+			"fields": [
+				{
+					"key": "bodyFatProtocolId",
+					"type": "enum",
+					"required": true,
+					"visible": true,
+					"editable": true,
+					"label": {
+						"pt-BR": "Protocolo de percentual de gordura",
+						"en": "Body fat protocol"
+					},
+					"optionsSource": "protocolDefinitions.bodyFatProtocols",
+					"filterRules": [
+						"show protocol when client age and biological sex are compatible",
+						"allow manual override with professional warning"
+					],
+					"errorMessages": {
+						"required": {
+							"pt-BR": "Selecione o protocolo de percentual de gordura.",
+							"en": "Select the body fat protocol."
+						}
+					}
+				},
+				{
+					"key": "densityConverterId",
+					"type": "enum",
+					"required": false,
+					"requiredWhen": "selectedBodyFatProtocol.output === 'bodyDensity'",
+					"visibleWhen": "selectedBodyFatProtocol.output === 'bodyDensity'",
+					"editable": true,
+					"label": {
+						"pt-BR": "Conversor de densidade corporal",
+						"en": "Body density converter"
+					},
+					"options": [
+						{
+							"value": "siri",
+							"label": {
+								"pt-BR": "Siri",
+								"en": "Siri"
+							}
+						},
+						{
+							"value": "brozek",
+							"label": {
+								"pt-BR": "Brozek",
+								"en": "Brozek"
+							}
+						}
+					],
+					"errorMessages": {
+						"required": {
+							"pt-BR": "Selecione o conversor de densidade corporal.",
+							"en": "Select the body density converter."
+						}
+					}
+				},
+				{
+					"key": "enabledBmiFormulas",
+					"type": "arrayEnum",
+					"required": true,
+					"visible": true,
+					"editable": false,
+					"label": {
+						"pt-BR": "Fórmulas de IMC",
+						"en": "BMI formulas"
+					},
+					"defaultValue": ["quetelet", "greccoFmrpUsp", "trefethen", "melaoJr"]
+				},
+				{
+					"key": "enabledHealthIndices",
+					"type": "arrayEnum",
+					"required": true,
+					"visible": true,
+					"editable": true,
+					"label": {
+						"pt-BR": "Índices de saúde",
+						"en": "Health indices"
+					},
+					"defaultValue": ["waistHipRatio", "waistHeightRatio"],
+					"options": [
+						{
+							"value": "waistHipRatio",
+							"label": {
+								"pt-BR": "Relação cintura-quadril",
+								"en": "Waist-hip ratio"
+							}
+						},
+						{
+							"value": "waistHeightRatio",
+							"label": {
+								"pt-BR": "Relação cintura-estatura",
+								"en": "Waist-height ratio"
+							}
+						}
+					]
+				},
+				{
+					"key": "enabledBodyCompositionCalculations",
+					"type": "arrayEnum",
+					"required": true,
+					"visible": true,
+					"editable": true,
+					"label": {
+						"pt-BR": "Cálculos de composição corporal",
+						"en": "Body composition calculations"
+					},
+					"defaultValue": ["fatMass", "fatFreeMass", "fatFreeMassPercent"],
+					"options": [
+						{
+							"value": "fatMass",
+							"label": {
+								"pt-BR": "Massa gorda",
+								"en": "Fat mass"
+							}
+						},
+						{
+							"value": "fatFreeMass",
+							"label": {
+								"pt-BR": "Massa livre de gordura",
+								"en": "Fat-free mass"
+							}
+						},
+						{
+							"value": "fatFreeMassPercent",
+							"label": {
+								"pt-BR": "Percentual de massa livre de gordura",
+								"en": "Fat-free mass percentage"
+							}
+						},
+						{
+							"value": "fatToFatFreeMassRatio",
+							"label": {
+								"pt-BR": "Razão massa gorda / massa livre de gordura",
+								"en": "Fat mass / fat-free mass ratio"
+							}
+						},
+						{
+							"value": "targetBodyMass",
+							"label": {
+								"pt-BR": "Massa corporal alvo por percentual de gordura",
+								"en": "Target body mass by body fat percentage"
+							}
+						}
+					]
+				},
+				{
+					"key": "enabledEnergyCalculations",
+					"type": "arrayEnum",
+					"required": true,
+					"visible": true,
+					"editable": true,
+					"label": {
+						"pt-BR": "Cálculos energéticos",
+						"en": "Energy calculations"
+					},
+					"defaultValue": ["mifflinStJeorBmr", "tdee"],
+					"options": [
+						{
+							"value": "mifflinStJeorBmr",
+							"label": {
+								"pt-BR": "Taxa metabólica basal — Mifflin-St Jeor",
+								"en": "Basal metabolic rate — Mifflin-St Jeor"
+							}
+						},
+						{
+							"value": "katchMcArdleBmr",
+							"label": {
+								"pt-BR": "Taxa metabólica basal — Katch-McArdle",
+								"en": "Basal metabolic rate — Katch-McArdle"
+							}
+						},
+						{
+							"value": "tdee",
+							"label": {
+								"pt-BR": "Gasto energético diário estimado",
+								"en": "Estimated total daily energy expenditure"
+							}
+						}
+					]
+				}
+			]
+		},
+		{
+			"id": "generalAnamnesisReview",
+			"order": 3,
+			"title": {
+				"pt-BR": "Anamnese reaproveitada do cliente",
+				"en": "Reused client anamnesis"
+			},
+			"fields": [
+				{
+					"key": "generalAnamnesisId",
+					"type": "foreignKey",
+					"required": false,
+					"visible": true,
+					"editable": false,
+					"references": "GeneralAnamnesis",
+					"label": {
+						"pt-BR": "Anamnese geral vinculada",
+						"en": "Linked general anamnesis"
+					}
+				},
+				{
+					"key": "generalAnamnesisStatus",
+					"type": "enum",
+					"required": false,
+					"visible": true,
+					"editable": false,
+					"label": {
+						"pt-BR": "Status da anamnese geral",
+						"en": "General anamnesis status"
+					},
+					"options": ["notStarted", "draft", "completed", "needsReview"]
+				},
+				{
+					"key": "anamnesisReviewMode",
+					"type": "enum",
+					"required": true,
+					"visible": true,
+					"editable": true,
+					"label": {
+						"pt-BR": "Modo de uso da anamnese",
+						"en": "Anamnesis usage mode"
+					},
+					"defaultValue": "reuseAndReview",
+					"options": [
+						{
+							"value": "reuseAndReview",
+							"label": {
+								"pt-BR": "Reaproveitar respostas e revisar",
+								"en": "Reuse answers and review"
+							}
+						},
+						{
+							"value": "assessmentOnly",
+							"label": {
+								"pt-BR": "Usar respostas apenas nesta avaliação",
+								"en": "Use answers only in this assessment"
+							}
+						}
+					]
+				},
+				{
+					"key": "allowGeneralAnamnesisUpdateFromAssessment",
+					"type": "boolean",
+					"required": true,
+					"visible": true,
+					"editable": true,
+					"defaultValue": true,
+					"label": {
+						"pt-BR": "Permitir atualizar a anamnese geral a partir desta avaliação",
+						"en": "Allow updating the general anamnesis from this assessment"
+					}
+				},
+				{
+					"key": "reviewedGeneralAnamnesisSections",
+					"type": "arrayEnum",
+					"required": false,
+					"visible": true,
+					"editable": true,
+					"label": {
+						"pt-BR": "Seções revisadas",
+						"en": "Reviewed sections"
+					},
+					"options": [
+						"goals",
+						"health",
+						"warningSigns",
+						"medicationsAndSupplements",
+						"allergiesAndRestrictions",
+						"painInjuriesAndLimitations",
+						"physicalActivityAndRoutine",
+						"sleepStressAndHabits",
+						"nutritionAndHydration",
+						"reproductiveHealth",
+						"familyHistory"
+					]
+				}
+			]
+		},
+		{
+			"id": "specificAnamnesis",
+			"order": 4,
+			"title": {
+				"pt-BR": "Anamnese específica da avaliação antropométrica",
+				"en": "Specific anamnesis for anthropometric assessment"
+			},
+			"fields": [
+				{
+					"key": "hadIntenseTrainingLast24h",
+					"type": "boolean",
+					"required": true,
+					"visible": true,
+					"editable": true,
+					"label": {
+						"pt-BR": "Praticou treino intenso nas últimas 24 horas?",
+						"en": "Had intense training in the last 24 hours?"
+					}
+				},
+				{
+					"key": "hadAlcoholLast24h",
+					"type": "boolean",
+					"required": true,
+					"visible": true,
+					"editable": true,
+					"label": {
+						"pt-BR": "Ingeriu bebida alcoólica nas últimas 24 horas?",
+						"en": "Consumed alcohol in the last 24 hours?"
+					}
+				},
+				{
+					"key": "sleptVeryPoorlyLastNight",
+					"type": "boolean",
+					"required": true,
+					"visible": true,
+					"editable": true,
+					"label": {
+						"pt-BR": "Dormiu muito mal na noite anterior?",
+						"en": "Slept very poorly last night?"
+					}
+				},
+				{
+					"key": "hadHeavyMealLast3h",
+					"type": "boolean",
+					"required": true,
+					"visible": true,
+					"editable": true,
+					"label": {
+						"pt-BR": "Fez refeição pesada nas últimas 3 horas?",
+						"en": "Had a heavy meal in the last 3 hours?"
+					}
+				},
+				{
+					"key": "isFastingOrRestrictingFoodToday",
+					"type": "boolean",
+					"required": true,
+					"visible": true,
+					"editable": true,
+					"label": {
+						"pt-BR": "Está em jejum prolongado ou restrição alimentar intensa hoje?",
+						"en": "Is fasting for a long period or under intense food restriction today?"
+					}
+				},
+				{
+					"key": "hasFluidRetentionOrSwellingToday",
+					"type": "boolean",
+					"required": true,
+					"visible": true,
+					"editable": true,
+					"label": {
+						"pt-BR": "Percebe retenção de líquido, inchaço ou edema hoje?",
+						"en": "Has fluid retention, swelling, or edema today?"
+					}
+				},
+				{
+					"key": "usesWeightOrHydrationAffectingMedication",
+					"type": "boolean",
+					"required": true,
+					"visible": true,
+					"editable": true,
+					"label": {
+						"pt-BR": "Usa medicamento que possa alterar peso, retenção hídrica ou composição corporal?",
+						"en": "Uses medication that may affect weight, fluid retention, or body composition?"
+					}
+				},
+				{
+					"key": "usesWeightOrHydrationAffectingSupplement",
+					"type": "boolean",
+					"required": true,
+					"visible": true,
+					"editable": true,
+					"label": {
+						"pt-BR": "Usa suplemento que possa alterar peso, hidratação, volume muscular ou desempenho?",
+						"en": "Uses supplement that may affect weight, hydration, muscle volume, or performance?"
+					}
+				},
+				{
+					"key": "hasSkinLesionPainOrDiscomfortInMeasurementArea",
+					"type": "boolean",
+					"required": true,
+					"visible": true,
+					"editable": true,
+					"label": {
+						"pt-BR": "Há feridas, lesões de pele, dor local ou desconforto em alguma região a ser medida?",
+						"en": "Are there wounds, skin lesions, local pain, or discomfort in any area to be measured?"
+					}
+				},
+				{
+					"key": "restrictedMeasurementAreas",
+					"type": "textarea",
+					"required": false,
+					"visible": true,
+					"editable": true,
+					"label": {
+						"pt-BR": "Regiões que não devem ser medidas hoje",
+						"en": "Areas that should not be measured today"
+					},
+					"validation": {
+						"maxLength": 1000,
+						"trim": true,
+						"emptyToNull": true
+					}
+				}
+			]
+		},
+		{
+			"id": "collectionConditions",
+			"order": 5,
+			"title": {
+				"pt-BR": "Condições da coleta",
+				"en": "Collection conditions"
+			},
+			"fields": [
+				{
+					"key": "assessmentLocation",
+					"type": "string",
+					"required": false,
+					"visible": true,
+					"editable": true,
+					"label": {
+						"pt-BR": "Local da avaliação",
+						"en": "Assessment location"
+					},
+					"validation": {
+						"maxLength": 250,
+						"trim": true,
+						"emptyToNull": true
+					}
+				},
+				{
+					"key": "collectionCondition",
+					"type": "enum",
+					"required": true,
+					"visible": true,
+					"editable": true,
+					"label": {
+						"pt-BR": "Condição geral da coleta",
+						"en": "General collection condition"
+					},
+					"defaultValue": "normal",
+					"options": [
+						{
+							"value": "normal",
+							"label": {
+								"pt-BR": "Normal",
+								"en": "Normal"
+							}
+						},
+						{
+							"value": "hasInterferingFactor",
+							"label": {
+								"pt-BR": "Cliente relatou fator que pode interferir",
+								"en": "Client reported a possible interfering factor"
+							}
+						},
+						{
+							"value": "partialCollection",
+							"label": {
+								"pt-BR": "Coleta parcial",
+								"en": "Partial collection"
+							}
+						},
+						{
+							"value": "restrictedCollection",
+							"label": {
+								"pt-BR": "Coleta com restrições",
+								"en": "Restricted collection"
+							}
+						}
+					]
+				},
+				{
+					"key": "usedInstruments",
+					"type": "arrayEnum",
+					"required": true,
+					"visible": true,
+					"editable": true,
+					"label": {
+						"pt-BR": "Instrumentos usados",
+						"en": "Used instruments"
+					},
+					"defaultValue": ["scale", "stadiometer", "measuringTape", "skinfoldCaliper"],
+					"options": [
+						{
+							"value": "scale",
+							"label": {
+								"pt-BR": "Balança",
+								"en": "Scale"
+							}
+						},
+						{
+							"value": "stadiometer",
+							"label": {
+								"pt-BR": "Estadiômetro",
+								"en": "Stadiometer"
+							}
+						},
+						{
+							"value": "measuringTape",
+							"label": {
+								"pt-BR": "Fita métrica",
+								"en": "Measuring tape"
+							}
+						},
+						{
+							"value": "skinfoldCaliper",
+							"label": {
+								"pt-BR": "Adipômetro",
+								"en": "Skinfold caliper"
+							}
+						}
+					]
+				},
+				{
+					"key": "instrumentNotes",
+					"type": "textarea",
+					"required": false,
+					"visible": true,
+					"editable": true,
+					"label": {
+						"pt-BR": "Marca/modelo ou observações dos instrumentos",
+						"en": "Instrument brand/model or notes"
+					},
+					"validation": {
+						"maxLength": 1000,
+						"trim": true,
+						"emptyToNull": true
+					}
+				},
+				{
+					"key": "defaultCollectionSide",
+					"type": "enum",
+					"required": true,
+					"visible": true,
+					"editable": true,
+					"defaultValue": "right",
+					"label": {
+						"pt-BR": "Lado padrão de coleta",
+						"en": "Default collection side"
+					},
+					"options": [
+						{
+							"value": "right",
+							"label": {
+								"pt-BR": "Direito",
+								"en": "Right"
+							}
+						},
+						{
+							"value": "left",
+							"label": {
+								"pt-BR": "Esquerdo",
+								"en": "Left"
+							}
+						},
+						{
+							"value": "both",
+							"label": {
+								"pt-BR": "Ambos, quando aplicável",
+								"en": "Both, when applicable"
+							}
+						}
+					]
+				},
+				{
+					"key": "collectionNotes",
+					"type": "textarea",
+					"required": false,
+					"visible": true,
+					"editable": true,
+					"label": {
+						"pt-BR": "Observações da coleta",
+						"en": "Collection notes"
+					},
+					"validation": {
+						"maxLength": 2000,
+						"trim": true,
+						"emptyToNull": true
+					}
+				}
+			]
+		},
+		{
+			"id": "generalMeasurements",
+			"order": 6,
+			"title": {
+				"pt-BR": "Medidas gerais",
+				"en": "General measurements"
+			},
+			"fields": [
+				{
+					"key": "bodyMassKg",
+					"type": "number",
+					"required": true,
+					"visible": true,
+					"editable": true,
+					"unit": "kg",
+					"label": {
+						"pt-BR": "Massa corporal",
+						"en": "Body mass"
+					},
+					"validation": {
+						"min": 1,
+						"max": 700,
+						"decimals": 2
+					}
+				},
+				{
+					"key": "heightCm",
+					"type": "number",
+					"required": true,
+					"visible": true,
+					"editable": true,
+					"unit": "cm",
+					"label": {
+						"pt-BR": "Estatura",
+						"en": "Height"
+					},
+					"validation": {
+						"min": 30,
+						"max": 260,
+						"decimals": 1
+					}
+				},
+				{
+					"key": "wingspanCm",
+					"type": "number",
+					"required": false,
+					"visible": true,
+					"editable": true,
+					"unit": "cm",
+					"label": {
+						"pt-BR": "Envergadura",
+						"en": "Wingspan"
+					},
+					"validation": {
+						"min": 30,
+						"max": 300,
+						"decimals": 1
+					}
+				}
+			]
+		},
+		{
+			"id": "circumferences",
+			"order": 7,
+			"title": {
+				"pt-BR": "Circunferências",
+				"en": "Circumferences"
+			},
+			"unit": "cm",
+			"fields": [
+				{
+					"key": "neckCircumferenceCm",
+					"type": "number",
+					"required": false,
+					"visible": true,
+					"editable": true,
+					"label": {
+						"pt-BR": "Pescoço",
+						"en": "Neck"
+					}
+				},
+				{
+					"key": "shoulderCircumferenceCm",
+					"type": "number",
+					"required": false,
+					"visible": true,
+					"editable": true,
+					"label": {
+						"pt-BR": "Ombros",
+						"en": "Shoulders"
+					}
+				},
+				{
+					"key": "chestCircumferenceCm",
+					"type": "number",
+					"required": false,
+					"visible": true,
+					"editable": true,
+					"label": {
+						"pt-BR": "Tórax",
+						"en": "Chest"
+					}
+				},
+				{
+					"key": "waistCircumferenceCm",
+					"type": "number",
+					"required": false,
+					"requiredWhen": "enabledHealthIndices includes 'waistHipRatio' OR enabledHealthIndices includes 'waistHeightRatio'",
+					"visible": true,
+					"editable": true,
+					"label": {
+						"pt-BR": "Cintura",
+						"en": "Waist"
+					}
+				},
+				{
+					"key": "abdomenCircumferenceCm",
+					"type": "number",
+					"required": false,
+					"visible": true,
+					"editable": true,
+					"label": {
+						"pt-BR": "Abdômen",
+						"en": "Abdomen"
+					}
+				},
+				{
+					"key": "hipCircumferenceCm",
+					"type": "number",
+					"required": false,
+					"requiredWhen": "enabledHealthIndices includes 'waistHipRatio'",
+					"visible": true,
+					"editable": true,
+					"label": {
+						"pt-BR": "Quadril",
+						"en": "Hip"
+					}
+				},
+				{
+					"key": "rightRelaxedArmCircumferenceCm",
+					"type": "number",
+					"required": false,
+					"visible": true,
+					"editable": true,
+					"label": {
+						"pt-BR": "Braço relaxado direito",
+						"en": "Right relaxed arm"
+					}
+				},
+				{
+					"key": "rightFlexedArmCircumferenceCm",
+					"type": "number",
+					"required": false,
+					"visible": true,
+					"editable": true,
+					"label": {
+						"pt-BR": "Braço contraído direito",
+						"en": "Right flexed arm"
+					}
+				},
+				{
+					"key": "rightForearmCircumferenceCm",
+					"type": "number",
+					"required": false,
+					"visible": true,
+					"editable": true,
+					"label": {
+						"pt-BR": "Antebraço direito",
+						"en": "Right forearm"
+					}
+				},
+				{
+					"key": "rightThighCircumferenceCm",
+					"type": "number",
+					"required": false,
+					"visible": true,
+					"editable": true,
+					"label": {
+						"pt-BR": "Coxa direita",
+						"en": "Right thigh"
+					}
+				},
+				{
+					"key": "rightCalfCircumferenceCm",
+					"type": "number",
+					"required": false,
+					"visible": true,
+					"editable": true,
+					"label": {
+						"pt-BR": "Panturrilha direita",
+						"en": "Right calf"
+					}
+				},
+				{
+					"key": "leftRelaxedArmCircumferenceCm",
+					"type": "number",
+					"required": false,
+					"visible": true,
+					"editable": true,
+					"label": {
+						"pt-BR": "Braço relaxado esquerdo",
+						"en": "Left relaxed arm"
+					}
+				},
+				{
+					"key": "leftFlexedArmCircumferenceCm",
+					"type": "number",
+					"required": false,
+					"visible": true,
+					"editable": true,
+					"label": {
+						"pt-BR": "Braço contraído esquerdo",
+						"en": "Left flexed arm"
+					}
+				},
+				{
+					"key": "leftForearmCircumferenceCm",
+					"type": "number",
+					"required": false,
+					"visible": true,
+					"editable": true,
+					"label": {
+						"pt-BR": "Antebraço esquerdo",
+						"en": "Left forearm"
+					}
+				},
+				{
+					"key": "leftThighCircumferenceCm",
+					"type": "number",
+					"required": false,
+					"visible": true,
+					"editable": true,
+					"label": {
+						"pt-BR": "Coxa esquerda",
+						"en": "Left thigh"
+					}
+				},
+				{
+					"key": "leftCalfCircumferenceCm",
+					"type": "number",
+					"required": false,
+					"visible": true,
+					"editable": true,
+					"label": {
+						"pt-BR": "Panturrilha esquerda",
+						"en": "Left calf"
+					}
+				}
+			],
+			"sharedValidation": {
+				"min": 1,
+				"max": 300,
+				"decimals": 1
+			}
+		},
+		{
+			"id": "skinfolds",
+			"order": 8,
+			"title": {
+				"pt-BR": "Dobras cutâneas",
+				"en": "Skinfolds"
+			},
+			"unit": "mm",
+			"fields": [
+				{
+					"key": "tricepsSkinfoldMm",
+					"type": "number",
+					"required": false,
+					"requiredWhen": "selectedBodyFatProtocol.requires includes 'tricepsSkinfoldMm'",
+					"visible": true,
+					"editable": true,
+					"label": {
+						"pt-BR": "Tricipital",
+						"en": "Triceps"
+					}
+				},
+				{
+					"key": "subscapularSkinfoldMm",
+					"type": "number",
+					"required": false,
+					"requiredWhen": "selectedBodyFatProtocol.requires includes 'subscapularSkinfoldMm'",
+					"visible": true,
+					"editable": true,
+					"label": {
+						"pt-BR": "Subescapular",
+						"en": "Subscapular"
+					}
+				},
+				{
+					"key": "bicepsSkinfoldMm",
+					"type": "number",
+					"required": false,
+					"requiredWhen": "selectedBodyFatProtocol.requires includes 'bicepsSkinfoldMm'",
+					"visible": true,
+					"editable": true,
+					"label": {
+						"pt-BR": "Bicipital",
+						"en": "Biceps"
+					}
+				},
+				{
+					"key": "chestSkinfoldMm",
+					"type": "number",
+					"required": false,
+					"requiredWhen": "selectedBodyFatProtocol.requires includes 'chestSkinfoldMm'",
+					"visible": true,
+					"editable": true,
+					"label": {
+						"pt-BR": "Peitoral",
+						"en": "Chest"
+					}
+				},
+				{
+					"key": "midaxillarySkinfoldMm",
+					"type": "number",
+					"required": false,
+					"requiredWhen": "selectedBodyFatProtocol.requires includes 'midaxillarySkinfoldMm'",
+					"visible": true,
+					"editable": true,
+					"label": {
+						"pt-BR": "Axilar média",
+						"en": "Midaxillary"
+					}
+				},
+				{
+					"key": "suprailiacSkinfoldMm",
+					"type": "number",
+					"required": false,
+					"requiredWhen": "selectedBodyFatProtocol.requires includes 'suprailiacSkinfoldMm'",
+					"visible": true,
+					"editable": true,
+					"label": {
+						"pt-BR": "Supra-ilíaca",
+						"en": "Suprailiac"
+					}
+				},
+				{
+					"key": "abdominalSkinfoldMm",
+					"type": "number",
+					"required": false,
+					"requiredWhen": "selectedBodyFatProtocol.requires includes 'abdominalSkinfoldMm'",
+					"visible": true,
+					"editable": true,
+					"label": {
+						"pt-BR": "Abdominal",
+						"en": "Abdominal"
+					}
+				},
+				{
+					"key": "thighSkinfoldMm",
+					"type": "number",
+					"required": false,
+					"requiredWhen": "selectedBodyFatProtocol.requires includes 'thighSkinfoldMm'",
+					"visible": true,
+					"editable": true,
+					"label": {
+						"pt-BR": "Coxa",
+						"en": "Thigh"
+					}
+				},
+				{
+					"key": "medialCalfSkinfoldMm",
+					"type": "number",
+					"required": false,
+					"requiredWhen": "selectedBodyFatProtocol.requires includes 'medialCalfSkinfoldMm'",
+					"visible": true,
+					"editable": true,
+					"label": {
+						"pt-BR": "Panturrilha medial",
+						"en": "Medial calf"
+					}
+				}
+			],
+			"sharedValidation": {
+				"min": 1,
+				"max": 150,
+				"decimals": 1
+			}
+		},
+		{
+			"id": "conditionalCalculationInputs",
+			"order": 9,
+			"title": {
+				"pt-BR": "Campos condicionais por cálculo",
+				"en": "Conditional calculation inputs"
+			},
+			"fields": [
+				{
+					"key": "activityFactor",
+					"type": "number",
+					"required": false,
+					"requiredWhen": "enabledEnergyCalculations includes 'tdee'",
+					"visibleWhen": "enabledEnergyCalculations includes 'tdee'",
+					"editable": true,
+					"label": {
+						"pt-BR": "Fator de atividade",
+						"en": "Activity factor"
+					},
+					"options": [
+						{
+							"value": 1.2,
+							"label": {
+								"pt-BR": "Sedentário",
+								"en": "Sedentary"
+							}
+						},
+						{
+							"value": 1.375,
+							"label": {
+								"pt-BR": "Levemente ativo",
+								"en": "Lightly active"
+							}
+						},
+						{
+							"value": 1.55,
+							"label": {
+								"pt-BR": "Moderadamente ativo",
+								"en": "Moderately active"
+							}
+						},
+						{
+							"value": 1.725,
+							"label": {
+								"pt-BR": "Muito ativo",
+								"en": "Very active"
+							}
+						},
+						{
+							"value": 1.9,
+							"label": {
+								"pt-BR": "Extremamente ativo",
+								"en": "Extremely active"
+							}
+						}
+					],
+					"validation": {
+						"min": 1,
+						"max": 3,
+						"decimals": 3
+					}
+				},
+				{
+					"key": "targetBodyFatPercent",
+					"type": "number",
+					"required": false,
+					"requiredWhen": "enabledBodyCompositionCalculations includes 'targetBodyMass'",
+					"visibleWhen": "enabledBodyCompositionCalculations includes 'targetBodyMass'",
+					"editable": true,
+					"unit": "%",
+					"label": {
+						"pt-BR": "Percentual de gordura alvo",
+						"en": "Target body fat percentage"
+					},
+					"validation": {
+						"min": 1,
+						"max": 80,
+						"decimals": 1
+					}
+				},
+				{
+					"key": "bodyGoalNotes",
+					"type": "textarea",
+					"required": false,
+					"visible": true,
+					"editable": true,
+					"label": {
+						"pt-BR": "Observações sobre objetivo corporal",
+						"en": "Body goal notes"
+					},
+					"validation": {
+						"maxLength": 1000,
+						"trim": true,
+						"emptyToNull": true
+					}
+				}
+			]
+		},
+		{
+			"id": "reviewAndConfirmation",
+			"order": 10,
+			"title": {
+				"pt-BR": "Revisão e finalização",
+				"en": "Review and completion"
+			},
+			"fields": [
+				{
+					"key": "clientTruthConfirmed",
+					"type": "boolean",
+					"required": true,
+					"visible": true,
+					"editable": true,
+					"defaultValue": false,
+					"label": {
+						"pt-BR": "Cliente confirma que as informações fornecidas são verdadeiras",
+						"en": "Client confirms that the provided information is true"
+					},
+					"validation": {
+						"mustBeTrueToComplete": true
+					}
+				},
+				{
+					"key": "specificAssessmentTruthConfirmed",
+					"type": "boolean",
+					"required": true,
+					"visible": true,
+					"editable": true,
+					"defaultValue": false,
+					"label": {
+						"pt-BR": "Cliente confirma que as informações específicas desta avaliação são verdadeiras",
+						"en": "Client confirms that the specific information for this assessment is true"
+					},
+					"validation": {
+						"mustBeTrueToComplete": true
+					}
+				},
+				{
+					"key": "interferenceAwarenessConfirmed",
+					"type": "boolean",
+					"required": true,
+					"visible": true,
+					"editable": true,
+					"defaultValue": false,
+					"label": {
+						"pt-BR": "Cliente entende que treino, alimentação, hidratação, sono, medicamentos, suplementos e retenção de líquido podem interferir nos resultados",
+						"en": "Client understands that training, food intake, hydration, sleep, medications, supplements, and fluid retention may affect the results"
+					},
+					"validation": {
+						"mustBeTrueToComplete": true
+					}
+				},
+				{
+					"key": "measurementAuthorizationConfirmed",
+					"type": "boolean",
+					"required": true,
+					"visible": true,
+					"editable": true,
+					"defaultValue": false,
+					"label": {
+						"pt-BR": "Cliente autoriza a aferição das medidas necessárias",
+						"en": "Client authorizes the collection of required measurements"
+					},
+					"validation": {
+						"mustBeTrueToComplete": true
+					}
+				},
+				{
+					"key": "physicalContactAwarenessConfirmed",
+					"type": "boolean",
+					"required": true,
+					"visible": true,
+					"editable": true,
+					"defaultValue": false,
+					"label": {
+						"pt-BR": "Cliente foi informado de que algumas medidas exigem contato físico profissional",
+						"en": "Client was informed that some measurements require professional physical contact"
+					},
+					"validation": {
+						"mustBeTrueToComplete": true
+					}
+				},
+				{
+					"key": "professionalReviewedAnamnesis",
+					"type": "boolean",
+					"required": true,
+					"visible": true,
+					"editable": true,
+					"defaultValue": false,
+					"label": {
+						"pt-BR": "Profissional confirma que revisou a anamnese antes da coleta",
+						"en": "Professional confirms that the anamnesis was reviewed before data collection"
+					},
+					"validation": {
+						"mustBeTrueToComplete": true
+					}
+				},
+				{
+					"key": "confirmationAt",
+					"type": "datetime",
+					"required": true,
+					"visible": false,
+					"editable": false,
+					"computed": true,
+					"calculation": "new Date().toISOString()"
+				}
+			]
+		}
+	],
+	"protocolDefinitions": {
+		"bodyFatProtocols": [
+			{
+				"id": "slaughterTricepsSubscapular",
+				"label": {
+					"pt-BR": "Slaughter — tríceps + subescapular",
+					"en": "Slaughter — triceps + subscapular"
+				},
+				"ageRange": {
+					"max": 16
+				},
+				"biologicalSex": ["male", "female"],
+				"output": "bodyFatPercent",
+				"requires": ["biologicalSex", "ageYears", "tricepsSkinfoldMm", "subscapularSkinfoldMm"],
+				"formulas": [
+					{
+						"condition": "biologicalSex === 'male' AND S2 <= 35",
+						"expression": "bodyFatPercent = 1.21 * S2 - 0.008 * (S2 ** 2) - 1.7"
+					},
+					{
+						"condition": "biologicalSex === 'male' AND S2 > 35",
+						"expression": "bodyFatPercent = 0.783 * S2 + 1.6"
+					},
+					{
+						"condition": "biologicalSex === 'female' AND S2 <= 35",
+						"expression": "bodyFatPercent = 1.33 * S2 - 0.013 * (S2 ** 2) - 2.5"
+					},
+					{
+						"condition": "biologicalSex === 'female' AND S2 > 35",
+						"expression": "bodyFatPercent = 0.546 * S2 + 9.7"
+					}
+				],
+				"intermediateValues": [
+					{
+						"key": "S2",
+						"expression": "tricepsSkinfoldMm + subscapularSkinfoldMm"
+					}
+				],
+				"requiresDensityConverter": false
+			},
+			{
+				"id": "jacksonPollock3",
+				"label": {
+					"pt-BR": "Jackson-Pollock 3 dobras",
+					"en": "Jackson-Pollock 3-site"
+				},
+				"ageRange": {
+					"min": 17,
+					"max": 60
+				},
+				"biologicalSex": ["male", "female"],
+				"output": "bodyDensity",
+				"requiresBySex": {
+					"male": [
+						"biologicalSex",
+						"ageYears",
+						"chestSkinfoldMm",
+						"abdominalSkinfoldMm",
+						"thighSkinfoldMm",
+						"densityConverterId"
+					],
+					"female": [
+						"biologicalSex",
+						"ageYears",
+						"tricepsSkinfoldMm",
+						"suprailiacSkinfoldMm",
+						"thighSkinfoldMm",
+						"densityConverterId"
+					]
+				},
+				"formulas": [
+					{
+						"condition": "biologicalSex === 'male'",
+						"expression": "bodyDensity = 1.10938 - 0.0008267 * S3 + 0.0000016 * (S3 ** 2) - 0.0002574 * ageYears"
+					},
+					{
+						"condition": "biologicalSex === 'female'",
+						"expression": "bodyDensity = 1.0994921 - 0.0009929 * S3 + 0.0000023 * (S3 ** 2) - 0.0001392 * ageYears"
+					}
+				],
+				"intermediateValues": [
+					{
+						"key": "S3",
+						"condition": "biologicalSex === 'male'",
+						"expression": "chestSkinfoldMm + abdominalSkinfoldMm + thighSkinfoldMm"
+					},
+					{
+						"key": "S3",
+						"condition": "biologicalSex === 'female'",
+						"expression": "tricepsSkinfoldMm + suprailiacSkinfoldMm + thighSkinfoldMm"
+					}
+				],
+				"requiresDensityConverter": true
+			},
+			{
+				"id": "jacksonPollock7",
+				"label": {
+					"pt-BR": "Jackson-Pollock 7 dobras",
+					"en": "Jackson-Pollock 7-site"
+				},
+				"ageRange": {
+					"min": 17,
+					"max": 60
+				},
+				"biologicalSex": ["male", "female"],
+				"output": "bodyDensity",
+				"requires": [
+					"biologicalSex",
+					"ageYears",
+					"chestSkinfoldMm",
+					"midaxillarySkinfoldMm",
+					"tricepsSkinfoldMm",
+					"subscapularSkinfoldMm",
+					"abdominalSkinfoldMm",
+					"suprailiacSkinfoldMm",
+					"thighSkinfoldMm",
+					"densityConverterId"
+				],
+				"formulas": [
+					{
+						"condition": "biologicalSex === 'male'",
+						"expression": "bodyDensity = 1.112 - 0.00043499 * S7 + 0.00000055 * (S7 ** 2) - 0.00028826 * ageYears"
+					},
+					{
+						"condition": "biologicalSex === 'female'",
+						"expression": "bodyDensity = 1.097 - 0.00046971 * S7 + 0.00000056 * (S7 ** 2) - 0.00012828 * ageYears"
+					}
+				],
+				"intermediateValues": [
+					{
+						"key": "S7",
+						"expression": "chestSkinfoldMm + midaxillarySkinfoldMm + tricepsSkinfoldMm + subscapularSkinfoldMm + abdominalSkinfoldMm + suprailiacSkinfoldMm + thighSkinfoldMm"
+					}
+				],
+				"requiresDensityConverter": true
+			},
+			{
+				"id": "durninWomersley4OlderAdults",
+				"label": {
+					"pt-BR": "Durnin-Womersley 4 dobras — maiores de 60 anos",
+					"en": "Durnin-Womersley 4-site — older adults"
+				},
+				"ageRange": {
+					"min": 61
+				},
+				"biologicalSex": ["male", "female"],
+				"output": "bodyDensity",
+				"requires": [
+					"biologicalSex",
+					"ageYears",
+					"bicepsSkinfoldMm",
+					"tricepsSkinfoldMm",
+					"subscapularSkinfoldMm",
+					"suprailiacSkinfoldMm",
+					"densityConverterId"
+				],
+				"formulas": [
+					{
+						"condition": "biologicalSex === 'male'",
+						"expression": "bodyDensity = 1.1715 - 0.0779 * log10(S4)"
+					},
+					{
+						"condition": "biologicalSex === 'female'",
+						"expression": "bodyDensity = 1.1339 - 0.0645 * log10(S4)"
+					}
+				],
+				"intermediateValues": [
+					{
+						"key": "S4",
+						"expression": "bicepsSkinfoldMm + tricepsSkinfoldMm + subscapularSkinfoldMm + suprailiacSkinfoldMm"
+					}
+				],
+				"requiresDensityConverter": true
+			}
+		],
+		"densityConverters": [
+			{
+				"id": "siri",
+				"label": {
+					"pt-BR": "Siri",
+					"en": "Siri"
+				},
+				"requires": ["bodyDensity"],
+				"expression": "bodyFatPercent = (495 / bodyDensity) - 450"
+			},
+			{
+				"id": "brozek",
+				"label": {
+					"pt-BR": "Brozek",
+					"en": "Brozek"
+				},
+				"requires": ["bodyDensity"],
+				"expression": "bodyFatPercent = (457 / bodyDensity) - 414.2"
+			}
+		]
+	},
+	"calculationDefinitions": [
+		{
+			"id": "quetelet",
+			"group": "bmi",
+			"label": {
+				"pt-BR": "IMC tradicional — Quételet / OMS",
+				"en": "Traditional BMI — Quetelet / WHO"
+			},
+			"requires": ["bodyMassKg", "heightCm"],
+			"expression": "bmiQuetelet = bodyMassKg / ((heightCm / 100) ** 2)"
+		},
+		{
+			"id": "greccoFmrpUsp",
+			"group": "bmi",
+			"label": {
+				"pt-BR": "Novo IMC — Grecco / FMRP-USP",
+				"en": "New BMI — Grecco / FMRP-USP"
+			},
+			"requires": ["bodyMassKg", "heightCm", "fatMassKg"],
+			"expression": "bmiGreccoFmrpUsp = ((3 * bodyMassKg) + (4 * fatMassKg)) / heightCm"
+		},
+		{
+			"id": "trefethen",
+			"group": "bmi",
+			"label": {
+				"pt-BR": "Novo IMC — Nick Trefethen",
+				"en": "New BMI — Nick Trefethen"
+			},
+			"requires": ["bodyMassKg", "heightCm"],
+			"expression": "bmiTrefethen = 1.3 * bodyMassKg / ((heightCm / 100) ** 2.5)"
+		},
+		{
+			"id": "melaoJr",
+			"group": "bmi",
+			"label": {
+				"pt-BR": "IMC — Hinderburg Melão Jr.",
+				"en": "BMI — Hinderburg Melao Jr."
+			},
+			"requires": ["bodyMassKg", "heightCm"],
+			"expression": "bmiMelaoJr = 1.7 * bodyMassKg / ((heightCm / 100) ** 3.06)"
+		},
+		{
+			"id": "waistHipRatio",
+			"group": "healthIndex",
+			"label": {
+				"pt-BR": "Relação cintura-quadril",
+				"en": "Waist-hip ratio"
+			},
+			"requires": ["waistCircumferenceCm", "hipCircumferenceCm"],
+			"expression": "waistHipRatio = waistCircumferenceCm / hipCircumferenceCm"
+		},
+		{
+			"id": "waistHeightRatio",
+			"group": "healthIndex",
+			"label": {
+				"pt-BR": "Relação cintura-estatura",
+				"en": "Waist-height ratio"
+			},
+			"requires": ["waistCircumferenceCm", "heightCm"],
+			"expression": "waistHeightRatio = waistCircumferenceCm / heightCm"
+		},
+		{
+			"id": "fatMass",
+			"group": "bodyComposition",
+			"label": {
+				"pt-BR": "Massa gorda",
+				"en": "Fat mass"
+			},
+			"requires": ["bodyMassKg", "bodyFatPercent"],
+			"expression": "fatMassKg = bodyMassKg * (bodyFatPercent / 100)"
+		},
+		{
+			"id": "fatFreeMass",
+			"group": "bodyComposition",
+			"label": {
+				"pt-BR": "Massa livre de gordura",
+				"en": "Fat-free mass"
+			},
+			"requires": ["bodyMassKg", "fatMassKg"],
+			"expression": "fatFreeMassKg = bodyMassKg - fatMassKg"
+		},
+		{
+			"id": "fatFreeMassPercent",
+			"group": "bodyComposition",
+			"label": {
+				"pt-BR": "Percentual de massa livre de gordura",
+				"en": "Fat-free mass percentage"
+			},
+			"requires": ["fatFreeMassKg", "bodyMassKg"],
+			"expression": "fatFreeMassPercent = (fatFreeMassKg / bodyMassKg) * 100"
+		},
+		{
+			"id": "fatToFatFreeMassRatio",
+			"group": "bodyComposition",
+			"label": {
+				"pt-BR": "Razão massa gorda / massa livre de gordura",
+				"en": "Fat mass / fat-free mass ratio"
+			},
+			"requires": ["fatMassKg", "fatFreeMassKg"],
+			"expression": "fatToFatFreeMassRatio = fatMassKg / fatFreeMassKg"
+		},
+		{
+			"id": "targetBodyMass",
+			"group": "bodyComposition",
+			"label": {
+				"pt-BR": "Massa corporal alvo",
+				"en": "Target body mass"
+			},
+			"requires": ["fatFreeMassKg", "targetBodyFatPercent"],
+			"expression": "targetBodyMassKg = fatFreeMassKg / (1 - targetBodyFatPercent / 100)"
+		},
+		{
+			"id": "mifflinStJeorBmr",
+			"group": "energy",
+			"label": {
+				"pt-BR": "Taxa metabólica basal — Mifflin-St Jeor",
+				"en": "Basal metabolic rate — Mifflin-St Jeor"
+			},
+			"requires": ["biologicalSex", "bodyMassKg", "heightCm", "ageYears"],
+			"expressions": [
+				{
+					"condition": "biologicalSex === 'male'",
+					"expression": "bmrKcalDay = (10 * bodyMassKg) + (6.25 * heightCm) - (5 * ageYears) + 5"
+				},
+				{
+					"condition": "biologicalSex === 'female'",
+					"expression": "bmrKcalDay = (10 * bodyMassKg) + (6.25 * heightCm) - (5 * ageYears) - 161"
+				}
+			]
+		},
+		{
+			"id": "katchMcArdleBmr",
+			"group": "energy",
+			"label": {
+				"pt-BR": "Taxa metabólica basal — Katch-McArdle",
+				"en": "Basal metabolic rate — Katch-McArdle"
+			},
+			"requires": ["fatFreeMassKg"],
+			"expression": "bmrKatchMcArdleKcalDay = 370 + (21.6 * fatFreeMassKg)"
+		},
+		{
+			"id": "tdee",
+			"group": "energy",
+			"label": {
+				"pt-BR": "Gasto energético diário estimado",
+				"en": "Estimated total daily energy expenditure"
+			},
+			"requires": ["bmrKcalDay", "activityFactor"],
+			"expression": "tdeeKcalDay = bmrKcalDay * activityFactor"
+		}
+	],
+	"dynamicRequirementRules": [
+		{
+			"id": "selectedProtocolRequiredMeasurements",
+			"description": {
+				"pt-BR": "As dobras obrigatórias são determinadas pelo protocolo de percentual de gordura selecionado.",
+				"en": "Required skinfolds are determined by the selected body fat protocol."
+			},
+			"rule": "all selectedBodyFatProtocol.requires fields must be valid"
+		},
+		{
+			"id": "densityConverterRequired",
+			"description": {
+				"pt-BR": "Se o protocolo gerar densidade corporal, o conversor Siri ou Brozek é obrigatório.",
+				"en": "If the protocol outputs body density, Siri or Brozek converter is required."
+			},
+			"rule": "densityConverterId is required when selectedBodyFatProtocol.output === 'bodyDensity'"
+		},
+		{
+			"id": "bmiMeasurementsRequired",
+			"description": {
+				"pt-BR": "Massa corporal e estatura são obrigatórias para todos os IMCs.",
+				"en": "Body mass and height are required for all BMI formulas."
+			},
+			"rule": "bodyMassKg and heightCm are required"
+		},
+		{
+			"id": "waistHipRatioRequiredMeasurements",
+			"description": {
+				"pt-BR": "Cintura e quadril são obrigatórios quando relação cintura-quadril estiver ativa.",
+				"en": "Waist and hip are required when waist-hip ratio is enabled."
+			},
+			"rule": "waistCircumferenceCm and hipCircumferenceCm are required when enabledHealthIndices includes 'waistHipRatio'"
+		},
+		{
+			"id": "waistHeightRatioRequiredMeasurements",
+			"description": {
+				"pt-BR": "Cintura e estatura são obrigatórias quando relação cintura-estatura estiver ativa.",
+				"en": "Waist and height are required when waist-height ratio is enabled."
+			},
+			"rule": "waistCircumferenceCm and heightCm are required when enabledHealthIndices includes 'waistHeightRatio'"
+		},
+		{
+			"id": "targetBodyMassRequiredInputs",
+			"description": {
+				"pt-BR": "Percentual de gordura alvo é obrigatório quando cálculo de massa corporal alvo estiver ativo.",
+				"en": "Target body fat percentage is required when target body mass calculation is enabled."
+			},
+			"rule": "targetBodyFatPercent is required when enabledBodyCompositionCalculations includes 'targetBodyMass'"
+		},
+		{
+			"id": "activityFactorRequired",
+			"description": {
+				"pt-BR": "Fator de atividade é obrigatório quando gasto energético diário estiver ativo.",
+				"en": "Activity factor is required when daily energy expenditure is enabled."
+			},
+			"rule": "activityFactor is required when enabledEnergyCalculations includes 'tdee'"
+		}
+	],
+	"computedFields": [
+		{
+			"key": "ageYears",
+			"source": "client.dateOfBirth + evaluatedAt",
+			"calculation": "completedYearsBetween(client.dateOfBirth, evaluatedAt)",
+			"visible": false,
+			"editable": false
+		},
+		{
+			"key": "heightM",
+			"source": "heightCm",
+			"calculation": "heightCm / 100",
+			"visible": false,
+			"editable": false
+		},
+		{
+			"key": "bodyDensity",
+			"source": "selectedBodyFatProtocol",
+			"calculation": "apply selectedBodyFatProtocol formula when output is bodyDensity",
+			"visible": false,
+			"editable": false
+		},
+		{
+			"key": "bodyFatPercent",
+			"source": "selectedBodyFatProtocol + densityConverterId",
+			"calculation": "apply selected protocol and converter when applicable",
+			"visible": false,
+			"editable": false
+		},
+		{
+			"key": "fatMassKg",
+			"source": ["bodyMassKg", "bodyFatPercent"],
+			"calculation": "bodyMassKg * (bodyFatPercent / 100)",
+			"visible": false,
+			"editable": false
+		},
+		{
+			"key": "fatFreeMassKg",
+			"source": ["bodyMassKg", "fatMassKg"],
+			"calculation": "bodyMassKg - fatMassKg",
+			"visible": false,
+			"editable": false
+		}
+	],
+	"snapshots": {
+		"clientSnapshot": [
+			"clientId",
+			"fullName",
+			"dateOfBirth",
+			"ageYears",
+			"biologicalSex",
+			"primaryPhone",
+			"legalGuardian",
+			"emergencyContacts"
+		],
+		"professionalSnapshot": [
+			"professionalId",
+			"displayName",
+			"professionalTitle",
+			"professionalRegistrations",
+			"professionalPhone",
+			"professionalEmail"
+		],
+		"generalAnamnesisSnapshot": [
+			"generalAnamnesisId",
+			"reviewedAnswers",
+			"reviewedAt",
+			"reviewedByProfessionalId"
+		],
+		"protocolSnapshot": [
+			"bodyFatProtocolId",
+			"densityConverterId",
+			"enabledBmiFormulas",
+			"enabledHealthIndices",
+			"enabledBodyCompositionCalculations",
+			"enabledEnergyCalculations"
+		]
+	},
+	"submitRules": {
+		"canSaveDraftWhen": [
+			"clientId is valid",
+			"professionalId is valid",
+			"assessmentType === 'basicAnthropometric'",
+			"evaluatedAt is valid"
+		],
+		"canCompleteWhen": [
+			"clientId is valid",
+			"professionalId is valid",
+			"bodyFatProtocolId is valid",
+			"all dynamic required measurements are valid",
+			"all enabled calculation required inputs are valid",
+			"clientTruthConfirmed === true",
+			"specificAssessmentTruthConfirmed === true",
+			"interferenceAwarenessConfirmed === true",
+			"measurementAuthorizationConfirmed === true",
+			"physicalContactAwarenessConfirmed === true",
+			"professionalReviewedAnamnesis === true"
+		],
+		"onSaveDraft": [
+			"set updatedAt",
+			"save current answers",
+			"save current measurements",
+			"preserve draft status"
+		],
+		"onComplete": [
+			"validate dynamic required fields",
+			"compute ageYears",
+			"compute protocol outputs",
+			"compute enabled calculations",
+			"save client snapshot",
+			"save professional snapshot",
+			"save general anamnesis snapshot",
+			"save protocol snapshot",
+			"set confirmationAt",
+			"set completedAt",
+			"set assessmentStatus to completed"
+		]
+	}
+}
